@@ -1,0 +1,35 @@
+title: Партнеры
+content:
+  - title: ЛФИ МФТИ
+    link: https://mipt.ru/education/departments/lpr/
+    logo: /images/magprog/partners/LPI.jpg
+  - title: ФПМИ МФТИ
+    link: https://mipt.ru/education/departments/fpmi/
+    logo: /images/magprog/partners/FPMI.jpg
+  - title: JetBrains Research
+    link: https://research.jetbrains.org/groups/npm/
+    logo: /images/magprog/partners/JBR.png
+  - title: Таврида Электрик
+    link: https://www.tavrida.com/ter/
+    logo: /images/magprog/partners/Tavrida.png
+  - title: ИЯИ РАН
+    link: https://www.inr.ru/
+    logo: /images/partners/inr_logo.png
+  - title: ИКИ РАН
+    link: http://www.iki.rssi.ru/
+    logo: /images/magprog/partners/iki.jpg
+  - title: ОИЯИ
+    link: https://bmn.jinr.ru/
+    logo: /images/magprog/partners/jinr.png
+#  - title: ВШЭ
+#    link: https://www.hse.ru/en/
+#    logo: /images/magprog/partners/hse.jpg
+#  - title: HZG-DESY
+#    link: https://www.desy.de/research/cooperations__institutes/hzg/index_eng.html
+#    logo: /images/magprog/partners/desy.svg
+  - title: Тинькофф
+    link: https://fintech.tinkoff.ru/
+    logo: /images/magprog/partners/tink.jpg
+  - title: ФИЦ Биотехнологии РАН
+    link: https://www.fbras.ru/
+    logo: /images/magprog/partners/biotech.png
