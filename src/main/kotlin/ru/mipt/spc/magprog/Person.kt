@@ -36,7 +36,9 @@ private fun FlowContent.personCards(list: List<Person>, prefix: String) {
 
 context(SiteContext)
 fun FlowContent.mentors() {
-    val mentors = findByType("magprog_mentor").values.map { Person(it) }.sortedBy { it.order }
+    val mentors = findByType("magprog_mentor").values.map {
+        Person(it)
+    }.sortedBy { it.order }
 
     div("header") {
         css {

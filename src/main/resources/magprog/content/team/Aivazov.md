@@ -1,9 +1,9 @@
 ---
 content_type: magprog_team
-title: Денис Айвазов
+name: Денис Айвазов
 id: Aivazov
 order: 4
-photo: /images/magprog/team/Aivazov.jpg
+photo: images/team/Aivazov.jpg
 language: ru
 ---
 **Консультант от ФПМИ**

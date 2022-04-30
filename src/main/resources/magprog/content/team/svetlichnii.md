@@ -1,9 +1,9 @@
 ---
 content_type: magprog_team
-title: Александр Светличный
+name: Александр Светличный
 id: svetlichnii
 order: 2
-photo: /images/members/svetlichny.jpeg
+photo: images/members/svetlichny.jpeg
 language: ru
 ---
 **Заместитель руководителя**

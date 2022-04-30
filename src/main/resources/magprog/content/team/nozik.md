@@ -1,9 +1,9 @@
 ---
 content_type: magprog_team
-title: Александр Нозик
+name: Александр Нозик
 id: nozik
 order: 1
-photo: /images/members/nozik.png
+photo: images/mentors/Nozik.jpg
 language: ru
 ---
 **Руководитель программы**

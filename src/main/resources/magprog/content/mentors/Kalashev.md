@@ -1,8 +1,8 @@
 ---
 content_type: magprog_mentor
-title: Олег Евгеньевич Калашев
+name: Олег Евгеньевич Калашев
 id: Kalashev
-photo: Kalashev.jpg
+photo: images/mentors/Kalashev.jpg
 language: ru
 ---
 

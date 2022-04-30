@@ -1,8 +1,8 @@
 ---
 content_type: magprog_mentor
-title: Петр Климай
+name: Петр Климай
 id: Klimai
-photo: Klimai.jpg
+photo: images/mentors/Klimai.jpg
 language: ru
 ---
 

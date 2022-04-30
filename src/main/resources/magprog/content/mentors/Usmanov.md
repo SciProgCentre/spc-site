@@ -1,8 +1,8 @@
 ---
 content_type: magprog_mentor
-title: Ильмир Усманов
+name: Ильмир Усманов
 id: Usmanov
-photo: Usmanov.jpg
+photo: images/mentors/Usmanov.jpg
 language: ru
 ---
 

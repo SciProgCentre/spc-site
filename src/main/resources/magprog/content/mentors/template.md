@@ -1,8 +1,8 @@
 ---
 content_type: magprog_mentor
-title: Полиграф Шариков
+name: Полиграф Шариков
 id: template
-photo: Template.jpg
+photo: images/mentors/Template.jpg
 published: false
 language: ru
 ---

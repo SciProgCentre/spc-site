@@ -1,8 +1,8 @@
 ---
 content_type: magprog_mentor
-title: Александр Нозик
+name: Александр Нозик
 id: Nozik
-photo: Nozik.jpg
+photo: images/mentors/Nozik.jpg
 language: ru
 ---
 

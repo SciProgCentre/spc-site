@@ -1,8 +1,8 @@
 ---
 content_type: magprog_mentor
-title: Igor Khokhriakov
+name: Igor Khokhriakov
 id: Khokhriakov
-photo: Khokhriakov.jpg
+photo: images/mentors/Khokhriakov.jpg
 language: ru
 ---
 

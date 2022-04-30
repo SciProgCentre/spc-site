@@ -1,15 +1,16 @@
 package ru.mipt.spc.magprog
 
+import kotlinx.coroutines.runBlocking
 import kotlinx.css.*
 import kotlinx.html.*
+import space.kscience.dataforge.data.await
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.string
 import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
 
-//fun CSSBuilder.magProgCss() {
+//fun CssBuilder.magProgCss() {
 //    rule(".magprog-body") {
 //        rule(".magprog-header") {
 //            display = Display.flex
@@ -45,19 +46,21 @@ private fun wrapSection(
     }
 }
 
-private fun wrapSection(block: HtmlBlock, idOverride: String? = null): MagProgSection =
-    wrapSection(
-        idOverride ?: block.id,
-        block.meta["section_title"]?.string ?: error("Section without title"),
-        block.content
-    )
+private fun wrapSection(
+    block: HtmlBlock,
+    idOverride: String? = null,
+): MagProgSection = wrapSection(
+    idOverride ?: block.id,
+    block.meta["section_title"]?.string ?: error("Section without title"),
+    block.content
+)
 
-private val CONTENT_NODE_NAME = "content".asName()
-private val INTRO_PATH: Name = TODO()
-private val ENROLL_PATH: Name = TODO()
-private val CONTACTS_PATH: Name = TODO()
-private val PROGRAM_PATH: Name = TODO()
-private val RECOMMENDED_COURSES_PATH: Name = TODO()
+private val CONTENT_NODE_NAME = Name.EMPTY//"content".asName()
+private val INTRO_PATH: Name = CONTENT_NODE_NAME + "intro"
+private val ENROLL_PATH: Name = CONTENT_NODE_NAME + "enroll"
+private val CONTACTS_PATH: Name = CONTENT_NODE_NAME + "contacts"
+private val PROGRAM_PATH: Name = CONTENT_NODE_NAME + "program"
+private val RECOMMENDED_COURSES_PATH: Name = CONTENT_NODE_NAME + "recommendedCourses"
 private val PARTNERS_PATH: Name = CONTENT_NODE_NAME + "partners"
 
 context(SiteContext) private fun FlowContent.programSection() {
@@ -67,23 +70,24 @@ context(SiteContext) private fun FlowContent.programSection() {
         h2 { +"Учебная программа" }
         with(programBlock) { content() }
         button(classes = "fit btn btn-primary btn-lg") {
-            attributes["data-bs-toggle"]="collapse"
-            attributes["data-bs-target"]="#recommended-courses-collapse-text"
-            attributes["aria-expanded"]="false"
-            attributes["aria-controls"]="recommended-courses-collapse-text"
+            attributes["data-bs-toggle"] = "collapse"
+            attributes["data-bs-target"] = "#recommended-courses-collapse-text"
+            attributes["aria-expanded"] = "false"
+            attributes["aria-controls"] = "recommended-courses-collapse-text"
             +"Рекомендованные курсы"
         }
         div("collapse pt-3") {
             id = "recommended-courses-collapse-text"
             div("card card-body") {
-                with(recommendedBlock){content()}
+                with(recommendedBlock) { content() }
             }
         }
     }
 }
 
 context(SiteContext) private fun FlowContent.partners() {
-    val partnersData: Meta = resolve<Any>(PARTNERS_PATH)?.meta ?: Meta.EMPTY
+    //val partnersData: Meta = resolve<Any>(PARTNERS_PATH)?.meta ?: Meta.EMPTY
+    val partnersData: Meta =  runBlocking { resolve<Meta>(PARTNERS_PATH)?.await()} ?: Meta.EMPTY
     div("inner") {
         h2 { +"Партнеры" }
         div("features") {
@@ -106,8 +110,7 @@ context(SiteContext) private fun FlowContent.partners() {
     }
 }
 
-context(SiteContext)
-fun HTML.magProgPage() {
+context(SiteContext) fun HTML.magProgPage() {
     val sections = listOf<MagProgSection>(
         wrapSection(resolveHtml(INTRO_PATH)!!, "intro"),
         MagProgSection(
@@ -140,7 +143,7 @@ fun HTML.magProgPage() {
         ) {
             team()
         },
-        wrapSection(resolveHtml(CONTACTS_PATH)!!, "enroll"),
+        wrapSection(resolveHtml(CONTACTS_PATH)!!, "contacts"),
     )
 
     head {
@@ -154,12 +157,12 @@ fun HTML.magProgPage() {
         }
         link {
             rel = "stylesheet"
-            href = resolveResource("assets/css/main.css")
+            href = resolveResource("css/main.css")
         }
         noScript {
             link {
                 rel = "stylesheet"
-                href = resolveResource("assets/css/noscript.css")
+                href = resolveResource("css/noscript.css")
             }
         }
     }
@@ -171,7 +174,7 @@ fun HTML.magProgPage() {
                     ul {
                         sections.forEach { section ->
                             li {
-                                a(href = section.id) {
+                                a(href = "#${section.id}") {
                                     +section.title
                                 }
                             }
@@ -214,25 +217,25 @@ fun HTML.magProgPage() {
             }
         }
         script {
-            src = resolveResource("assets/js/jquery.min.js")
+            src = resolveResource("js/jquery.min.js")
         }
         script {
-            src = resolveResource("assets/js/jquery.scrollex.min.js")
+            src = resolveResource("js/jquery.scrollex.min.js")
         }
         script {
-            src = resolveResource("assets/js/jquery.scrolly.min.js")
+            src = resolveResource("js/jquery.scrolly.min.js")
         }
         script {
-            src = resolveResource("assets/js/browser.min.js")
+            src = resolveResource("js/browser.min.js")
         }
         script {
-            src = resolveResource("assets/js/breakpoints.min.js")
+            src = resolveResource("js/breakpoints.min.js")
         }
         script {
-            src = resolveResource("assets/js/util.js")
+            src = resolveResource("js/util.js")
         }
         script {
-            src = resolveResource("assets/js/main.js")
+            src = resolveResource("js/main.js")
         }
     }
 }

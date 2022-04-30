@@ -1,8 +1,8 @@
 ---
 content_type: magprog_mentor
-title: Айно Константиновна Скасырская
+name: Айно Константиновна Скасырская
 id: Skasyrskaya
-photo: Skasyrskaya.jpg
+photo: images/mentors/Skasyrskaya.jpg
 language: ru
 ---
 
