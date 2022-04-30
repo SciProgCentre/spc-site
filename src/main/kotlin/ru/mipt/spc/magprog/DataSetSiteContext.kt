@@ -20,6 +20,7 @@ import space.kscience.dataforge.meta.toMeta
 import space.kscience.dataforge.misc.DFInternal
 import space.kscience.dataforge.names.Name
 import kotlin.reflect.KType
+import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.typeOf
 
 class DataSetSiteContext(
@@ -64,22 +65,28 @@ class DataSetSiteContext(
     private val Data<*>.published: Boolean get() = meta["published"].string != "false"
 
     @DFInternal
-    override fun <T : Any> resolve(type: KType, name: Name): Data<T>? = when (type) {
-        typeOf<Meta>() -> {
-            val data = dataSet.selectOne<ByteArray>(name)
-            if( data == null) null else {
-                when (data.meta[META_FILE_EXTENSION_KEY].string) {
-                    "json" -> data.map {
-                        Json.parseToJsonElement(it.decodeToString()).toMeta()
-                    }
-                    "yaml" -> data.map {
-                        YamlMetaFormat.readObject(it.asBinary())
-                    }
-                    else -> error("File with extension ${data.meta[META_FILE_EXTENSION_KEY]} could not be parsed as Meta")
-                } as Data<T>?
+    override fun <T : Any> resolve(type: KType, name: Name): Data<T>? {
+        val data: Data<Any> = dataSet.get(name) ?: return null
+        return if (type == typeOf<Meta>() && data.type == typeOf<ByteArray>()) {
+            data as Data<ByteArray>
+            when (data.meta[META_FILE_EXTENSION_KEY].string) {
+                "json" -> data.map {
+                    Json.parseToJsonElement(it.decodeToString()).toMeta()
+                }
+                "yaml" -> data.map {
+                    YamlMetaFormat.readObject(it.asBinary())
+                }
+                else -> error("File with extension ${data.meta[META_FILE_EXTENSION_KEY]} could not be parsed as Meta")
+            } as Data<T>?
+        }else {
+            if (!data.type.isSubtypeOf(type)) {
+                null
+            } else {
+                object : Data<T> by (data as Data<T>) {
+                    override val type: KType = type
+                }
             }
         }
-        else -> dataSet.selectOne(type, name)
     }
 
     @DFInternal
