@@ -7,7 +7,6 @@ import kotlinx.serialization.json.Json
 import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
 import org.intellij.markdown.html.HtmlGenerator
 import org.intellij.markdown.parser.MarkdownParser
-import ru.mipt.spc.magprog.DirectoryDataTree.Companion.META_FILE_EXTENSION_KEY
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.data.*
 import space.kscience.dataforge.io.asBinary
@@ -19,6 +18,7 @@ import space.kscience.dataforge.meta.string
 import space.kscience.dataforge.meta.toMeta
 import space.kscience.dataforge.misc.DFInternal
 import space.kscience.dataforge.names.Name
+import space.kscience.snark.DirectoryDataTree.Companion.META_FILE_EXTENSION_KEY
 import kotlin.reflect.KType
 import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.typeOf
@@ -35,12 +35,12 @@ class DataSetSiteContext(
     private val markdownParser = MarkdownParser(markdownFlavor)
 
     //TODO replace by a plugin
-    private suspend fun Data<ByteArray>.toHtmlBlock(): HtmlBlock {
+    private suspend fun Data<ByteArray>.toHtmlBlock(): HtmlData {
         val fileType = meta[META_FILE_EXTENSION_KEY].string
         val src = await().decodeToString()
 
         return when (fileType) {
-            "html" -> HtmlBlock(meta) {
+            "html" -> HtmlData(meta) {
                 div {
                     unsafe {
                         +src
@@ -48,7 +48,7 @@ class DataSetSiteContext(
                 }
             }
 
-            "markdown", "mdown", "mkdn", "mkd", "md" -> HtmlBlock(meta) {
+            "markdown", "mdown", "mkdn", "mkd", "md" -> HtmlData(meta) {
                 div("markdown") {
                     val parsedTree = markdownParser.buildMarkdownTreeFromString(src)
 
@@ -93,11 +93,11 @@ class DataSetSiteContext(
     override fun <T : Any> resolveAll(type: KType, filter: (name: Name, meta: Meta) -> Boolean): DataSet<T> =
         dataSet.select(type, filter = filter)
 
-    override fun resolveHtml(name: Name): HtmlBlock? = runBlocking {
+    override fun resolveHtml(name: Name): HtmlData? = runBlocking {
         resolve<ByteArray>(name)?.takeIf { it.published }?.toHtmlBlock()
     }
 
-    override fun resolveAllHtml(filter: (name: Name, meta: Meta) -> Boolean): Map<Name, HtmlBlock> = runBlocking {
+    override fun resolveAllHtml(filter: (name: Name, meta: Meta) -> Boolean): Map<Name, HtmlData> = runBlocking {
         buildMap {
             resolveAll<ByteArray>(filter).dataSequence().filter { it.published }.forEach {
                 put(it.name, it.toHtmlBlock())

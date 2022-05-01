@@ -28,12 +28,12 @@ interface SiteContext: ContextAware {
     /**
      * Resolve a Html builder by its full name
      */
-    fun resolveHtml(name: Name): HtmlBlock?
+    fun resolveHtml(name: Name): HtmlData?
 
     /**
      * Find all Html blocks using given name/meta filter
      */
-    fun resolveAllHtml(filter: (name: Name, meta: Meta) -> Boolean): Map<Name, HtmlBlock>
+    fun resolveAllHtml(filter: (name: Name, meta: Meta) -> Boolean): Map<Name, HtmlData>
 }
 
 @OptIn(DFInternal::class)

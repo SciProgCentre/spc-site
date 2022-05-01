@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import ru.mipt.npm.gradle.KScienceVersions
 
 plugins {
@@ -21,11 +20,11 @@ application {
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
 
-tasks.withType<KotlinCompile>{
-    kotlinOptions{
-        freeCompilerArgs = freeCompilerArgs + "-Xcontext-receivers"
-    }
-}
+//tasks.withType<KotlinCompile>{
+//    kotlinOptions{
+//        freeCompilerArgs = freeCompilerArgs + "-Xcontext-receivers"
+//    }
+//}
 
 val dataforgeVersion by extra("0.6.0-dev-3")
 val ktorVersion  = KScienceVersions.ktorVersion

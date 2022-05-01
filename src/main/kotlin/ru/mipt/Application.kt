@@ -16,12 +16,12 @@ import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import ru.mipt.plugins.configureTemplating
 import ru.mipt.spc.magprog.DataSetSiteContext
-import ru.mipt.spc.magprog.DirectoryDataTree
 import ru.mipt.spc.magprog.SiteContext
 import ru.mipt.spc.magprog.magProgPage
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.io.io
 import space.kscience.dataforge.io.yaml.YamlPlugin
+import space.kscience.snark.DirectoryDataTree
 import java.nio.file.Path
 
 

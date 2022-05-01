@@ -6,8 +6,10 @@ import kotlinx.html.*
 import space.kscience.dataforge.data.await
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.get
+import space.kscience.dataforge.meta.getIndexed
 import space.kscience.dataforge.meta.string
 import space.kscience.dataforge.names.Name
+import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
 
 //fun CssBuilder.magProgCss() {
@@ -26,9 +28,9 @@ class MagProgSection(
     val id: String,
     val title: String,
     val style: String,
-    override val content: FlowContent.() -> Unit,
-) : HtmlBlock {
-    override val meta: Meta
+    val content: FlowContent.() -> Unit,
+)  {
+    val meta: Meta
         get() = Meta {
             "id" put id
             "title" put title
@@ -47,13 +49,14 @@ private fun wrapSection(
 }
 
 private fun wrapSection(
-    block: HtmlBlock,
+    block: HtmlData,
     idOverride: String? = null,
 ): MagProgSection = wrapSection(
     idOverride ?: block.id,
     block.meta["section_title"]?.string ?: error("Section without title"),
-    block.content
-)
+){
+    htmlData(block)
+}
 
 private val CONTENT_NODE_NAME = Name.EMPTY//"content".asName()
 private val INTRO_PATH: Name = CONTENT_NODE_NAME + "intro"
@@ -68,7 +71,7 @@ context(SiteContext) private fun FlowContent.programSection() {
     val recommendedBlock = resolveHtml(RECOMMENDED_COURSES_PATH)!!
     div("inner") {
         h2 { +"Учебная программа" }
-        with(programBlock) { content() }
+        htmlData(programBlock)
         button(classes = "fit btn btn-primary btn-lg") {
             attributes["data-bs-toggle"] = "collapse"
             attributes["data-bs-target"] = "#recommended-courses-collapse-text"
@@ -79,7 +82,7 @@ context(SiteContext) private fun FlowContent.programSection() {
         div("collapse pt-3") {
             id = "recommended-courses-collapse-text"
             div("card card-body") {
-                with(recommendedBlock) { content() }
+                htmlData(recommendedBlock)
             }
         }
     }
@@ -91,7 +94,7 @@ context(SiteContext) private fun FlowContent.partners() {
     div("inner") {
         h2 { +"Партнеры" }
         div("features") {
-            partnersData.items.values.forEach { partner ->
+            partnersData.getIndexed("content".asName()).values.forEach { partner ->
                 section {
                     a(href = partner["link"].string, target = "_blank") {
                         rel = "noreferrer"
@@ -205,7 +208,7 @@ context(SiteContext) fun HTML.magProgPage() {
             id = "footer"
             div("inner") {
                 ul("menu") {
-                    li { +"""&copy; Untitled. All rights reserved.""" }
+                    li { +"""&copy; SPC. All rights reserved.""" }
                     li {
                         +"""Design:"""
                         a {

@@ -4,7 +4,7 @@ import kotlinx.css.*
 import kotlinx.html.*
 import space.kscience.dataforge.meta.string
 
-class Person(val block: HtmlBlock) : HtmlBlock by block {
+class Person(val block: HtmlData) : HtmlData by block {
     val name: String by meta.string { error("Mentor name is not defined") }
     val photo: String? by meta.string()
 }
@@ -27,7 +27,7 @@ private fun FlowContent.personCards(list: List<Person>, prefix: String) {
                     h2 {
                         a(href = "#${prefix}_${mentor.id}") { +mentor.name }
                     }
-                    with(mentor) { content() }
+                    htmlData(mentor.block)
                 }
             }
         }

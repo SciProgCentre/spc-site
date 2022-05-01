@@ -1,9 +1,8 @@
-package ru.mipt.spc.magprog
+package space.kscience.snark
 
 import space.kscience.dataforge.data.Data
 import space.kscience.dataforge.data.DataTree
 import space.kscience.dataforge.data.DataTreeItem
-import space.kscience.dataforge.data.StaticData
 import space.kscience.dataforge.io.IOPlugin
 import space.kscience.dataforge.io.readEnvelopeFile
 import space.kscience.dataforge.io.readMetaFile
@@ -21,22 +20,6 @@ import kotlin.io.path.nameWithoutExtension
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
-//internal object ByteArrayIOFormat : IOFormat<ByteArray> {
-//
-//    override val type: KType = typeOf<ByteArray>()
-//
-//    override fun writeObject(output: Output, obj: ByteArray) {
-//        output.writeFully(obj)
-//    }
-//
-//    override fun readObject(input: Input): ByteArray = input.readBytes()
-//
-//    override fun toMeta(): Meta = Meta {
-//        IOFormat.NAME_KEY put "ByteArray"
-//    }
-//
-//}
-
 
 class DirectoryDataTree(val io: IOPlugin, val path: Path) : DataTree<ByteArray> {
     override val dataType: KType
@@ -51,7 +34,9 @@ class DirectoryDataTree(val io: IOPlugin, val path: Path) : DataTree<ByteArray> 
             META_FILE_EXTENSION_KEY put filePath.extension
             //TODO add other file information
         }
-        return StaticData(typeOf<ByteArray>(), envelope.data?.toByteArray() ?: ByteArray(0), meta)
+        return Data(meta){
+            envelope.data?.toByteArray() ?: ByteArray(0)
+        }
     }
 
 
