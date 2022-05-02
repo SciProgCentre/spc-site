@@ -20,13 +20,15 @@ application {
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
 
-//tasks.withType<KotlinCompile>{
-//    kotlinOptions{
-//        freeCompilerArgs = freeCompilerArgs + "-Xcontext-receivers"
-//    }
-//}
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>{
+    kotlinOptions{
+        languageVersion  = "1.7"
+        apiVersion = "1.7"
+        freeCompilerArgs = freeCompilerArgs + "-Xcontext-receivers"
+    }
+}
 
-val dataforgeVersion by extra("0.6.0-dev-3")
+val dataforgeVersion by extra("0.6.0-dev-4")
 val ktorVersion  = KScienceVersions.ktorVersion
 
 dependencies {

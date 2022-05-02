@@ -3,6 +3,7 @@ package ru.mipt.spc.magprog
 import kotlinx.coroutines.runBlocking
 import kotlinx.css.*
 import kotlinx.html.*
+import ru.mipt.css
 import space.kscience.dataforge.data.await
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.get
@@ -11,6 +12,9 @@ import space.kscience.dataforge.meta.string
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
+import space.kscience.snark.HtmlData
+import space.kscience.snark.htmlData
+import space.kscience.snark.id
 
 //fun CssBuilder.magProgCss() {
 //    rule(".magprog-body") {
@@ -66,13 +70,13 @@ private val PROGRAM_PATH: Name = CONTENT_NODE_NAME + "program"
 private val RECOMMENDED_COURSES_PATH: Name = CONTENT_NODE_NAME + "recommendedCourses"
 private val PARTNERS_PATH: Name = CONTENT_NODE_NAME + "partners"
 
-context(SiteContext) private fun FlowContent.programSection() {
+context(PageContext) private fun FlowContent.programSection() {
     val programBlock = resolveHtml(PROGRAM_PATH)!!
     val recommendedBlock = resolveHtml(RECOMMENDED_COURSES_PATH)!!
     div("inner") {
         h2 { +"Учебная программа" }
         htmlData(programBlock)
-        button(classes = "fit btn btn-primary btn-lg") {
+        button(classes = "fit btn btn-secondary") {
             attributes["data-bs-toggle"] = "collapse"
             attributes["data-bs-target"] = "#recommended-courses-collapse-text"
             attributes["aria-expanded"] = "false"
@@ -81,14 +85,14 @@ context(SiteContext) private fun FlowContent.programSection() {
         }
         div("collapse pt-3") {
             id = "recommended-courses-collapse-text"
-            div("card card-body") {
+            div {
                 htmlData(recommendedBlock)
             }
         }
     }
 }
 
-context(SiteContext) private fun FlowContent.partners() {
+context(PageContext) private fun FlowContent.partners() {
     //val partnersData: Meta = resolve<Any>(PARTNERS_PATH)?.meta ?: Meta.EMPTY
     val partnersData: Meta =  runBlocking { resolve<Meta>(PARTNERS_PATH)?.await()} ?: Meta.EMPTY
     div("inner") {
@@ -113,7 +117,7 @@ context(SiteContext) private fun FlowContent.partners() {
     }
 }
 
-context(SiteContext) fun HTML.magProgPage() {
+context(PageContext) fun HTML.magProgPage() {
     val sections = listOf<MagProgSection>(
         wrapSection(resolveHtml(INTRO_PATH)!!, "intro"),
         MagProgSection(
@@ -157,6 +161,10 @@ context(SiteContext) fun HTML.magProgPage() {
         meta {
             name = "viewport"
             content = "width=device-width, initial-scale=1, user-scalable=no"
+        }
+        link {
+            rel = "stylesheet"
+            href = resolveResource("css/bootstrap.min.css")
         }
         link {
             rel = "stylesheet"
@@ -236,6 +244,9 @@ context(SiteContext) fun HTML.magProgPage() {
         }
         script {
             src = resolveResource("js/util.js")
+        }
+        script {
+            src = resolveResource("js/bootstrap.min.js")
         }
         script {
             src = resolveResource("js/main.js")

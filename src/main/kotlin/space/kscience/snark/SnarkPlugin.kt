@@ -8,8 +8,10 @@ import space.kscience.dataforge.io.yaml.YamlPlugin
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.string
+import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.misc.Type
 import space.kscience.dataforge.names.Name
+import space.kscience.dataforge.names.asName
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 
@@ -19,18 +21,20 @@ interface SnarkParser<R : Any> {
 
     val fileExtensions: Set<String>
 
-    val priority: Int
+    val priority: Int get() = DEFAULT_PRIORITY
 
     val resultType: KType
 
-    suspend fun parse(bytes: ByteArray): R
+    suspend fun parse(bytes: ByteArray, meta: Meta): R
 
     companion object {
         const val TYPE = "snark.parser"
+        const val DEFAULT_PRIORITY = 10
     }
 }
 
 
+@OptIn(DFExperimental::class)
 class SnarkPlugin : AbstractPlugin() {
     val yaml by require(YamlPlugin)
     val io get() = yaml.io
@@ -40,13 +44,30 @@ class SnarkPlugin : AbstractPlugin() {
     private val parsers: Map<Name, SnarkParser<*>> by lazy { context.gather(SnarkParser.TYPE, true) }
 
     private val parseAction = Action.map<ByteArray, Any> {
-        result { bytes ->
-            parsers.values.filter { parser ->
-                parser.contentType.toString() == meta["contentType"].string ||
-                        meta[DirectoryDataTree.META_FILE_EXTENSION_KEY].string in parser.fileExtensions
-            }.maxByOrNull {
-                it.priority
-            }?.parse(bytes) ?: bytes
+        val parser: SnarkParser<*>? = parsers.values.filter { parser ->
+            parser.contentType.toString() == meta["contentType"].string ||
+                    meta[DirectoryDataTree.META_FILE_EXTENSION_KEY].string in parser.fileExtensions
+        }.maxByOrNull {
+            it.priority
+        }
+
+        //ensure that final type is correct
+        if (parser == null) {
+            logger.warn { "The parser is not found for data with meta $meta" }
+            result { it }
+        } else {
+            result(parser.resultType) { bytes ->
+                parser.parse(bytes, meta)
+            }
+        }
+    }
+
+    override fun content(target: String): Map<Name, Any> {
+        return when(target){
+            SnarkParser.TYPE -> mapOf(
+                "html".asName() to SnarkHtmlParser
+            )
+            else ->super.content(target)
         }
     }
 

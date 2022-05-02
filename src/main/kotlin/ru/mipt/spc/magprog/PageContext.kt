@@ -9,10 +9,11 @@ import space.kscience.dataforge.meta.string
 import space.kscience.dataforge.misc.DFInternal
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.startsWith
+import space.kscience.snark.HtmlData
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
-interface SiteContext: ContextAware {
+interface PageContext: ContextAware {
 
     /**
      * Resolve a resource full path by its name
@@ -37,12 +38,12 @@ interface SiteContext: ContextAware {
 }
 
 @OptIn(DFInternal::class)
-inline fun <reified T: Any> SiteContext.resolve(name: Name): Data<T>? = resolve(typeOf<T>(), name)
+inline fun <reified T: Any> PageContext.resolve(name: Name): Data<T>? = resolve(typeOf<T>(), name)
 
 @OptIn(DFInternal::class)
-inline fun <reified T:Any> SiteContext.resolveAll(noinline filter: (name: Name, meta: Meta) -> Boolean): DataSet<T> =
+inline fun <reified T:Any> PageContext.resolveAll(noinline filter: (name: Name, meta: Meta) -> Boolean): DataSet<T> =
     resolveAll(typeOf<T>(), filter)
 
-fun SiteContext.findByType(contentType: String, baseName: Name = Name.EMPTY) = resolveAllHtml { name, meta ->
+fun PageContext.findByType(contentType: String, baseName: Name = Name.EMPTY) = resolveAllHtml { name, meta ->
     name.startsWith(baseName) && meta["content_type"].string == contentType
 }

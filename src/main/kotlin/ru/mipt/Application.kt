@@ -6,7 +6,7 @@ import io.ktor.server.application.call
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.html.respondHtml
-import io.ktor.server.http.content.resources
+import io.ktor.server.http.content.files
 import io.ktor.server.http.content.static
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.statuspages.StatusPages
@@ -14,43 +14,48 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
+import kotlinx.css.CssBuilder
+import kotlinx.html.CommonAttributeGroupFacade
+import kotlinx.html.style
 import ru.mipt.plugins.configureTemplating
-import ru.mipt.spc.magprog.DataSetSiteContext
-import ru.mipt.spc.magprog.SiteContext
+import ru.mipt.spc.magprog.DataSetPageContext
+import ru.mipt.spc.magprog.PageContext
 import ru.mipt.spc.magprog.magProgPage
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.io.io
-import space.kscience.dataforge.io.yaml.YamlPlugin
 import space.kscience.snark.DirectoryDataTree
+import space.kscience.snark.SnarkPlugin
 import java.nio.file.Path
 
+fun CommonAttributeGroupFacade.css(block: CssBuilder.() -> Unit) {
+    style = CssBuilder().block().toString()
+}
 
 class AuthenticationException : RuntimeException()
 class AuthorizationException : RuntimeException()
 
-internal fun Application.magProgSite(prefix: String = "magprog"){
-    val context = Context("spc-site"){
-        plugin(YamlPlugin)
+internal fun Application.magProgPage(rootPath: Path, prefix: String = "magprog") {
+    val context = Context("spc-site") {
+        plugin(SnarkPlugin)
     }
 
     val io = context.io
-    val directory = javaClass.getResource("/magprog/content")!!.toURI()
-    val content = DirectoryDataTree(io, Path.of(directory))
+    val content = DirectoryDataTree(io, rootPath.resolve("content"))
 
 
-    val magprogSiteContext: SiteContext = DataSetSiteContext(context,"magprog", content)
+    val magprogPageContext: PageContext = DataSetPageContext(context, prefix, content)
 
     routing {
-        route(prefix){
+        route(prefix) {
             get {
                 call.respondHtml {
-                    with(magprogSiteContext){
+                    with(magprogPageContext) {
                         magProgPage()
                     }
                 }
             }
             static {
-                resources("magprog/assets")
+                files(rootPath.resolve("assets").toFile())
             }
         }
     }
@@ -59,12 +64,12 @@ internal fun Application.magProgSite(prefix: String = "magprog"){
 
 fun main() {
     embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
-        magProgSite()
+        magProgPage(rootPath = Path.of(javaClass.getResource("/magprog")!!.toURI()))
         install(StatusPages) {
-            exception<AuthenticationException> { call, cause ->
+            exception<AuthenticationException> { call, _ ->
                 call.respond(HttpStatusCode.Unauthorized)
             }
-            exception<AuthorizationException> { call, cause ->
+            exception<AuthorizationException> { call, _ ->
                 call.respond(HttpStatusCode.Forbidden)
             }
         }

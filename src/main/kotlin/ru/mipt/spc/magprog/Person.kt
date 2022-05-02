@@ -2,14 +2,19 @@ package ru.mipt.spc.magprog
 
 import kotlinx.css.*
 import kotlinx.html.*
+import ru.mipt.css
 import space.kscience.dataforge.meta.string
+import space.kscience.snark.HtmlData
+import space.kscience.snark.htmlData
+import space.kscience.snark.id
+import space.kscience.snark.order
 
 class Person(val block: HtmlData) : HtmlData by block {
     val name: String by meta.string { error("Mentor name is not defined") }
     val photo: String? by meta.string()
 }
 
-context(SiteContext)
+context(PageContext)
 private fun FlowContent.personCards(list: List<Person>, prefix: String) {
     list.forEach { mentor ->
         section {
@@ -34,7 +39,7 @@ private fun FlowContent.personCards(list: List<Person>, prefix: String) {
     }
 }
 
-context(SiteContext)
+context(PageContext)
 fun FlowContent.mentors() {
     val mentors = findByType("magprog_mentor").values.map {
         Person(it)
@@ -54,7 +59,7 @@ fun FlowContent.mentors() {
     personCards(mentors,"mentor")
 }
 
-context(SiteContext)
+context(PageContext)
 fun FlowContent.team() {
     val team = findByType("magprog_team").values.map { Person(it) }.sortedBy { it.order }
 

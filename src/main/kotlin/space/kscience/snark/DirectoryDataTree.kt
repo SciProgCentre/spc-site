@@ -13,10 +13,8 @@ import space.kscience.dataforge.names.NameToken
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
 import java.nio.file.Path
-import kotlin.io.path.extension
-import kotlin.io.path.isDirectory
-import kotlin.io.path.listDirectoryEntries
-import kotlin.io.path.nameWithoutExtension
+import java.nio.file.attribute.BasicFileAttributes
+import kotlin.io.path.*
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
@@ -32,7 +30,10 @@ class DirectoryDataTree(val io: IOPlugin, val path: Path) : DataTree<ByteArray> 
         val meta = envelope.meta.copy {
             META_FILE_PATH_KEY put filePath.toString()
             META_FILE_EXTENSION_KEY put filePath.extension
-            //TODO add other file information
+
+            val attributes = filePath.readAttributes<BasicFileAttributes>()
+            META_FILE_UPDATE_TIME_KEY put attributes.lastModifiedTime().toInstant().toString()
+            META_FILE_CREATE_TIME_KEY put attributes.creationTime().toInstant().toString()
         }
         return Data(meta){
             envelope.data?.toByteArray() ?: ByteArray(0)
@@ -57,6 +58,8 @@ class DirectoryDataTree(val io: IOPlugin, val path: Path) : DataTree<ByteArray> 
         val META_FILE_KEY = "file".asName()
         val META_FILE_PATH_KEY = META_FILE_KEY + "path"
         val META_FILE_EXTENSION_KEY = META_FILE_KEY + "extension"
+        val META_FILE_CREATE_TIME_KEY = META_FILE_KEY +"created"
+        val META_FILE_UPDATE_TIME_KEY = META_FILE_KEY +"update"
     }
 }
 

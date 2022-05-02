@@ -1,4 +1,4 @@
-package ru.mipt.spc.magprog
+package space.kscience.snark
 
 import kotlinx.coroutines.runBlocking
 import kotlinx.html.FlowContent

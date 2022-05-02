@@ -19,15 +19,16 @@ import space.kscience.dataforge.meta.toMeta
 import space.kscience.dataforge.misc.DFInternal
 import space.kscience.dataforge.names.Name
 import space.kscience.snark.DirectoryDataTree.Companion.META_FILE_EXTENSION_KEY
+import space.kscience.snark.HtmlData
 import kotlin.reflect.KType
 import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.typeOf
 
-class DataSetSiteContext(
+class DataSetPageContext(
     override val context: Context,
     val prefix: String,
     val dataSet: DataSet<Any>,
-) : SiteContext {
+) : PageContext {
 
     override fun resolveResource(name: String): String = "$prefix/$name"
 
