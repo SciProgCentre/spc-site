@@ -25,12 +25,8 @@ import space.kscience.snark.*
 import java.nio.file.Path
 import kotlin.collections.component1
 import kotlin.collections.component2
-import kotlin.collections.forEach
-import kotlin.collections.listOf
-import kotlin.collections.map
-import kotlin.collections.mapValues
 import kotlin.collections.set
-import kotlin.collections.sortedBy
+
 
 //fun CssBuilder.magProgCss() {
 //    rule(".magprog-body") {
@@ -144,12 +140,14 @@ context(PageContext) private fun FlowContent.team() {
     team.forEach { member ->
         section {
             id = member.id
-            div("image left") {
+            a(classes = "image", href = resolveRef("mentor-${member.id}")) {
                 member.photo?.let { photoPath ->
                     img(
                         src = resolveRef(photoPath),
                         alt = member.name
-                    )
+                    ) {
+                        attributes["data-position"] = "center center"
+                    }
                 }
             }
 
@@ -176,13 +174,13 @@ context(PageContext) private fun FlowContent.mentors() {
     mentors.forEach { (name, mentor) ->
         section {
             id = mentor.id
-            div("image left") {
+            a(classes = "image", href = resolveRef("mentor-${mentor.id}")) {
                 mentor.photo?.let { photoPath ->
-                    a(href = resolveRef("mentor-${mentor.id}")) {
-                        img(
-                            src = resolveRef(photoPath),
-                            alt = mentor.name
-                        )
+                    img(
+                        src = resolveRef(photoPath),
+                        alt = mentor.name
+                    ) {
+                        attributes["data-position"] = "center center"
                     }
                 }
             }
@@ -261,22 +259,18 @@ context(PageContext) internal fun BODY.magProgFooter() {
         src = resolveRef("js/util.js")
     }
     script {
-        src = resolveRef("js/bootstrap.min.js")
-    }
-    script {
         src = resolveRef("js/main.js")
     }
 }
 
 internal val Person.mentorPageId get() = "mentor-${id}"
 
-
 internal fun Application.magProgPage(context: Context, rootPath: Path, prefix: String = "/magprog") {
     val io = context.io
     val content = DirectoryDataTree(io, rootPath.resolve("content"))
 
 
-    val magprogPageContext: PageContext = DataSetPageContext(context, prefix, content)
+    val magprogPageContext: PageContext = DataSetPageContext(this, context, prefix, content)
 
     routing {
         route(prefix) {

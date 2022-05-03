@@ -1,5 +1,6 @@
 package ru.mipt.spc.magprog
 
+import io.ktor.server.application.Application
 import kotlinx.coroutines.runBlocking
 import kotlinx.html.div
 import kotlinx.html.unsafe
@@ -25,6 +26,7 @@ import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.typeOf
 
 class DataSetPageContext(
+    val application: Application,
     override val context: Context,
     val prefix: String,
     val dataSet: DataSet<Any>,
