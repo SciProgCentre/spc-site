@@ -1,4 +1,4 @@
-package ru.mipt.plugins
+package ru.mipt
 
 import io.ktor.http.ContentType
 import io.ktor.server.application.Application

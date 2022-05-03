@@ -9,9 +9,7 @@ import space.kscience.dataforge.io.readMetaFile
 import space.kscience.dataforge.io.toByteArray
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.copy
-import space.kscience.dataforge.names.NameToken
-import space.kscience.dataforge.names.asName
-import space.kscience.dataforge.names.plus
+import space.kscience.dataforge.names.*
 import java.nio.file.Path
 import java.nio.file.attribute.BasicFileAttributes
 import kotlin.io.path.*
@@ -51,7 +49,12 @@ class DirectoryDataTree(val io: IOPlugin, val path: Path) : DataTree<ByteArray> 
                 DataTreeItem.Leaf(readFile(childPath))
             }
 
-            NameToken(fileName) to item
+            val name = Name.parse(fileName)
+            if(name.length == 1) {
+                name.first() to item
+            } else{
+                TODO("Segmented names are not supported")
+            }
         }
 
     companion object {

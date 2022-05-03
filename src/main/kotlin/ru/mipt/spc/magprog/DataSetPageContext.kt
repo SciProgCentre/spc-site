@@ -30,7 +30,7 @@ class DataSetPageContext(
     val dataSet: DataSet<Any>,
 ) : PageContext {
 
-    override fun resolveResource(name: String): String = "$prefix/$name"
+    override fun resolveRef(name: String): String = "$prefix/$name"
 
     private val markdownFlavor = CommonMarkFlavourDescriptor()
     private val markdownParser = MarkdownParser(markdownFlavor)
@@ -65,9 +65,10 @@ class DataSetPageContext(
 
     private val Data<*>.published: Boolean get() = meta["published"].string != "false"
 
+    @Suppress("UNCHECKED_CAST")
     @DFInternal
     override fun <T : Any> resolve(type: KType, name: Name): Data<T>? {
-        val data: Data<Any> = dataSet.get(name) ?: return null
+        val data: Data<Any> = dataSet[name] ?: return null
         return if (type == typeOf<Meta>() && data.type == typeOf<ByteArray>()) {
             data as Data<ByteArray>
             when (data.meta[META_FILE_EXTENSION_KEY].string) {

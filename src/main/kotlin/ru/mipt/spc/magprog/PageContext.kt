@@ -18,7 +18,7 @@ interface PageContext: ContextAware {
     /**
      * Resolve a resource full path by its name
      */
-    fun resolveResource(name: String): String
+    fun resolveRef(name: String): String
 
     @DFInternal
     fun <T: Any> resolve(type: KType, name: Name): Data<T>?
@@ -36,6 +36,8 @@ interface PageContext: ContextAware {
      */
     fun resolveAllHtml(filter: (name: Name, meta: Meta) -> Boolean): Map<Name, HtmlData>
 }
+
+val PageContext.homeRef get() = resolveRef("").removeSuffix("/")
 
 @OptIn(DFInternal::class)
 inline fun <reified T: Any> PageContext.resolve(name: Name): Data<T>? = resolve(typeOf<T>(), name)
