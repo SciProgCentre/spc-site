@@ -1,6 +1,5 @@
 package ru.mipt.spc.magprog
 
-import io.ktor.server.application.Application
 import kotlinx.coroutines.runBlocking
 import kotlinx.html.div
 import kotlinx.html.unsafe
@@ -25,8 +24,9 @@ import kotlin.reflect.KType
 import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.typeOf
 
+internal val Data<*>.published: Boolean get() = meta["published"].string != "false"
+
 class DataSetPageContext(
-    val application: Application,
     override val context: Context,
     val prefix: String,
     val dataSet: DataSet<Any>,
@@ -65,12 +65,13 @@ class DataSetPageContext(
 
     }
 
-    private val Data<*>.published: Boolean get() = meta["published"].string != "false"
-
     @Suppress("UNCHECKED_CAST")
     @DFInternal
     override fun <T : Any> resolve(type: KType, name: Name): Data<T>? {
         val data: Data<Any> = dataSet[name] ?: return null
+
+        if(data.type == type) return data as Data<T>
+
         return if (type == typeOf<Meta>() && data.type == typeOf<ByteArray>()) {
             data as Data<ByteArray>
             when (data.meta[META_FILE_EXTENSION_KEY].string) {
@@ -94,8 +95,8 @@ class DataSetPageContext(
     }
 
     @DFInternal
-    override fun <T : Any> resolveAll(type: KType, filter: (name: Name, meta: Meta) -> Boolean): DataSet<T> =
-        dataSet.select(type, filter = filter)
+    override fun <T : Any> resolveAll(type: KType, predicate: (name: Name, meta: Meta) -> Boolean): DataSet<T> =
+        dataSet.filterIsInstance(type, predicate = predicate)
 
     override fun resolveHtml(name: Name): HtmlData? = runBlocking {
         resolve<ByteArray>(name)?.takeIf { it.published }?.toHtmlBlock()

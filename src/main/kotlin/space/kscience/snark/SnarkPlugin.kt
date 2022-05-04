@@ -36,14 +36,14 @@ interface SnarkParser<R : Any> {
 
 @OptIn(DFExperimental::class)
 class SnarkPlugin : AbstractPlugin() {
-    val yaml by require(YamlPlugin)
+    private val yaml by require(YamlPlugin)
     val io get() = yaml.io
 
     override val tag: PluginTag get() = Companion.tag
 
     private val parsers: Map<Name, SnarkParser<*>> by lazy { context.gather(SnarkParser.TYPE, true) }
 
-    private val parseAction = Action.map<ByteArray, Any> {
+    val parseAction = Action.map<ByteArray, Any> {
         val parser: SnarkParser<*>? = parsers.values.filter { parser ->
             parser.contentType.toString() == meta["contentType"].string ||
                     meta[DirectoryDataTree.META_FILE_EXTENSION_KEY].string in parser.fileExtensions
@@ -65,7 +65,10 @@ class SnarkPlugin : AbstractPlugin() {
     override fun content(target: String): Map<Name, Any> {
         return when(target){
             SnarkParser.TYPE -> mapOf(
-                "html".asName() to SnarkHtmlParser
+                "html".asName() to SnarkHtmlParser,
+                "markdown".asName() to SnarkMarkdownParser,
+                "json".asName() to SnarkJsonParser,
+                "yaml".asName() to SnarkYamlParser
             )
             else ->super.content(target)
         }

@@ -11,8 +11,8 @@ import io.ktor.server.routing.routing
 import kotlinx.coroutines.runBlocking
 import kotlinx.html.*
 import space.kscience.dataforge.context.Context
+import space.kscience.dataforge.context.fetch
 import space.kscience.dataforge.data.await
-import space.kscience.dataforge.io.io
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.getIndexed
@@ -266,15 +266,18 @@ context(PageContext) internal fun BODY.magProgFooter() {
 internal val Person.mentorPageId get() = "mentor-${id}"
 
 internal fun Application.magProgPage(context: Context, rootPath: Path, prefix: String = "/magprog") {
-    val io = context.io
-    val content = DirectoryDataTree(io, rootPath.resolve("content"))
+//    val io = context.io
+//    val content = DirectoryDataTree(io, rootPath.resolve("content"))
+//
+//    val magprogPageContext: PageContext = DataSetPageContext(context, prefix, content)
 
+    val snark = context.fetch(SnarkPlugin)
 
-    val magprogPageContext: PageContext = DataSetPageContext(this, context, prefix, content)
+    val magProgPageContext = SnarkPageContext(snark, rootPath.resolve("content"), prefix)
 
     routing {
         route(prefix) {
-            with(magprogPageContext) {
+            with(magProgPageContext) {
                 static {
                     files(rootPath.resolve("assets").toFile())
                 }

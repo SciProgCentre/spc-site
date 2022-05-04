@@ -24,7 +24,7 @@ interface PageContext: ContextAware {
     fun <T: Any> resolve(type: KType, name: Name): Data<T>?
 
     @DFInternal
-    fun <T: Any> resolveAll(type: KType, filter: (name: Name, meta: Meta) -> Boolean): DataSet<T>
+    fun <T: Any> resolveAll(type: KType, predicate: (name: Name, meta: Meta) -> Boolean): DataSet<T>
 
     /**
      * Resolve a Html builder by its full name

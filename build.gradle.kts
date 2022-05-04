@@ -6,9 +6,9 @@ plugins {
     application
 }
 
-repositories{
-    mavenLocal()
-}
+//repositories{
+//    mavenLocal()
+//}
 
 group = "ru.mipt.npm"
 version = "0.0.1-SNAPSHOT"
@@ -28,7 +28,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>{
     }
 }
 
-val dataforgeVersion by extra("0.6.0-dev-4")
+val dataforgeVersion by extra("0.6.0-dev-5")
 val ktorVersion  = KScienceVersions.ktorVersion
 
 dependencies {
