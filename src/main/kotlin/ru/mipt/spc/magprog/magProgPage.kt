@@ -45,13 +45,7 @@ class MagProgSection(
     val title: String,
     val style: String,
     val content: FlowContent.() -> Unit,
-) {
-    val meta: Meta
-        get() = Meta {
-            "id" put id
-            "title" put title
-        }
-}
+)
 
 private fun wrapSection(
     id: String,
@@ -164,7 +158,7 @@ context(PageContext) private fun FlowContent.team() {
 }
 
 context(PageContext) private fun FlowContent.mentors() {
-    val mentors = findByType("magprog_mentor").mapValues { Person(it.value) }.entries.sortedBy { it.value.order }
+    val mentors = findByType("magprog_mentor").mapValues { Person(it.value) }.entries.sortedBy { it.value.id }
 
     div("header") {
         h1("title") {
@@ -266,10 +260,6 @@ context(PageContext) internal fun BODY.magProgFooter() {
 internal val Person.mentorPageId get() = "mentor-${id}"
 
 internal fun Application.magProgPage(context: Context, rootPath: Path, prefix: String = "/magprog") {
-//    val io = context.io
-//    val content = DirectoryDataTree(io, rootPath.resolve("content"))
-//
-//    val magprogPageContext: PageContext = DataSetPageContext(context, prefix, content)
 
     val snark = context.fetch(SnarkPlugin)
 

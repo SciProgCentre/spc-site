@@ -24,7 +24,6 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>{
     kotlinOptions{
         languageVersion  = "1.7"
         apiVersion = "1.7"
-        freeCompilerArgs = freeCompilerArgs + "-Xcontext-receivers"
     }
 }
 
