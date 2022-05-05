@@ -18,13 +18,16 @@ object SnarkMarkdownParser:SnarkParser<HtmlFragment> {
     private val markdownFlavor = CommonMarkFlavourDescriptor()
     private val markdownParser = MarkdownParser(markdownFlavor)
 
-    override suspend fun parse(bytes: ByteArray, meta: Meta): HtmlFragment = {
+    override suspend fun parse(bytes: ByteArray, meta: Meta): HtmlFragment {
         val src = bytes.decodeToString()
-        div{
-            val parsedTree = markdownParser.buildMarkdownTreeFromString(src)
+        val parsedTree = markdownParser.buildMarkdownTreeFromString(src)
+        val htmlString = HtmlGenerator(src, parsedTree, markdownFlavor).generateHtml()
 
-            unsafe {
-                +HtmlGenerator(src, parsedTree, markdownFlavor).generateHtml()
+        return {
+            div{
+                unsafe {
+                    +htmlString
+                }
             }
         }
     }
