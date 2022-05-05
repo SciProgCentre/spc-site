@@ -126,8 +126,8 @@ class Person(val data: HtmlData) : HtmlData by data {
 context(PageContext) private fun FlowContent.team() {
     val team = findByType("magprog_team").map { Person(it.value) }.sortedBy { it.order }
 
-    div("header") {
-        h1("title") {
+    div("inner") {
+        h2 {
             +"Команда"
         }
     }
@@ -147,7 +147,7 @@ context(PageContext) private fun FlowContent.team() {
 
             div("content") {
                 div("inner") {
-                    h2 {
+                    h3 {
                         a(href = "#team_${member.id}") { +member.name }
                     }
                     htmlData(member)
@@ -160,8 +160,8 @@ context(PageContext) private fun FlowContent.team() {
 context(PageContext) private fun FlowContent.mentors() {
     val mentors = findByType("magprog_mentor").mapValues { Person(it.value) }.entries.sortedBy { it.value.id }
 
-    div("header") {
-        h1("title") {
+    div("inner") {
+        h2 {
             +"Научные руководители"
         }
     }
@@ -357,7 +357,7 @@ internal fun Application.magProgPage(context: Context, rootPath: Path, prefix: S
                                         href = "$homeRef#mentors"
                                         +"Научные руководители"
                                     }
-                                    nav {
+                                    nav() {
                                         ul {
                                             mentors.forEach {
                                                 li {
