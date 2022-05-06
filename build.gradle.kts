@@ -20,15 +20,9 @@ application {
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment", "-Xmx200M")
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>{
-    kotlinOptions{
-        languageVersion  = "1.7"
-        apiVersion = "1.7"
-    }
-}
 
 val dataforgeVersion by extra("0.6.0-dev-5")
-val ktorVersion  = KScienceVersions.ktorVersion
+val ktorVersion = KScienceVersions.ktorVersion
 
 dependencies {
     implementation("io.ktor:ktor-server-core:$ktorVersion")
@@ -48,4 +42,11 @@ dependencies {
 
 kotlin {
     explicitApi = org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode.Disabled
+
+}
+
+sourceSets {
+    main {
+        resources.srcDir(project.rootDir.resolve("data"))
+    }
 }

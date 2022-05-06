@@ -6,6 +6,7 @@ order: 2
 photo: images/team/svetlichny.jpeg
 language: ru
 ---
+
 **Заместитель руководителя**
 
 Преподаватель кафедры общей физики МФТИ.

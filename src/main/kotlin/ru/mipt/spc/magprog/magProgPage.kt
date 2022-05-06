@@ -209,6 +209,10 @@ context(PageContext) internal fun HTML.magProgHead(title: String) {
             rel = "stylesheet"
             href = resolveRef("css/main.css")
         }
+        link {
+            rel = "shortcut icon"
+            href = resolveRef("images/favicon-32x32.png")
+        }
         noScript {
             link {
                 rel = "stylesheet"
