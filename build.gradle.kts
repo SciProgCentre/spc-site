@@ -21,7 +21,7 @@ application {
 }
 
 
-val dataforgeVersion by extra("0.6.0-dev-5")
+val dataforgeVersion by extra("0.6.0-dev-6")
 val ktorVersion = KScienceVersions.ktorVersion
 
 dependencies {
@@ -42,6 +42,12 @@ dependencies {
 
 kotlin {
     explicitApi = org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode.Disabled
+    sourceSets.all {
+        languageSettings {
+            languageVersion  = "1.7"
+            apiVersion = "1.7"
+        }
+    }
 
 }
 

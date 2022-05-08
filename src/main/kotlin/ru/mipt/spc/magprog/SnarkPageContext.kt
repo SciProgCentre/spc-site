@@ -4,8 +4,8 @@ import space.kscience.dataforge.actions.invoke
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.data.Data
 import space.kscience.dataforge.data.DataSet
-import space.kscience.dataforge.data.filterIsInstance
-import space.kscience.dataforge.data.selectOne
+import space.kscience.dataforge.data.filterByType
+import space.kscience.dataforge.data.getByType
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.misc.DFInternal
 import space.kscience.dataforge.names.Name
@@ -30,14 +30,14 @@ class SnarkPageContext(
     private val parsedData: DataSet<Any> by lazy { snarkPlugin.parseAction(directoryDataTree) }
 
     @DFInternal
-    override fun <T : Any> resolve(type: KType, name: Name): Data<T>? = parsedData.selectOne(type, name)
+    override fun <T : Any> resolve(type: KType, name: Name): Data<T>? = parsedData.getByType(type, name)
 
     @DFInternal
     override fun <T : Any> resolveAll(type: KType, predicate: (name: Name, meta: Meta) -> Boolean): DataSet<T> =
-        parsedData.filterIsInstance(type, predicate)
+        parsedData.filterByType(type, predicate)
 
     override fun resolveHtml(name: Name): HtmlData? = resolve(name)
 
     override fun resolveAllHtml(filter: (name: Name, meta: Meta) -> Boolean): Map<Name, HtmlData> =
-        resolveAll<HtmlFragment>(filter).dataSequence().filter { it.published }.associate { it.name to it.data }
+        resolveAll<HtmlFragment>(filter).traverse().filter { it.published }.associate { it.name to it.data }
 }

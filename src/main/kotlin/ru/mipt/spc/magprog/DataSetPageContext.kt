@@ -96,7 +96,7 @@ class DataSetPageContext(
 
     @DFInternal
     override fun <T : Any> resolveAll(type: KType, predicate: (name: Name, meta: Meta) -> Boolean): DataSet<T> =
-        dataSet.filterIsInstance(type, predicate = predicate)
+        dataSet.filterByType(type, predicate = predicate)
 
     override fun resolveHtml(name: Name): HtmlData? = runBlocking {
         resolve<ByteArray>(name)?.takeIf { it.published }?.toHtmlBlock()
@@ -104,7 +104,7 @@ class DataSetPageContext(
 
     override fun resolveAllHtml(filter: (name: Name, meta: Meta) -> Boolean): Map<Name, HtmlData> = runBlocking {
         buildMap {
-            resolveAll<ByteArray>(filter).dataSequence().filter { it.published }.forEach {
+            resolveAll<ByteArray>(filter).traverse().filter { it.published }.forEach {
                 put(it.name, it.toHtmlBlock())
             }
         }
