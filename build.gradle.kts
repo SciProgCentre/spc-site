@@ -1,9 +1,11 @@
 import ru.mipt.npm.gradle.KScienceVersions
+import sass.embedded_protocol.EmbeddedSass.OutputStyle
 
 plugins {
     id("ru.mipt.npm.gradle.project")
     id("ru.mipt.npm.gradle.jvm")
     application
+    id("io.freefair.sass-java") version "6.4.3"
 }
 
 //repositories{
@@ -51,8 +53,28 @@ kotlin {
 
 }
 
+val dataSourcePath = project.rootDir.resolve("data")
+
 sourceSets {
     main {
-        resources.srcDir(project.rootDir.resolve("data"))
+        resources.srcDir(dataSourcePath)
     }
+}
+
+tasks.compileSass {
+    destinationDir.set(dataSourcePath)
+    sourceMapEnabled.set(false)
+    setOutputStyle(OutputStyle.COMPRESSED.toString())
+}
+
+tasks.processResources {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    exclude("**/*.scss")
+}
+
+tasks.clean {
+    delete(fileTree(dataSourcePath).matching {
+        include("**/*.css")
+        exclude("**/libs/*.css")
+    })
 }

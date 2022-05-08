@@ -207,7 +207,7 @@ context(PageContext) internal fun HTML.magProgHead(title: String) {
         }
         link {
             rel = "stylesheet"
-            href = resolveRef("css/main.css")
+            href = resolveRef("styles/main.css")
         }
         link {
             rel = "shortcut icon"
@@ -216,7 +216,7 @@ context(PageContext) internal fun HTML.magProgHead(title: String) {
         noScript {
             link {
                 rel = "stylesheet"
-                href = resolveRef("css/noscript.css")
+                href = resolveRef("styles/noscript.css")
             }
         }
     }
