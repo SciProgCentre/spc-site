@@ -1,4 +1,4 @@
-package ru.mipt.spc.magprog
+package ru.mipt.spc
 
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
@@ -13,6 +13,7 @@ import kotlinx.html.*
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.fetch
 import space.kscience.dataforge.data.await
+import space.kscience.dataforge.data.getByType
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.getIndexed
@@ -95,7 +96,7 @@ context(PageContext) private fun FlowContent.programSection() {
 
 context(PageContext) private fun FlowContent.partners() {
     //val partnersData: Meta = resolve<Any>(PARTNERS_PATH)?.meta ?: Meta.EMPTY
-    val partnersData: Meta = runBlocking { resolve<Meta>(PARTNERS_PATH)?.await() } ?: Meta.EMPTY
+    val partnersData: Meta = runBlocking { data.getByType<Meta>(PARTNERS_PATH)?.await() } ?: Meta.EMPTY
     div("inner") {
         h2 { +"Партнеры" }
         div("features") {
@@ -103,7 +104,7 @@ context(PageContext) private fun FlowContent.partners() {
                 section {
                     a(href = partner["link"].string, target = "_blank") {
                         rel = "noreferrer"
-                        val imagePath = partner["logo"].string?.let(::resolveRef)
+                        val imagePath = partner["logo"].string?.let { resolveRef(it) }
                         img(
                             classes = "icon major",
                             src = imagePath,
@@ -263,17 +264,17 @@ context(PageContext) internal fun BODY.magProgFooter() {
 
 internal val Person.mentorPageId get() = "mentor-${id}"
 
-internal fun Application.magProgPage(context: Context, rootPath: Path, prefix: String = "/magprog") {
+internal fun Application.spcMaster(context: Context, dataPath: Path, prefix: String = "/magprog") {
 
     val snark = context.fetch(SnarkPlugin)
 
-    val magProgPageContext = SnarkPageContext(snark, rootPath.resolve("content"), prefix)
+    val magProgPageContext = snark.buildPageContext(prefix, dataPath.resolve("content"))
 
     routing {
         route(prefix) {
             with(magProgPageContext) {
                 static {
-                    files(rootPath.resolve("assets").toFile())
+                    files(dataPath.resolve("assets").toFile())
                 }
 
                 get {

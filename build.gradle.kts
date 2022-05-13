@@ -6,9 +6,9 @@ plugins {
     application
 }
 
-//repositories{
-//    mavenLocal()
-//}
+repositories{
+    mavenLocal()
+}
 
 group = "ru.mipt.npm"
 version = "0.0.1-SNAPSHOT"
@@ -21,7 +21,7 @@ application {
 }
 
 
-val dataforgeVersion by extra("0.6.0-dev-6")
+val dataforgeVersion by extra("0.6.0-dev-7")
 val ktorVersion = KScienceVersions.ktorVersion
 
 dependencies {
@@ -48,7 +48,6 @@ kotlin {
             apiVersion = "1.7"
         }
     }
-
 }
 
 sourceSets {

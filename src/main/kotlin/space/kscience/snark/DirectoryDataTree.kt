@@ -31,7 +31,12 @@ class DirectoryDataTree(val io: IOPlugin, val path: Path) : DataTree<ByteArray>,
     override val dataType: KType
         get() = typeOf<ByteArray>()
 
-    override val meta: Meta get() = io.readMetaFile(path)
+    override val meta: Meta get() = try {
+        //TODO replace by readMetaFileOrNull
+        io.readMetaFile(path)
+    } catch (ise: java.lang.IllegalStateException){
+        Meta.EMPTY
+    }
 
     private fun readFile(filePath: Path): Data<ByteArray> {
         val envelope = io.readEnvelopeFile(filePath, readNonEnvelopes = true)
