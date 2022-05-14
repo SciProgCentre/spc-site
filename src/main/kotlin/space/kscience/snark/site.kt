@@ -8,12 +8,12 @@ import space.kscience.dataforge.data.DataSetBuilder
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.copy
 import space.kscience.dataforge.names.Name
-import space.kscience.snark.*
+import space.kscience.snark.HtmlData
+import space.kscience.snark.HtmlFragment
+import space.kscience.snark.PageContext
 import kotlin.reflect.typeOf
 
-class SiteBuilderAction(
-    val snark: SnarkPlugin,
-) : AbstractAction<Any, HtmlFragment>(typeOf<HtmlFragment>()) {
+class SiteBuilderAction : AbstractAction<Any, HtmlFragment>(typeOf<HtmlFragment>()) {
 
     private val pageBuilders = HashMap<Name, (DataSet<*>) -> HtmlData>()
 
@@ -21,7 +21,7 @@ class SiteBuilderAction(
         val prefix = name.tokens.joinToString(separator = "/", prefix = "/")
         pageBuilders[name] = { dataset ->
             val fragment: HtmlFragment = {
-                builder.invoke(snark.buildPageContext(prefix, dataset), this)
+                builder.invoke(PageContext(prefix, dataset), this)
             }
             Data(fragment, meta.copy {
                 "name" put name.toString()

@@ -398,7 +398,7 @@ internal fun Application.spcHome(context: Context, rootPath: Path, prefix: Strin
 
     val snark = context.fetch(SnarkPlugin)
 
-    val homePageContext = snark.buildPageContext(prefix, rootPath.resolve("content"))
+    val homePageContext = snark.parse(prefix, rootPath.resolve("content"))
 
     routing {
         route(prefix) {

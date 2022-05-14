@@ -42,6 +42,7 @@ private fun Application.resolveData(uri: URI, targetPath: Path): Path {
     return targetPath
 }
 
+@Suppress("unused")
 fun Application.spcModule() {
     val context = Context("spc-site") {
         plugin(SnarkPlugin)

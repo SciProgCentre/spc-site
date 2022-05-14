@@ -15,24 +15,30 @@ import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.startsWith
 import java.nio.file.Path
 
-data class PageContext(val path: String, val pageMeta: Meta, val data: DataSet<*>)
+data class PageContext(val path: String, val pageMeta: Meta, val data: DataSet<*>) {
+    val language: String? by pageMeta.string()
+}
 
 /**
  * Resolve a resource full path by its name
  */
-fun PageContext.resolveRef(name: String): String = "$path/$name"
+fun PageContext.resolveRef(name: String): String = "${path.removeSuffix("/")}/$name"
 
 /**
  * Resolve a Html builder by its full name
  */
-fun PageContext.resolveHtml(name: Name): HtmlData? = data.getByType(name)
+fun PageContext.resolveHtml(name: Name): HtmlData? = data.getByType<HtmlFragment>(name)?.takeIf {
+    it.published //TODO add language confirmation
+}
 
 /**
  * Find all Html blocks using given name/meta filter
  */
 fun PageContext.resolveAllHtml(predicate: (name: Name, meta: Meta) -> Boolean): Map<Name, HtmlData> =
     data.filterByType<HtmlFragment> { name, meta ->
-        predicate(name, meta) && meta["published"].string != "false"
+        predicate(name, meta)
+                && meta["published"].string != "false"
+        //TODO add language confirmation
     }.asSequence().associate { it.name to it.data }
 
 val PageContext.homeRef get() = resolveRef("").removeSuffix("/")
@@ -44,14 +50,14 @@ fun PageContext.findByType(contentType: String, baseName: Name = Name.EMPTY) = r
 
 internal val Data<*>.published: Boolean get() = meta["published"].string != "false"
 
-fun SnarkPlugin.buildPageContext(rootUrl: String, data: DataSet<*>): PageContext = PageContext(rootUrl, data.meta, data)
+fun PageContext(rootUrl: String, data: DataSet<*>): PageContext = PageContext(rootUrl, data.meta, data)
 
-fun SnarkPlugin.buildPageContext(rootUrl: String, path: Path): PageContext {
+fun SnarkPlugin.parse(rootUrl: String, path: Path): PageContext {
     val directoryDataTree = DirectoryDataTree(io, path)
 
     val parsedData: DataSet<Any> = parseAction(directoryDataTree)
 
-    return buildPageContext(rootUrl, parsedData)
+    return PageContext(rootUrl, parsedData)
 }
 
 context(PageContext) inline fun withRequest(request: ApplicationRequest, block: context(PageContext) () -> Unit) {

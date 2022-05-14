@@ -14,7 +14,7 @@ group = "ru.mipt.npm"
 version = "0.0.1-SNAPSHOT"
 
 application {
-    mainClass.set("ru.mipt.spc.ApplicationKt")
+    mainClass.set("io.ktor.server.netty.EngineMain")
 
     val isDevelopment: Boolean = project.ext.has("development")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment", "-Xmx200M")
