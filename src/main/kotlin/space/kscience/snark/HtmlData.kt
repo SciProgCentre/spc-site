@@ -1,5 +1,6 @@
 package space.kscience.snark
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.html.FlowContent
 import kotlinx.html.TagConsumer
@@ -23,11 +24,11 @@ val HtmlData.language: String? get() = meta["language"].string?.lowercase()
 
 val HtmlData.order: Int? get() = meta["order"]?.int
 
-fun TagConsumer<*>.htmlData(data: HtmlData) = runBlocking {
+fun TagConsumer<*>.htmlData(data: HtmlData) = runBlocking(Dispatchers.IO) {
     data.await().invoke(this@htmlData)
 }
 
-fun FlowContent.htmlData(data: HtmlData) = runBlocking {
+fun FlowContent.htmlData(data: HtmlData) = runBlocking(Dispatchers.IO) {
     data.await().invoke(consumer)
 }
 

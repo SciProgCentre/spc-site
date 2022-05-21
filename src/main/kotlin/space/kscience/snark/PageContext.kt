@@ -6,7 +6,6 @@ import io.ktor.server.plugins.origin
 import io.ktor.server.request.ApplicationRequest
 import io.ktor.server.request.host
 import io.ktor.server.request.port
-import space.kscience.dataforge.actions.invoke
 import space.kscience.dataforge.data.*
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.get
@@ -23,6 +22,8 @@ data class PageContext(val path: String, val pageMeta: Meta, val data: DataSet<*
  * Resolve a resource full path by its name
  */
 fun PageContext.resolveRef(name: String): String = "${path.removeSuffix("/")}/$name"
+
+fun PageContext.resolveRef(name: Name): String = "${path.removeSuffix("/")}/${name.tokens.joinToString ("/")}"
 
 /**
  * Resolve a Html builder by its full name
@@ -53,9 +54,7 @@ internal val Data<*>.published: Boolean get() = meta["published"].string != "fal
 fun PageContext(rootUrl: String, data: DataSet<*>): PageContext = PageContext(rootUrl, data.meta, data)
 
 fun SnarkPlugin.parse(rootUrl: String, path: Path): PageContext {
-    val directoryDataTree = DirectoryDataTree(io, path)
-
-    val parsedData: DataSet<Any> = parseAction(directoryDataTree)
+    val parsedData: DataSet<Any> = readDirectory(path)
 
     return PageContext(rootUrl, parsedData)
 }

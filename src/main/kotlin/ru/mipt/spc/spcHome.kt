@@ -11,166 +11,20 @@ import io.ktor.server.routing.*
 import kotlinx.html.*
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.fetch
+import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.string
+import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.parseAsName
 import space.kscience.snark.*
 import java.nio.file.Path
 
 
-private const val SPC_TITLE = "Scientific Programming Centre"
-
-context(PageContext) private fun HTML.spcHead(title: String = SPC_TITLE) {
-    head {
-        title {
-            +title
-        }
-        meta {
-            charset = "utf-8"
-        }
-        meta {
-            name = "viewport"
-            content = "width=device-width, initial-scale=1, user-scalable=no"
-        }
-        link(rel = "stylesheet", href = resolveRef("assets/css/main.css"))
-        noScript {
-            link(rel = "stylesheet", href = resolveRef("assets/css/noscript.css"))
-        }
-    }
-}
-
-context(PageContext) private fun FlowContent.spcHomeMenu() {
-    nav {
-        id = "menu"
-        ul("links") {
-            li {
-                a {
-                    href = homeRef
-                    +"""Home"""
-                }
-            }
-            li {
-                a {
-                    href = resolveRef("magprog")
-                    +"""Master"""
-                }
-            }
-            li {
-                a {
-                    href = resolveRef("research")
-                    +"""Research"""
-                }
-            }
-            li {
-                a {
-                    href = resolveRef("consulting")
-                    +"""Consulting"""
-                }
-            }
-            li {
-                a {
-                    href = resolveRef("team")
-                    +"""Team"""
-                }
-            }
-        }
-//        ul("actions stacked") {
-//            li {
-//                a(classes = "button primary fit") {
-//                    href = "#"
-//                    +"""Get Started"""
-//                }
-//            }
-//            li {
-//                a(classes = "button fit") {
-//                    href = "#"
-//                    +"""Log In"""
-//                }
-//            }
-//        }
-    }
-}
-
-context(PageContext) private fun FlowContent.spcFooter() {
-    footer {
-        id = "footer"
-        div("inner") {
-            ul("icons") {
-//                li {
-//                    a(classes = "icon brands alt fa-twitter") {
-//                        href = "#"
-//                        span("label") { +"""Twitter""" }
-//                    }
-//                }
-//                li {
-//                    a(classes = "icon brands alt fa-facebook-f") {
-//                        href = "#"
-//                        span("label") { +"""Facebook""" }
-//                    }
-//                }
-//                li {
-//                    a(classes = "icon brands alt fa-instagram") {
-//                        href = "#"
-//                        span("label") { +"""Instagram""" }
-//                    }
-//                }
-                li {
-                    a(classes = "icon brands alt fa-github") {
-                        href = "https://github.com/mipt-npm"
-                        span("label") { +"""GitHub""" }
-                    }
-                }
-//                li {
-//                    a(classes = "icon brands alt fa-linkedin-in") {
-//                        href = "#"
-//                        span("label") { +"""LinkedIn""" }
-//                    }
-//                }
-            }
-            ul("copyright") {
-                li { +"""SPC""" }
-                li {
-                    +"""Design:"""
-                    a {
-                        href = "https://html5up.net"
-                        +"""HTML5 UP"""
-                    }
-                }
-            }
-        }
-    }
-}
-
-context(PageContext) private fun FlowContent.wrapper(contentBody: FlowContent.() -> Unit) {
-    div {
-        id = "wrapper"
-        // Header
-        header("alt") {
-            id = "header"
-            a(classes = "logo") {
-                href = homeRef
-                strong { +"""SPC""" }
-                span { +"""Scientific Programming Centre""" }
-            }
-            nav {
-                a {
-                    href = "#menu"
-                    +"""Menu"""
-                }
-            }
-        }
-        // Menu
-        spcHomeMenu()
-        //Body
-        contentBody()
-        // Footer
-        spcFooter()
-    }
-}
-
-
-context(PageContext) private fun HTML.spcPage(data: HtmlData) {
-    val title = data.meta["title"].string ?: SPC_TITLE
+context(PageContext) internal fun HTML.spcPageContent(
+    meta: Meta,
+    title: String = meta["title"].string ?: SPC_TITLE,
+    fragment: FlowContent.() -> Unit,
+) {
     spcHead(title)
     body("is-preload") {
         wrapper {
@@ -183,7 +37,7 @@ context(PageContext) private fun HTML.spcPage(data: HtmlData) {
                         header("major") {
                             h1 { +title }
                         }
-                        data.meta["image"].string?.let { imagePath ->
+                        meta["image"].string?.let { imagePath ->
                             span("image main") {
                                 img {
                                     src = resolveRef(imagePath)
@@ -191,7 +45,7 @@ context(PageContext) private fun HTML.spcPage(data: HtmlData) {
                                 }
                             }
                         }
-                        htmlData(data)
+                        fragment()
                     }
                 }
             }
@@ -201,24 +55,39 @@ context(PageContext) private fun HTML.spcPage(data: HtmlData) {
     }
 }
 
-context(PageContext) private fun Route.spcPage(subRoute: String, data: HtmlData) {
+
+context(PageContext) internal fun Route.spcPage(subRoute: String, meta: Meta, fragment: FlowContent.() -> Unit) {
     get(subRoute) {
         withRequest(call.request) {
             call.respondHtml {
-                spcPage(data)
+                spcPageContent(meta, fragment = fragment)
             }
         }
     }
 }
 
-context(PageContext) private fun Route.spcPage(subRoute: String, dataPath: String = subRoute) {
-    val data = resolveHtml(dataPath.parseAsName())
+context(PageContext) internal fun Route.spcPage(
+    subRoute: String,
+    dataPath: Name = subRoute.parseAsName(),
+    more: FlowContent.() -> Unit = {},
+) {
+    val data = resolveHtml(dataPath)
     if (data != null) {
-        spcPage(subRoute, data)
+        spcPage(subRoute, data.meta) {
+            htmlData(data)
+            more()
+        }
     } else {
         application.log.error("Content for page with path $dataPath not found")
     }
 
+}
+
+context(PageContext) internal fun Route.spcPage(
+    name: Name,
+    more: FlowContent.() -> Unit = {},
+) {
+    spcPage(name.tokens.joinToString("/"), name, more)
 }
 
 context(PageContext) private fun HTML.spcHome() {
@@ -420,8 +289,9 @@ internal fun Application.spcHome(context: Context, rootPath: Path, prefix: Strin
                 }
 
                 spcPage("consulting")
-                spcPage("research")
-                spcPage("team")
+
+                spcLanding("team") { _, m -> m["type"].string == "team" }
+                spcLanding("research"){ _, m -> m["type"].string == "project" }
             }
         }
     }

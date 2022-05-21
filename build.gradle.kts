@@ -3,6 +3,7 @@ import ru.mipt.npm.gradle.KScienceVersions
 plugins {
     id("ru.mipt.npm.gradle.project")
     id("ru.mipt.npm.gradle.jvm")
+    id("org.hidetake.ssh") version "2.10.1"
     application
 }
 
@@ -21,7 +22,7 @@ application {
 }
 
 
-val dataforgeVersion by extra("0.6.0-dev-7")
+val dataforgeVersion by extra("0.6.0-dev-9")
 val ktorVersion = KScienceVersions.ktorVersion
 
 dependencies {
@@ -42,11 +43,11 @@ dependencies {
 
 kotlin {
     explicitApi = org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode.Disabled
-    sourceSets.all {
-        languageSettings {
-            languageVersion  = "1.7"
-            apiVersion = "1.7"
-        }
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>{
+    kotlinOptions{
+        freeCompilerArgs = freeCompilerArgs + "-Xcontext-receivers"
     }
 }
 
