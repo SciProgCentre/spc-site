@@ -38,7 +38,8 @@ context(PageContext) internal fun HTML.spcPageContent(
                             h1 { +title }
                         }
                         meta["image"]?.let { imageMeta ->
-                            val imagePath = imageMeta.value?.string ?: imageMeta["path"].string ?: error("Image path not provided")
+                            val imagePath =
+                                imageMeta.value?.string ?: imageMeta["path"].string ?: error("Image path not provided")
                             val imageClass = imageMeta["position"].string ?: "main"
                             span("image $imageClass") {
                                 img {
@@ -105,10 +106,10 @@ context(PageContext) private fun HTML.spcHome() {
                     }
                     div("content") {
                         p {
-                            +"""Programming in Science"""
-                            br {
-                            }
-                            +"""and Science in Programming"""
+                            +"Programming in Science"
+                            br{}
+                            entity(Entities.nbsp)
+                            +"and Science in Programming"
                         }
                         ul("actions") {
                             li {
