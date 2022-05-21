@@ -1,3 +1,5 @@
+**Director of the centre**
+
 * PhD in particle physics.
 * Director of [Scientific Programming Centre](/).
 * Senior researcher at https://npm.mipt.ru.

@@ -16,6 +16,7 @@ import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.string
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.parseAsName
+import space.kscience.dataforge.values.string
 import space.kscience.snark.*
 import java.nio.file.Path
 
@@ -32,13 +33,14 @@ context(PageContext) internal fun HTML.spcPageContent(
                 id = "main"
                 // One
                 section {
-                    id = "one"
                     div("inner") {
                         header("major") {
                             h1 { +title }
                         }
-                        meta["image"].string?.let { imagePath ->
-                            span("image main") {
+                        meta["image"]?.let { imageMeta ->
+                            val imagePath = imageMeta.value?.string ?: imageMeta["path"].string ?: error("Image path not provided")
+                            val imageClass = imageMeta["position"].string ?: "main"
+                            span("image $imageClass") {
                                 img {
                                     src = resolveRef(imagePath)
                                     alt = imagePath
@@ -157,7 +159,7 @@ context(PageContext) private fun HTML.spcHome() {
                                 }
                             }
                             p {
-                                +"""Fundamental and applied research in analysis, scientific software design and data aquisition and control systems."""
+                                +"""Fundamental and applied research in analysis, scientific software design and data acquisition and control systems."""
                             }
                         }
                     }
@@ -192,7 +194,6 @@ context(PageContext) private fun HTML.spcHome() {
                                     +"""Team"""
                                 }
                             }
-                            p { +"""Our team""" }
                         }
                     }
 //                    article {
@@ -232,10 +233,9 @@ context(PageContext) private fun HTML.spcHome() {
                 }
                 // Two
                 section {
-                    id = "two"
                     div("inner") {
                         header("major") {
-                            h2 { +"""Science, education and industry working together""" }
+                            h2 { +"Science + education + industry" }
                         }
                         p {
                             +"""
@@ -290,8 +290,8 @@ internal fun Application.spcHome(context: Context, rootPath: Path, prefix: Strin
 
                 spcPage("consulting")
 
-                spcLanding("team") { _, m -> m["type"].string == "team" }
-                spcLanding("research"){ _, m -> m["type"].string == "project" }
+                spcSpotlight("team") { _, m -> m["type"].string == "team" }
+                spcSpotlight("research") { _, m -> m["type"].string == "project" }
             }
         }
     }

@@ -8,13 +8,15 @@ import io.ktor.server.routing.get
 import kotlinx.html.*
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.get
+import space.kscience.dataforge.meta.int
 import space.kscience.dataforge.meta.string
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.parseAsName
 import space.kscience.dataforge.names.withIndex
+import space.kscience.dataforge.values.string
 import space.kscience.snark.*
 
-context(PageContext) private fun FlowContent.spcTeamContent(
+context(PageContext) private fun FlowContent.spcSpotlightContent(
     landing: HtmlData,
     content: Map<Name, HtmlData>,
 ) {
@@ -41,13 +43,15 @@ context(PageContext) private fun FlowContent.spcTeamContent(
     // Main
     div {
         id = "main"
-        content.forEach { (name, data) ->
-            val ref = resolveRef(name)
-
-            section("spotlights") {
-                id = data.meta["id"].string ?: name.toString()
+        //TODO add smart SNARK ordering
+        section("spotlights") {
+            content.entries.sortedBy { it.value.meta["order"].int ?: Int.MAX_VALUE }.forEach { (name, data) ->
+                val ref = resolveRef(name)
                 section {
-                    data.meta["image"].string?.let { imagePath ->
+                    id = data.meta["id"].string ?: name.toString()
+                    data.meta["image"]?.let { imageMeta: Meta ->
+                        val imagePath =
+                            imageMeta.value?.string ?: imageMeta["path"].string ?: error("Image path not provided")
                         a(classes = "image") {
                             href = ref
                             img {
@@ -62,8 +66,11 @@ context(PageContext) private fun FlowContent.spcTeamContent(
                             header("major") {
                                 h3 { +(data.meta["title"].string ?: "???") }
                             }
-                            resolveHtml(name.withIndex("info"))?.let {
-                                htmlData(it)
+                            val infoData = resolveHtml(name.withIndex("info"))
+                            if (infoData == null) {
+                                htmlData(data)
+                            } else {
+                                htmlData(infoData)
                             }
                             ul("actions") {
                                 li {
@@ -82,7 +89,7 @@ context(PageContext) private fun FlowContent.spcTeamContent(
 }
 
 
-context(PageContext) internal fun Route.spcLanding(
+context(PageContext) internal fun Route.spcSpotlight(
     name: String,
     contentFilter: (Name, Meta) -> Boolean,
 ) {
@@ -97,7 +104,7 @@ context(PageContext) internal fun Route.spcLanding(
                 spcHead(title)
                 body("is-preload") {
                     wrapper {
-                        spcTeamContent(body, content)
+                        spcSpotlightContent(body, content)
                     }
 
                     fortyScripts()

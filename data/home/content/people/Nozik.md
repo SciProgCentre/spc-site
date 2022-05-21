@@ -3,10 +3,11 @@ type: team
 title: Alexander Nozik
 id: nozik
 order: 1
-image: images/people/nozik_2.png
 language: en
+image: images/people/nozik_2.png
 ---
 
+** Director of the centre **
 
 * PhD in particle physics.
 * Director of [Scientific Programming Centre](/).
