@@ -273,9 +273,14 @@ internal fun Application.spcMaster(context: Context, dataPath: Path, prefix: Str
     routing {
         route(prefix) {
             with(magProgPageContext) {
-                static {
+                static{
                     files(dataPath.resolve("assets").toFile())
+
+                    static("images") {
+                        files(dataPath.resolve("images").toFile())
+                    }
                 }
+
 
                 get {
                     call.respondHtml {

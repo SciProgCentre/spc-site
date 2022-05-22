@@ -3,11 +3,10 @@ import ru.mipt.npm.gradle.KScienceVersions
 plugins {
     id("ru.mipt.npm.gradle.project")
     id("ru.mipt.npm.gradle.jvm")
-    id("org.hidetake.ssh") version "2.10.1"
     application
 }
 
-repositories{
+repositories {
     mavenLocal()
 }
 
@@ -45,8 +44,8 @@ kotlin {
     explicitApi = org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode.Disabled
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>{
-    kotlinOptions{
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions {
         freeCompilerArgs = freeCompilerArgs + "-Xcontext-receivers"
     }
 }

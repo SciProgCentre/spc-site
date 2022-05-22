@@ -7,7 +7,7 @@ language: en
 image: images/people/nozik_2.png
 ---
 
-** Director of the centre **
+**Director of the centre**
 
 * PhD in particle physics.
 * Director of [Scientific Programming Centre](/).
