@@ -1,6 +1,6 @@
 ---
 content_type: magprog_mentor
-name: Зиновьев Алексей Викторович
+name: Алексей Викторович Зиновьев
 id: Zinoviev
 photo: images/mentors/Zinoviev.jpg
 language: ru

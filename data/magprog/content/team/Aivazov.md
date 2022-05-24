@@ -6,4 +6,4 @@ order: 4
 photo: images/team/Aivazov.jpg
 language: ru
 ---
-**Консультант от ФПМИ**
+Консультант от ФПМИ

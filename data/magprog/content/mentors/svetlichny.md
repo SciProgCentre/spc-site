@@ -1,6 +1,6 @@
 ---
 content_type: magprog_mentor
-name: Светличный Александр
+name: Александр Светличный
 id: Svetlichny
 photo: images/mentors/Svetlichny.jpg
 language: ru

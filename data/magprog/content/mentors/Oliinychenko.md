@@ -1,6 +1,6 @@
 ---
 content_type: magprog_mentor
-name: Олийниченко Дмитрий Робертович
+name: Дмитрий Робертович Олийниченко
 id: Oliinychenko
 photo: images/mentors/Oliinychenko.jpg
 language: ru

@@ -128,34 +128,55 @@ context(PageContext) private fun FlowContent.team() {
     val team = findByType("magprog_team").map { Person(it.value) }.sortedBy { it.order }
 
     div("inner") {
-        h2 {
-            +"Команда"
-        }
-    }
-    team.forEach { member ->
-        section {
-            id = member.id
-            a(classes = "image", href = resolveRef("mentor-${member.id}")) {
-                member.photo?.let { photoPath ->
-                    img(
-                        src = resolveRef(photoPath),
-                        alt = member.name
-                    ) {
-                        attributes["data-position"] = "center center"
+        h2 { +"Команда" }
+        div("features") {
+            team.forEach { member ->
+                section {
+                    a {
+                        val imagePath = member.photo?.let { resolveRef(it) }
+                        img(
+                            classes = "icon major",
+                            src = imagePath,
+                            alt = imagePath
+                        ) {
+                            h3 { +member.name }
+                            htmlData(member.data)
+                        }
                     }
                 }
             }
+        }
+    }
 
-            div("content") {
-                div("inner") {
-                    h3 {
-                        a(href = "#team_${member.id}") { +member.name }
-                    }
-                    htmlData(member)
-                }
-            }
-        }
-    }
+//    div("inner") {
+//        h2 {
+//            +"Команда"
+//        }
+//    }
+//    team.forEach { member ->
+//        section {
+//            id = member.id
+//            a(classes = "image") {
+//                member.photo?.let { photoPath ->
+//                    img(
+//                        src = resolveRef(photoPath),
+//                        alt = member.name
+//                    ) {
+//                        attributes["data-position"] = "center center"
+//                    }
+//                }
+//            }
+//
+//            div("content") {
+//                div("inner") {
+//                    h3 {
+//                        a(href = "#team_${member.id}") { +member.name }
+//                    }
+//                    htmlData(member)
+//                }
+//            }
+//        }
+//    }
 }
 
 context(PageContext) private fun FlowContent.mentors() {
@@ -193,6 +214,10 @@ context(PageContext) private fun FlowContent.mentors() {
             }
         }
     }
+}
+
+context(PageContext) internal fun FlowContent.contacts() {
+
 }
 
 
@@ -273,7 +298,7 @@ internal fun Application.spcMaster(context: Context, dataPath: Path, prefix: Str
     routing {
         route(prefix) {
             with(magProgPageContext) {
-                static{
+                static {
                     files(dataPath.resolve("assets").toFile())
 
                     static("images") {
@@ -309,14 +334,10 @@ internal fun Application.spcMaster(context: Context, dataPath: Path, prefix: Str
                                 programSection()
                             },
                             wrapSection(resolveHtml(ENROLL_PATH)!!, "enroll"),
-                            MagProgSection(
-                                id = "team",
-                                title = "Команда",
-                                style = "wrapper style2 spotlights",
-                            ) {
+                            wrapSection(id = "contacts", title = "Контакты") {
+                                htmlData(resolveHtml(CONTACTS_PATH)!!)
                                 team()
-                            },
-                            wrapSection(resolveHtml(CONTACTS_PATH)!!, "contacts"),
+                            }
                         )
                         magProgHead("Магистратура \"Научное программирование\"")
                         body("is-preload magprog-body") {
@@ -367,13 +388,13 @@ internal fun Application.spcMaster(context: Context, dataPath: Path, prefix: Str
                                         href = "$homeRef#mentors"
                                         +"Научные руководители"
                                     }
-                                    nav() {
+                                    nav{
                                         ul {
                                             mentors.forEach {
                                                 li {
                                                     a {
                                                         href = resolveRef(it.mentorPageId)
-                                                        +it.name
+                                                        +it.name.substringAfterLast(" ")
                                                     }
                                                 }
                                             }

@@ -11,10 +11,8 @@ import java.net.URI
 import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Path
-import kotlin.io.path.createDirectories
-import kotlin.io.path.div
-import kotlin.io.path.isRegularFile
-import kotlin.io.path.relativeTo
+import java.time.LocalDateTime
+import kotlin.io.path.*
 
 fun CommonAttributeGroupFacade.css(block: CssBuilder.() -> Unit) {
     style = CssBuilder().block().toString()
@@ -42,6 +40,9 @@ private fun Application.resolveData(uri: URI, targetPath: Path): Path {
     return targetPath
 }
 
+const val DEPLOY_DATE_FILE = "deployDate"
+const val BUILD_DATE_FILE = "buildDate"
+
 @Suppress("unused")
 fun Application.spcModule() {
     val context = Context("spc-site") {
@@ -49,6 +50,20 @@ fun Application.spcModule() {
     }
 
     val dataPath = Path.of("data")
+
+    // Clear data directory if it is outdated
+    val deployDate = dataPath.resolve(DEPLOY_DATE_FILE).takeIf { it.exists() }
+        ?.readText()?.let { LocalDateTime.parse(it) }
+    val buildDate = javaClass.getResource(BUILD_DATE_FILE)?.readText()?.let { LocalDateTime.parse(it) }
+
+    if (deployDate != null && buildDate != null && buildDate.isAfter(deployDate)) {
+        log.info("Outdated data. Resetting data directory.")
+        dataPath.deleteIfExists()
+
+        //Writing deploy date file
+        dataPath.createDirectories()
+        dataPath.resolve(DEPLOY_DATE_FILE).writeText(LocalDateTime.now().toString())
+    }
 
     val homeDataPath = resolveData(
         javaClass.getResource("/home")!!.toURI(),

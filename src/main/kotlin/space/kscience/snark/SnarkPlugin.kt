@@ -68,24 +68,6 @@ class SnarkPlugin : AbstractPlugin() {
         context.gather(SnarkParser.TYPE, true)
     }
 
-//    val parseAction: Action<ByteArray, Any> = Action.map {
-//        val parser: SnarkParser<*>? = parsers.values.filter { parser ->
-//            parser.contentType.toString() == meta["contentType"].string ||
-//                    meta[META_FILE_EXTENSION_KEY].string in parser.fileExtensions
-//        }.maxByOrNull {
-//            it.priority
-//        }
-//
-//        //ensure that final type is correct
-//        if (parser == null) {
-//            logger.warn { "The parser is not found for data with meta $meta" }
-//            result { it }
-//        } else {
-//            result(parser.resultType) { bytes ->
-//                parser.parse(bytes, meta)
-//            }
-//        }
-//    }
 
     fun readDirectory(path: Path): DataTree<Any> = io.readDataDirectory(path) { dataPath, meta ->
         val fileExtension = meta[FileData.META_FILE_EXTENSION_KEY].string ?: dataPath.extension

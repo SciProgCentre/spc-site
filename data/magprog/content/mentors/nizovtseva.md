@@ -1,6 +1,6 @@
 ---
 content_type: magprog_mentor
-name: Низовцева Ирина Геннадьевна
+name: Ирина Геннадьевна Низовцева
 id: Nizovtseva
 photo: images/mentors/Nizovtseva.jpg
 language: ru

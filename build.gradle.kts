@@ -1,4 +1,5 @@
 import ru.mipt.npm.gradle.KScienceVersions
+import java.time.LocalDateTime
 
 plugins {
     id("ru.mipt.npm.gradle.project")
@@ -11,7 +12,7 @@ repositories {
 }
 
 group = "ru.mipt.npm"
-version = "0.0.1-SNAPSHOT"
+version = "0.1.0-SNAPSHOT"
 
 application {
     mainClass.set("io.ktor.server.netty.EngineMain")
@@ -53,5 +54,13 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 sourceSets {
     main {
         resources.srcDir(project.rootDir.resolve("data"))
+    }
+}
+
+//write build time in build to check outdated external data directory
+tasks.getByName<Copy>("processResources") {
+    doFirst {
+        val deployDate = LocalDateTime.now()
+        project.buildDir.resolve("resources/main/buildDate").writeText(deployDate.toString())
     }
 }
