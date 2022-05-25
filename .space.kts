@@ -2,10 +2,12 @@ job("Deploy") {
     startOn {
         gitPush { enabled = false }
     }
-
-    gradlew("openjdk:11", "installDist")
-
-    container(displayName = "Deploy via scp", image = "openjdk:11") {
+    
+    container(image = "openjdk:11") {
+        kotlinScript { api ->
+            api.gradlew("installDist")
+        }
+        
         env["HOST"] = Params("spc-host")
         env["USER"] = Secrets("spc-webmaster-user")
         env["ID"] = Secrets("spc-webmaster-id")
@@ -14,8 +16,7 @@ job("Deploy") {
             interpreter = "/bin/bash"
             content = """
                 ls -la
-                """.trimIndent()
+            """.trimIndent()
         }
     }
-
 }
