@@ -8,7 +8,7 @@ job("Deploy") {
     container(image = "openjdk:11") {
         kotlinScript { api ->
             api.gradlew("installDist")
-            api.fileShare().put(java.io.File("build/installDist"))
+            api.fileShare().put(java.io.File("build/install"))
         }
     }
 
