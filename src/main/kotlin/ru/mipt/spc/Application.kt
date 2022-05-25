@@ -51,6 +51,8 @@ fun Application.spcModule() {
 
     val dataPath = Path.of("data")
 
+
+
     // Clear data directory if it is outdated
     val deployDate = dataPath.resolve(DEPLOY_DATE_FILE).takeIf { it.exists() }
         ?.readText()?.let { LocalDateTime.parse(it) }
@@ -58,12 +60,16 @@ fun Application.spcModule() {
 
     if (deployDate != null && buildDate != null && buildDate.isAfter(deployDate)) {
         log.info("Outdated data. Resetting data directory.")
-        dataPath.deleteIfExists()
+
+        Files.walk(dataPath)
+            .sorted(Comparator.reverseOrder())
+            .forEach { it.deleteIfExists() }
 
         //Writing deploy date file
         dataPath.createDirectories()
         dataPath.resolve(DEPLOY_DATE_FILE).writeText(LocalDateTime.now().toString())
-    } else if (deployDate == null && buildDate != null) {
+
+    } else if (System.getProperty("spc-production") == "true" && deployDate == null && buildDate != null) {
 
         //Writing deploy date in production mode if it does not exist
         dataPath.createDirectories()

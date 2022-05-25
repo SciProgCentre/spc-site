@@ -2,6 +2,5 @@
 build/
 .idea/
 /logs/
-/data/deployDate
 
 !gradle/wrapper/gradle-wrapper.jar

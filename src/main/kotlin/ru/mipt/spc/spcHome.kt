@@ -107,7 +107,7 @@ context(PageContext) private fun HTML.spcHome() {
                     div("content") {
                         p {
                             +"Programming in Science"
-                            br{}
+                            br {}
                             entity(Entities.nbsp)
                             +"and Science in Programming"
                         }
@@ -125,7 +125,47 @@ context(PageContext) private fun HTML.spcHome() {
             // Main
             div {
                 id = "main"
-                // One
+                section {
+                    div("inner") {
+                        a(href = "https://mipt.ru/education/departments/fpmi/") {
+                            span("image left") {
+                                img {
+                                    src = "images/FPMI.jpg"
+                                    alt = "FPMI"
+                                    height = "60dp"
+                                    width = "60dp"
+                                }
+                            }
+                        }
+                        p {
+                            +"Centre was created in 2022 based on the Phystech School of Applied Mathematics and Informatics at MIPT"
+                        }
+                    }
+                }
+
+                section {
+                    div("inner") {
+                        header("major") {
+                            h2 { +"Science + education + industry" }
+                        }
+                        p {
+                            +"""
+                                Our mission is to bring together science, education and industry and
+                                work on better software solutions for science and better science in 
+                                software development.
+                            """.trimIndent()
+                        }
+//                        ul("actions") {
+//                            li {
+//                                a(classes = "button next") {
+//                                    href = "landing.html"
+//                                    +"""Get Started"""
+//                                }
+//                            }
+//                        }
+                    }
+                }
+
                 section("tiles") {
                     id = "master"
                     article {
@@ -231,29 +271,6 @@ context(PageContext) private fun HTML.spcHome() {
 //                            p { +"""Feugiat amet tempus""" }
 //                        }
 //                    }
-                }
-                // Two
-                section {
-                    div("inner") {
-                        header("major") {
-                            h2 { +"Science + education + industry" }
-                        }
-                        p {
-                            +"""
-                                Our mission is to bring together science, education and industry and
-                                work on better software solutions for science and better science in 
-                                software development.
-                            """.trimIndent()
-                        }
-//                        ul("actions") {
-//                            li {
-//                                a(classes = "button next") {
-//                                    href = "landing.html"
-//                                    +"""Get Started"""
-//                                }
-//                            }
-//                        }
-                    }
                 }
             }
         }
