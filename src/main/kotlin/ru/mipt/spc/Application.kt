@@ -41,7 +41,7 @@ private fun Application.resolveData(uri: URI, targetPath: Path): Path {
 }
 
 const val DEPLOY_DATE_FILE = "deployDate"
-const val BUILD_DATE_FILE = "buildDate"
+const val BUILD_DATE_FILE = "/buildDate"
 
 @Suppress("unused")
 fun Application.spcModule() {
@@ -64,7 +64,9 @@ fun Application.spcModule() {
         dataPath.createDirectories()
         dataPath.resolve(DEPLOY_DATE_FILE).writeText(LocalDateTime.now().toString())
     } else if (deployDate == null && buildDate != null) {
-        //Writing deploy date in production mode
+
+        //Writing deploy date in production mode if it does not exist
+        dataPath.createDirectories()
         dataPath.resolve(DEPLOY_DATE_FILE).writeText(LocalDateTime.now().toString())
     }
 

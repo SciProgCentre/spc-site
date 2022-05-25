@@ -2,7 +2,7 @@
 content_type: magprog_mentor
 name: Иван Харук
 id: Kharuk
-photo: images/mentors/Kharuk.JPG
+photo: images/mentors/Kharuk.jpg
 language: ru
 ---
 

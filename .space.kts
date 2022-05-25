@@ -12,9 +12,8 @@ job("Deploy") {
         shellScript {
             interpreter = "/bin/bash"
             content = """
-                    echo Hello
-                    echo World!
-                """
+                ls -la
+                """.trimIndent()
         }
     }
 
