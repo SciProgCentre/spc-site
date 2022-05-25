@@ -19,7 +19,9 @@ job("Deploy") {
 
         shellScript {
             interpreter = "/bin/bash"
-            content = "echo \$ID | ssh -i /dev/stdin -r /mnt/space/share/spc-site/ \"\$USER@\$HOST:/opt\""
+            content = """
+                echo ${'$'}ID | ssh -i /dev/stdin -r /mnt/space/share/spc-site/ "${'$'}USER@${'$'}HOST:/opt"
+            """.trimIndent()
         }
     }
 }

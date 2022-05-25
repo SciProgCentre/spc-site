@@ -51,12 +51,12 @@ fun Application.spcModule() {
 
     val dataPath = Path.of("data")
 
-
-
     // Clear data directory if it is outdated
     val deployDate = dataPath.resolve(DEPLOY_DATE_FILE).takeIf { it.exists() }
         ?.readText()?.let { LocalDateTime.parse(it) }
     val buildDate = javaClass.getResource(BUILD_DATE_FILE)?.readText()?.let { LocalDateTime.parse(it) }
+
+    val inProduction = environment.config.propertyOrNull("ktor.inProduction") != null
 
     if (deployDate != null && buildDate != null && buildDate.isAfter(deployDate)) {
         log.info("Outdated data. Resetting data directory.")
@@ -69,7 +69,7 @@ fun Application.spcModule() {
         dataPath.createDirectories()
         dataPath.resolve(DEPLOY_DATE_FILE).writeText(LocalDateTime.now().toString())
 
-    } else if (System.getProperty("spc-production") == "true" && deployDate == null && buildDate != null) {
+    } else if (inProduction && deployDate == null && buildDate != null) {
 
         //Writing deploy date in production mode if it does not exist
         dataPath.createDirectories()
