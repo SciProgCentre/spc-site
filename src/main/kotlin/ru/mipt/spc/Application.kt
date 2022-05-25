@@ -56,7 +56,9 @@ fun Application.spcModule() {
         ?.readText()?.let { LocalDateTime.parse(it) }
     val buildDate = javaClass.getResource(BUILD_DATE_FILE)?.readText()?.let { LocalDateTime.parse(it) }
 
-    val inProduction = environment.config.propertyOrNull("ktor.inProduction") != null
+    val inProduction: Boolean = environment.config.propertyOrNull("ktor.environment.production") != null
+
+    if(inProduction) log.info("Production mode activated")
 
     if (deployDate != null && buildDate != null && buildDate.isAfter(deployDate)) {
         log.info("Outdated data. Resetting data directory.")
@@ -70,10 +72,11 @@ fun Application.spcModule() {
         dataPath.resolve(DEPLOY_DATE_FILE).writeText(LocalDateTime.now().toString())
 
     } else if (inProduction && deployDate == null && buildDate != null) {
-
+        val date = LocalDateTime.now().toString()
+        log.info("Deploy date: $date")
         //Writing deploy date in production mode if it does not exist
         dataPath.createDirectories()
-        dataPath.resolve(DEPLOY_DATE_FILE).writeText(LocalDateTime.now().toString())
+        dataPath.resolve(DEPLOY_DATE_FILE).writeText(date)
     }
 
 
