@@ -1,7 +1,7 @@
 ---
 type: project
 title: Plotly-kt
-order: 8
+order: 20
 language: en
 image: images/projects/plotly-kt.svg
 ---

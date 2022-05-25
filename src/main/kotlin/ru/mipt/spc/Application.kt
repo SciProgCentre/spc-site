@@ -63,7 +63,11 @@ fun Application.spcModule() {
         //Writing deploy date file
         dataPath.createDirectories()
         dataPath.resolve(DEPLOY_DATE_FILE).writeText(LocalDateTime.now().toString())
+    } else if (deployDate == null && buildDate != null) {
+        //Writing deploy date in production mode
+        dataPath.resolve(DEPLOY_DATE_FILE).writeText(LocalDateTime.now().toString())
     }
+
 
     val homeDataPath = resolveData(
         javaClass.getResource("/home")!!.toURI(),

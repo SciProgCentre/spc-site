@@ -1,12 +1,15 @@
 ---
 type: project
 title: DataForge
-order: 2
+order: 5
 language: en
 image:
     path: images/projects/df.svg
     position: left
 ---
+
+[Repository and documentation](https://github.com/mipt-npm/dataforge-core)
+
 ## Questions and Answers
 In this section we will try to cover DataForge main ideas in the form of questions and answers.
 

@@ -1,7 +1,7 @@
 ---
 type: project
 title: VisionForge
-order: 5
+order: 30
 language: en
 image:  images/projects/muon-monitor.png
 ---
