@@ -58,7 +58,11 @@ fun Application.spcModule() {
 
     val inProduction: Boolean = environment.config.propertyOrNull("ktor.environment.production") != null
 
-    if(inProduction) log.info("Production mode activated")
+    if(inProduction){
+        log.info("Production mode activated")
+        log.info("Build date: $buildDate")
+        log.info("Deploy date: $deployDate")
+    }
 
     if (deployDate != null && buildDate != null && buildDate.isAfter(deployDate)) {
         log.info("Outdated data. Resetting data directory.")

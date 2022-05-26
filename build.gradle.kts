@@ -57,10 +57,14 @@ sourceSets {
     }
 }
 
-//write build time in build to check outdated external data directory
-tasks.getByName<Copy>("processResources") {
+val writeBuildDate: Task by tasks.creating {
     doFirst {
         val deployDate = LocalDateTime.now()
         project.buildDir.resolve("resources/main/buildDate").writeText(deployDate.toString())
     }
+    outputs.file("resources/main/buildDate")
 }
+
+
+//write build time in build to check outdated external data directory
+tasks.getByName("processResources").dependsOn(writeBuildDate)
