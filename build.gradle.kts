@@ -58,9 +58,11 @@ sourceSets {
 }
 
 val writeBuildDate: Task by tasks.creating {
-    doFirst {
+    doLast {
         val deployDate = LocalDateTime.now()
-        project.buildDir.resolve("resources/main/buildDate").writeText(deployDate.toString())
+        val file = File(project.buildDir, "resources/main/buildDate")
+        file.parentFile.mkdirs()
+        file.writeText(deployDate.toString())
     }
     outputs.file("resources/main/buildDate")
 }
