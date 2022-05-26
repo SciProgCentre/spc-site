@@ -2,7 +2,7 @@
 content_type: magprog_mentor
 name: Roland Grinis
 id: Grinis
-photo: images/mentors/Grinis.jpg
+image: images/mentors/Grinis.jpg
 language: ru
 ---
 

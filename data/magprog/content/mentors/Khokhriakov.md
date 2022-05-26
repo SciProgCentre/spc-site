@@ -2,7 +2,7 @@
 content_type: magprog_mentor
 name: Igor Khokhriakov
 id: Khokhriakov
-photo: images/mentors/Khokhriakov.jpg
+image: images/mentors/Khokhriakov.jpg
 language: ru
 ---
 

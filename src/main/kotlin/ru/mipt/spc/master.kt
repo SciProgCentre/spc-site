@@ -41,6 +41,9 @@ import kotlin.collections.set
 //    }
 //}
 
+private val HtmlData.imagePath: String? get() = meta["image"]?.string ?: meta["image.path"].string
+private val HtmlData.name: String get() = meta["name"].string ?: error("Name not found")
+
 class MagProgSection(
     val id: String,
     val title: String,
@@ -119,13 +122,13 @@ context(PageContext) private fun FlowContent.partners() {
     }
 }
 
-class Person(val data: HtmlData) : HtmlData by data {
-    val name: String by meta.string { error("Mentor name is not defined") }
-    val photo: String? by meta.string()
-}
+//class Person(val data: HtmlData) : HtmlData by data {
+//    val name: String by meta.string { error("Mentor name is not defined") }
+//    val photo: String? by meta.string()
+//}
 
 context(PageContext) private fun FlowContent.team() {
-    val team = findByType("magprog_team").map { Person(it.value) }.sortedBy { it.order }
+    val team = findByType("magprog_team").values.sortedBy { it.order }
 
     div("inner") {
         h2 { +"Команда" }
@@ -133,14 +136,14 @@ context(PageContext) private fun FlowContent.team() {
             team.forEach { member ->
                 section {
                     a {
-                        val imagePath = member.photo?.let { resolveRef(it) }
+                        val imagePath = member.imagePath?.let { resolveRef(it) }
                         img(
                             classes = "icon major",
                             src = imagePath,
                             alt = imagePath
                         ) {
                             h3 { +member.name }
-                            htmlData(member.data)
+                            htmlData(member)
                         }
                     }
                 }
@@ -180,7 +183,7 @@ context(PageContext) private fun FlowContent.team() {
 }
 
 context(PageContext) private fun FlowContent.mentors() {
-    val mentors = findByType("magprog_mentor").mapValues { Person(it.value) }.entries.sortedBy { it.value.id }
+    val mentors = findByType("magprog_mentor").entries.sortedBy { it.value.id }
 
     div("inner") {
         h2 {
@@ -191,7 +194,7 @@ context(PageContext) private fun FlowContent.mentors() {
         section {
             id = mentor.id
             a(classes = "image", href = resolveRef("mentor-${mentor.id}")) {
-                mentor.photo?.let { photoPath ->
+                mentor.imagePath?.let { photoPath ->
                     img(
                         src = resolveRef(photoPath),
                         alt = mentor.name
@@ -287,7 +290,7 @@ context(PageContext) internal fun BODY.magProgFooter() {
     }
 }
 
-internal val Person.mentorPageId get() = "mentor-${id}"
+private val HtmlData.mentorPageId get() = "mentor-${id}"
 
 internal fun Application.spcMaster(context: Context, dataPath: Path, prefix: String = "/magprog") {
 
@@ -371,9 +374,7 @@ internal fun Application.spcMaster(context: Context, dataPath: Path, prefix: Str
                     }
                 }
 
-                val mentors = findByType("magprog_mentor").map {
-                    Person(it.value)
-                }.sortedBy {
+                val mentors = findByType("magprog_mentor").values.sortedBy {
                     it.order
                 }
 
@@ -388,7 +389,7 @@ internal fun Application.spcMaster(context: Context, dataPath: Path, prefix: Str
                                         href = "$homeRef#mentors"
                                         +"Научные руководители"
                                     }
-                                    nav{
+                                    nav {
                                         ul {
                                             mentors.forEach {
                                                 li {
@@ -407,8 +408,9 @@ internal fun Application.spcMaster(context: Context, dataPath: Path, prefix: Str
                                         id = "main"
                                         div("inner") {
                                             h1("major") { +mentor.name }
-                                            span("image left") {
-                                                mentor.photo?.let { photoPath ->
+                                            val imageClass = mentor.meta["image.position"].string ?: "left"
+                                            span("image $imageClass") {
+                                                mentor.imagePath?.let { photoPath ->
                                                     img(
                                                         src = resolveRef(photoPath),
                                                         alt = mentor.name

@@ -2,7 +2,9 @@
 content_type: magprog_mentor
 name: Виталий Кондратов
 id: Kondratov
-photo: images/mentors/Kondratov.jpg
+image: 
+    path: images/mentors/Kondratov.jpg
+    position: right
 language: ru
 ---
 

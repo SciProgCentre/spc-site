@@ -2,7 +2,7 @@
 content_type: magprog_mentor
 name: Петр Климай
 id: Klimai
-photo: images/mentors/Klimai.jpg
+image: images/mentors/Klimai.jpg
 language: ru
 ---
 

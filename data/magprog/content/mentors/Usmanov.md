@@ -2,7 +2,7 @@
 content_type: magprog_mentor
 name: Ильмир Усманов
 id: Usmanov
-photo: images/mentors/Usmanov.jpg
+image: images/mentors/Usmanov.jpg
 language: ru
 ---
 

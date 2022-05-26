@@ -2,7 +2,7 @@
 content_type: magprog_mentor
 name: Максим Сергеевич Долгоносов
 id: Dolgonosov
-photo: images/mentors/Dolgonosov.jpg
+image: images/mentors/Dolgonosov.jpg
 language: ru
 ---
 

@@ -2,7 +2,7 @@
 content_type: magprog_mentor
 name: Константин Викторович Герценбергер 
 id: Gertsenberger
-photo: images/mentors/Gertsenberger.jpg
+image: images/mentors/Gertsenberger.jpg
 language: ru
 ---
 #### Организация

@@ -2,7 +2,7 @@
 content_type: magprog_mentor
 name: Игорь Анатольевич Пшеничнов
 id: Pshenichnov
-photo: images/mentors/Pshenichnov.jpg
+image: images/mentors/Pshenichnov.jpg
 language: ru
 ---
 

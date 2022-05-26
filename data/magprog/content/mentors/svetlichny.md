@@ -2,7 +2,7 @@
 content_type: magprog_mentor
 name: Александр Светличный
 id: Svetlichny
-photo: images/mentors/Svetlichny.jpg
+image: images/mentors/Svetlichny.jpg
 language: ru
 ---
 #### Организация

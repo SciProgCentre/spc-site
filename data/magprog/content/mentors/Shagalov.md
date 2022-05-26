@@ -2,7 +2,7 @@
 content_type: magprog_mentor
 name: Лев Михайлович Шагалов
 id: Shagalov
-photo: images/mentors/Shagalov.jpg
+image: images/mentors/Shagalov.jpg
 language: ru
 ---
 

@@ -2,7 +2,7 @@
 content_type: magprog_mentor
 name: Dmitriy Kostunin
 id: Kostunin
-photo: images/mentors/Kostunin.jpg
+image: images/mentors/Kostunin.jpg
 language: ru
 published: false
 ---

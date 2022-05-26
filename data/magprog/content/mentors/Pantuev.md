@@ -2,7 +2,7 @@
 content_type: magprog_mentor
 name: Владислав Сергеевич Пантуев
 id: Pantuev
-photo: images/mentors/Pantuev.jpg
+image: images/mentors/Pantuev.jpg
 language: ru
 ---
 
