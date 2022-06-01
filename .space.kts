@@ -20,8 +20,8 @@ job("Deploy") {
         shellScript {
             interpreter = "/bin/bash"
             content = """
-            	echo ${'$'}ID > id
-                scp -r -i id /mnt/space/share/spc-site/ "${'$'}USER@${'$'}HOST:/opt"
+            	echo ${'$'}ID > id.key
+                scp -r -i id.key /mnt/space/share/spc-site/ "${'$'}USER@${'$'}HOST:/opt"
             """.trimIndent()
         }
     }
