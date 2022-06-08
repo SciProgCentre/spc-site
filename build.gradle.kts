@@ -65,6 +65,7 @@ val writeBuildDate: Task by tasks.creating {
         file.writeText(deployDate.toString())
     }
     outputs.file("resources/main/buildDate")
+    outputs.upToDateWhen { false }
 }
 
 
