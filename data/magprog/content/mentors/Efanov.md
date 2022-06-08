@@ -1,6 +1,6 @@
 ---
 content_type: magprog_mentor
-name: Ефанов Андрей Александрович
+name: Андрей Александрович Ефанов
 id: Efanov
 image: images/mentors/Efanov.jpg
 language: ru
