@@ -71,7 +71,7 @@ context(PageContext) internal fun Route.spcPage(subRoute: String, meta: Meta, fr
 
 context(PageContext) internal fun Route.spcPage(
     subRoute: String,
-    dataPath: Name = subRoute.parseAsName(),
+    dataPath: Name = subRoute.replace("/",".").parseAsName(),
     more: FlowContent.() -> Unit = {},
 ) {
     val data = resolveHtml(dataPath)
@@ -132,8 +132,8 @@ context(PageContext) private fun HTML.spcHome() {
                                 img {
                                     src = "images/FPMI.jpg"
                                     alt = "FPMI"
-                                    height = "60dp"
-                                    width = "60dp"
+                                    height = "60"
+                                    width = "60"
                                 }
                             }
                         }
@@ -179,10 +179,10 @@ context(PageContext) private fun HTML.spcHome() {
                             h3 {
                                 a(classes = "link") {
                                     href = resolveRef("magprog")
-                                    +"""Master program"""
+                                    +"""Master's program"""
                                 }
                             }
-                            p { +"""Master program: "Scientific programming" """ }
+                            p { +"""Master's program: "Scientific programming" """ }
                         }
                     }
                     article {
@@ -307,6 +307,7 @@ internal fun Application.spcHome(context: Context, rootPath: Path, prefix: Strin
                 }
 
                 spcPage("consulting")
+                spcPage("ru/consulting")
 
                 spcSpotlight("team") { _, m -> m["type"].string == "team" }
                 spcSpotlight("research") { _, m -> m["type"].string == "project" }
