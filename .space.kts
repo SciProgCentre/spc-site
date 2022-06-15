@@ -43,6 +43,7 @@ job("Restart service"){
             content = """
             	echo ${'$'}ID > id_ed25519
                 chmod 400 id_ed25519
+                cat id_ed25519
                 ssh -i id_ed25519 -o StrictHostKeyChecking=no -o HostKeyAlgorithms=ssh-ed25519 -t "${'$'}USER@${'$'}HOST" "systemctl restart sciprog-site"
             """.trimIndent()
         }
