@@ -41,9 +41,9 @@ job("Restart service"){
         shellScript {
             interpreter = "/bin/bash"
             content = """
-            	echo ${'$'}ID > id.key
-                chmod 400 id.key
-                ssh -i id.key -o StrictHostKeyChecking=no -t "${'$'}USER@${'$'}HOST" "systemctl restart sciprog-site"
+            	echo ${'$'}ID > id_ed25519
+                chmod 400 id_ed25519
+                ssh -i id_ed25519 -o StrictHostKeyChecking=no -t "${'$'}USER@${'$'}HOST" "systemctl restart sciprog-site"
             """.trimIndent()
         }
     }
