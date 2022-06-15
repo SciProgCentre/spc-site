@@ -21,6 +21,7 @@ job("Deploy") {
             interpreter = "/bin/bash"
             content = """
             	echo ${'$'}ID > id.key
+                chmod 400 id.key
                 scp -r -i id.key /mnt/space/share/spc-site/ "${'$'}USER@${'$'}HOST:/opt"
             """.trimIndent()
         }
