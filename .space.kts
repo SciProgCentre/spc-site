@@ -33,7 +33,7 @@ job("Restart service"){
         gitPush { enabled = false }
     }
     
-    container(image = "ubuntu") {
+    container(image = "openjdk:11") {
         env["HOST"] = Params("spc-host")
         env["USER"] = Secrets("spc-webmaster-user")
         env["ID"] = Secrets("spc-webmaster-id")
@@ -43,7 +43,7 @@ job("Restart service"){
             content = """
             	echo ${'$'}ID > id.key
                 chmod 400 id.key
-                ssh -i id.key -t "${'$'}USER@${'$'}HOST" "systemctl restart sciprog-site"
+                ssh -i id.key -o StrictHostKeyChecking=no -t "${'$'}USER@${'$'}HOST" "systemctl restart sciprog-site"
             """.trimIndent()
         }
     }
