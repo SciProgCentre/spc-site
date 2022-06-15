@@ -5,6 +5,9 @@ section_title: О программе
 language: ru
 ---
 
+<iframe width="100%" height="315" src="https://www.youtube.com/embed/pniPs5ne294" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+
 Магистерская программа МФТИ **"Научное программное обеспечение"** (старое название: **"Разработка и применение программного обеспечения в физических исследованиях"**) создана при поддержке двух школ МФТИ: Физтех-школы физики и исследований им. Ландау ([ЛФИ](https://mipt.ru/education/departments/lpr/)), Физтех-школы прикладной математики и информатики ([ФПМИ](https://mipt.ru/education/departments/fpmi/)) а также ряда академических и промышленных партнеров. В ее основе лежит взаимодействие студента и [научного руководителя](#mentors). 
 
 Цель создания программы &mdash; объединение усилий ученых и программистов для разработки лучших компьютерных решений и применения этих решений в области фундаментальной и прикладной науки и инженерии.

@@ -11,11 +11,12 @@ import io.ktor.server.routing.*
 import kotlinx.html.*
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.fetch
+import space.kscience.dataforge.data.filterByType
+import space.kscience.dataforge.data.forEach
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.string
-import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.parseAsName
+import space.kscience.dataforge.names.*
 import space.kscience.dataforge.values.string
 import space.kscience.snark.*
 import java.nio.file.Path
@@ -71,7 +72,7 @@ context(PageContext) internal fun Route.spcPage(subRoute: String, meta: Meta, fr
 
 context(PageContext) internal fun Route.spcPage(
     subRoute: String,
-    dataPath: Name = subRoute.replace("/",".").parseAsName(),
+    dataPath: Name = subRoute.replace("/", ".").parseAsName(),
     more: FlowContent.() -> Unit = {},
 ) {
     val data = resolveHtml(dataPath)
@@ -83,7 +84,26 @@ context(PageContext) internal fun Route.spcPage(
     } else {
         application.log.error("Content for page with path $dataPath not found")
     }
+}
 
+/**
+ * Route a directory
+ */
+context(PageContext) internal fun Route.spcDirectory(
+    subRoute: String,
+    dataPath: Name = subRoute.replace("/", ".").parseAsName(),
+) {
+    data.filterByType<HtmlFragment> { name, _ -> name.startsWith(dataPath) }.forEach { html ->
+        val pageName = if (html.name.lastOrNull()?.body == PageContext.INDEX_PAGE_NAME) {
+            html.name.cutLast()
+        } else {
+            html.name
+        }
+
+        spcPage(pageName.tokens.joinToString(separator = "/"), html.meta) {
+            htmlData(html)
+        }
+    }
 }
 
 context(PageContext) internal fun Route.spcPage(
@@ -306,11 +326,11 @@ internal fun Application.spcHome(context: Context, rootPath: Path, prefix: Strin
                     }
                 }
 
-                spcPage("consulting")
+                spcDirectory("consulting")
                 spcPage("ru/consulting")
 
                 spcSpotlight("team") { _, m -> m["type"].string == "team" }
-                spcSpotlight("research") { _, m -> m["type"].string == "project" }
+                spcSpotlight("research") { name, m -> name.startsWith("projects".asName()) && m["type"].string == "project" }
             }
         }
     }

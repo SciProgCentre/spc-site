@@ -349,6 +349,14 @@ internal fun Application.spcMaster(context: Context, dataPath: Path, prefix: Str
                                 div("inner") {
                                     nav {
                                         ul {
+                                            li {
+                                                a(href = "/"){
+                                                    i("fa fa-home") {
+                                                        attributes["aria-hidden"] = "true"
+                                                    }
+                                                    +"SPC"
+                                                }
+                                            }
                                             sections.forEach { section ->
                                                 li {
                                                     a(href = "#${section.id}") {

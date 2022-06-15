@@ -11,11 +11,17 @@ import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.string
 import space.kscience.dataforge.names.Name
+import space.kscience.dataforge.names.plus
 import space.kscience.dataforge.names.startsWith
+import space.kscience.snark.PageContext.Companion.INDEX_PAGE_NAME
 import java.nio.file.Path
 
 data class PageContext(val path: String, val pageMeta: Meta, val data: DataSet<*>) {
     val language: String? by pageMeta.string()
+
+    companion object {
+        const val INDEX_PAGE_NAME: String = "index"
+    }
 }
 
 /**
@@ -23,13 +29,17 @@ data class PageContext(val path: String, val pageMeta: Meta, val data: DataSet<*
  */
 fun PageContext.resolveRef(name: String): String = "${path.removeSuffix("/")}/$name"
 
-fun PageContext.resolveRef(name: Name): String = "${path.removeSuffix("/")}/${name.tokens.joinToString ("/")}"
+fun PageContext.resolveRef(name: Name): String = "${path.removeSuffix("/")}/${name.tokens.joinToString("/")}"
 
 /**
  * Resolve a Html builder by its full name
  */
-fun PageContext.resolveHtml(name: Name): HtmlData? = data.getByType<HtmlFragment>(name)?.takeIf {
-    it.published //TODO add language confirmation
+fun PageContext.resolveHtml(name: Name): HtmlData? {
+    val resolved = (data.getByType<HtmlFragment>(name) ?: data.getByType<HtmlFragment>(name + INDEX_PAGE_NAME))
+
+    return resolved?.takeIf {
+        it.published //TODO add language confirmation
+    }
 }
 
 /**
