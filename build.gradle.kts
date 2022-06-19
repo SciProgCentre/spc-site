@@ -82,7 +82,7 @@ if (host != null && user != null || identity != null) {
         group = "distribution"
         dependsOn("installDist")
         doLast {
-            sshUploadDirectory(buildDir.resolve("install"), host, user, "/opt") {
+            sshUploadDirectory(buildDir.resolve("install/spc-site"), host, user, "/opt") {
                 addIdentity("spc-webmaster", identity.encodeToByteArray(), null, null)
             }
         }

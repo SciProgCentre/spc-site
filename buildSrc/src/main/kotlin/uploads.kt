@@ -25,16 +25,18 @@ private fun ChannelSftp.recursiveFolderUpload(sourceFile: File, destinationPath:
             cd(destinationPath)
             var attrs: SftpATTRS? = null
             // check if the directory is already existing
+            val directoryPath = destinationPath + "/" + sourceFile.getName()
             try {
-                attrs = stat(destinationPath + "/" + sourceFile.getName())
+                attrs = stat(directoryPath)
             } catch (e: Exception) {
-                println(destinationPath + "/" + sourceFile.getName() + " not found")
+                println("$directoryPath does not exist")
             }
+            
             // else create a directory
             if (attrs != null) {
-                println("Directory exists IsDir=" + attrs.isDir())
+                println("Directory $directoryPath exists IsDir=${attrs.isDir()}")
             } else {
-                println("Creating dir " + sourceFile.getName())
+                println("Creating directory $directoryPath")
                 mkdir(sourceFile.getName())
             }
             for (f in files) {
