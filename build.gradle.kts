@@ -68,6 +68,32 @@ val writeBuildDate: Task by tasks.creating {
     outputs.upToDateWhen { false }
 }
 
-
 //write build time in build to check outdated external data directory
 tasks.getByName("processResources").dependsOn(writeBuildDate)
+
+/* Upload with JSch */
+
+val host = System.getProperty("SPC_HOST")
+val user = System.getProperty("SPC_USER")
+val identity = System.getProperty("SPC_ID")
+
+if (host != null && user != null && identity != null) {
+    val uploadDistribution by tasks.creating {
+        group = "distribution"
+        dependsOn("installDist")
+        doLast {
+            sshUploadDirectory(buildDir.resolve("install"), host, user, "/opt") {
+                addIdentity("spc-webmaster.key", identity.encodeToByteArray(), null, null)
+            }
+        }
+    }
+
+    val reloadDistribution by tasks.creating {
+        group = "distribution"
+        doLast {
+            sshExecute(host, user, "sudo systemctl restart sciprog-site") {
+                addIdentity("spc-webmaster", identity.encodeToByteArray(), null, null)
+            }
+        }
+    }
+}

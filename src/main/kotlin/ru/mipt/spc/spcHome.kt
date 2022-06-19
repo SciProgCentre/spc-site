@@ -300,7 +300,6 @@ context(PageContext) private fun HTML.spcHome() {
 
 }
 
-
 internal fun Application.spcHome(context: Context, rootPath: Path, prefix: String = "") {
 
     val snark = context.fetch(SnarkPlugin)
