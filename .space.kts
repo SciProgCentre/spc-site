@@ -3,7 +3,7 @@ job("Deploy") {
         gitPush { enabled = false }
     }
 
-    container(image = "mipt-npm.registry.jetbrains.space/p/mipt-npm/containers/kotlin-ci:1.0.2") {
+    container(image = "gradle:jdk17-alpine") {
         env["SPC_HOST"] = Params("spc-host")
         env["SPC_USER"] = Secrets("spc-webmaster.key-user")
         env["SPC_ID"] = Secrets("spc-webmaster.key-id")
@@ -19,7 +19,7 @@ job("Restart service"){
         gitPush { enabled = false }
     }
 
-    container(image = "mipt-npm.registry.jetbrains.space/p/mipt-npm/containers/kotlin-ci:1.0.2") {
+    container(image = "gradle:jdk17-alpine") {
         env["SPC_HOST"] = Params("spc-host")
         env["SPC_USER"] = Secrets("spc-webmaster.key-user")
         env["SPC_ID"] = Secrets("spc-webmaster.key-id")
