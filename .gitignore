@@ -4,3 +4,4 @@ build/
 /logs/
 
 !gradle/wrapper/gradle-wrapper.jar
+/deploy.ps1

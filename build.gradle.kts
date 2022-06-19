@@ -73,17 +73,17 @@ tasks.getByName("processResources").dependsOn(writeBuildDate)
 
 /* Upload with JSch */
 
-val host = System.getProperty("SPC_HOST")
-val user = System.getProperty("SPC_USER")
-val identity = System.getProperty("SPC_ID")
+val host = System.getenv("SPC_HOST")
+val user = System.getenv("SPC_USER")
+val identity = System.getenv("SPC_ID")
 
-if (host != null && user != null && identity != null) {
+if (host != null && user != null || identity != null) {
     val uploadDistribution by tasks.creating {
         group = "distribution"
         dependsOn("installDist")
         doLast {
             sshUploadDirectory(buildDir.resolve("install"), host, user, "/opt") {
-                addIdentity("spc-webmaster.key", identity.encodeToByteArray(), null, null)
+                addIdentity("spc-webmaster", identity.encodeToByteArray(), null, null)
             }
         }
     }
@@ -96,4 +96,7 @@ if (host != null && user != null && identity != null) {
             }
         }
     }
+
+}else {
+    logger.error("Host, user or ID are not defined")
 }
