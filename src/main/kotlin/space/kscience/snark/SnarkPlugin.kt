@@ -50,7 +50,7 @@ internal class SnarkParserWrapper<R : Any>(
     override val fileExtensions: Set<String>,
 ) : SnarkParser<R>, IOReader<R> by reader
 
-
+@Suppress("FunctionName")
 inline fun <reified R : Any> SnarkParser(
     reader: IOReader<R>,
     contentType: ContentType,
