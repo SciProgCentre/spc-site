@@ -8,7 +8,7 @@ job("Deploy") {
         env["SPC_USER"] = Secrets("spc-webmaster-user")
         env["SPC_ID"] = Secrets("spc-webmaster-id")
         kotlinScript { api ->
-            api.gradle("uploadDistribution", "reloadDistribution")
+            api.gradle("uploadDistribution")
         }
     }
 }

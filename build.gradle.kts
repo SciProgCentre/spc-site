@@ -75,15 +75,23 @@ tasks.getByName("processResources").dependsOn(writeBuildDate)
 
 val host = System.getenv("SPC_HOST")
 val user = System.getenv("SPC_USER")
-val identity = System.getenv("SPC_ID")
+val identityString = System.getenv("SPC_ID")
+val serviceName = "sciprog-site"
 
-if (host != null && user != null || identity != null) {
+if (host != null && user != null || identityString != null) {
     val uploadDistribution by tasks.creating {
         group = "distribution"
         dependsOn("installDist")
         doLast {
-            sshUploadDirectory(buildDir.resolve("install/spc-site"), host, user, "/opt") {
-                addIdentity("spc-webmaster", identity.encodeToByteArray(), null, null)
+            JSch {
+                addIdentity("spc-webmaster", identityString.encodeToByteArray(), null, null)
+            }.useSession(host, user) {
+                //stopping service during the upload
+                execute("sudo systemctl stop $serviceName")
+                uploadDirectory(buildDir.resolve("install/spc-site"), "/opt")
+                //adding executable flag to the entry point
+                execute("sudo chmod +x /opt/spc-site/bin/spc-site")
+                execute("sudo systemctl start $serviceName")
             }
         }
     }
@@ -91,12 +99,14 @@ if (host != null && user != null || identity != null) {
     val reloadDistribution by tasks.creating {
         group = "distribution"
         doLast {
-            sshExecute(host, user, "sudo systemctl restart sciprog-site") {
-                addIdentity("spc-webmaster", identity.encodeToByteArray(), null, null)
+            JSch {
+                addIdentity("spc-webmaster", identityString.encodeToByteArray(), null, null)
+            }.useSession(host, user) {
+                execute("sudo systemctl restart $serviceName")
             }
         }
     }
 
-}else {
+} else {
     logger.error("Host, user or ID are not defined. Skipping deployment tasks.")
 }

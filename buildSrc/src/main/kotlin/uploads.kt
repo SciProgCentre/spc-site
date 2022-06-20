@@ -1,7 +1,4 @@
-import com.jcraft.jsch.ChannelSftp
-import com.jcraft.jsch.JSch
-import com.jcraft.jsch.Session
-import com.jcraft.jsch.SftpATTRS
+import com.jcraft.jsch.*
 import java.io.File
 import java.io.FileInputStream
 import java.util.*
@@ -46,37 +43,57 @@ private fun ChannelSftp.recursiveFolderUpload(sourceFile: File, destinationPath:
     }
 }
 
-fun JSch.uploadDirectory(
+fun Session.uploadDirectory(
     file: File,
-    host: String,
-    user: String,
     targetDirectory: String,
-    port: Int = 22,
 ) {
-    var session: Session? = null
     var channel: ChannelSftp? = null
     try {
-        session = getSession(user, host, port)
-
         val config = Properties()
         config["StrictHostKeyChecking"] = "no"
-        session.setConfig(config)
-        session.connect() // Create SFTP Session
-        channel = session.openChannel("sftp") as ChannelSftp // Open SFTP Channel
+        channel = openChannel("sftp") as ChannelSftp // Open SFTP Channel
         channel.connect()
         channel.cd(targetDirectory) // Change Directory on SFTP Server
         channel.recursiveFolderUpload(file, targetDirectory)
     } finally {
         channel?.disconnect()
+    }
+}
+
+fun Session.execute(
+    command: String,
+): String {
+    var channel: ChannelExec? = null
+    try {
+        channel = openChannel("exec") as ChannelExec
+        channel.setCommand(command)
+        channel.inputStream = null
+        channel.setErrStream(System.err)
+        val input = channel.inputStream
+        channel.connect()
+        return input.use { it.readAllBytes().decodeToString() }
+    } finally {
+        channel?.disconnect()
+    }
+}
+
+inline fun JSch.useSession(
+    host: String,
+    user: String,
+    port: Int = 22,
+    block: Session.() -> Unit,
+) {
+    var session: Session? = null
+    try {
+        session = getSession(user, host, port)
+        val config = Properties()
+        config["StrictHostKeyChecking"] = "no"
+        session.setConfig(config)
+        session.connect()
+        session.block()
+    } finally {
         session?.disconnect()
     }
 }
 
-fun sshUploadDirectory(
-    file: File,
-    host: String,
-    user: String,
-    targetDirectory: String,
-    port: Int = 22,
-    shellConfig: JSch.() -> Unit,
-) = JSch().apply(shellConfig).uploadDirectory(file, host, user, targetDirectory, port)
+fun JSch(configuration: JSch.() -> Unit): JSch = JSch().apply(configuration)
