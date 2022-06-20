@@ -1,10 +1,6 @@
 package ru.mipt.spc
 
 import html5up.forty.fortyScripts
-import io.ktor.server.application.call
-import io.ktor.server.html.respondHtml
-import io.ktor.server.routing.Route
-import io.ktor.server.routing.get
 import kotlinx.html.*
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.get
@@ -15,6 +11,13 @@ import space.kscience.dataforge.names.parseAsName
 import space.kscience.dataforge.names.withIndex
 import space.kscience.dataforge.values.string
 import space.kscience.snark.*
+import kotlin.collections.Map
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.forEach
+import kotlin.collections.joinToString
+import kotlin.collections.set
+import kotlin.collections.sortedBy
 
 context(PageContext) private fun FlowContent.spcSpotlightContent(
     landing: HtmlData,
@@ -89,7 +92,7 @@ context(PageContext) private fun FlowContent.spcSpotlightContent(
 }
 
 
-context(PageContext) internal fun Route.spcSpotlight(
+context(PageContext) internal fun SnarkRoute.spcSpotlight(
     name: String,
     contentFilter: (Name, Meta) -> Boolean,
 ) {
@@ -97,29 +100,22 @@ context(PageContext) internal fun Route.spcSpotlight(
     val content = resolveAllHtml(contentFilter)
 
     val meta = body.meta
-    get(name) {
-        withRequest(call.request) {
-            call.respondHtml {
-                val title = meta["title"].string ?: SPC_TITLE
-                spcHead(title)
-                body("is-preload") {
-                    wrapper {
-                        spcSpotlightContent(body, content)
-                    }
-
-                    fortyScripts()
-                }
+    page(name) {
+        val title = meta["title"].string ?: SPC_TITLE
+        spcHead(title)
+        body("is-preload") {
+            wrapper {
+                spcSpotlightContent(body, content)
             }
+
+            fortyScripts()
         }
     }
+
     content.forEach { (name, contentBody) ->
-        get(name.tokens.joinToString("/")) {
-            withRequest(call.request) {
-                call.respondHtml {
-                    spcPageContent(contentBody.meta) {
-                        htmlData(contentBody)
-                    }
-                }
+        page(name.tokens.joinToString("/")){
+            spcPageContent(contentBody.meta) {
+                htmlData(contentBody)
             }
         }
     }

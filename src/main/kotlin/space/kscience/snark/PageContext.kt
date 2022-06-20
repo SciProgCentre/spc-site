@@ -6,6 +6,8 @@ import io.ktor.server.plugins.origin
 import io.ktor.server.request.ApplicationRequest
 import io.ktor.server.request.host
 import io.ktor.server.request.port
+import space.kscience.dataforge.context.Context
+import space.kscience.dataforge.context.ContextAware
 import space.kscience.dataforge.data.*
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.get
@@ -16,7 +18,13 @@ import space.kscience.dataforge.names.startsWith
 import space.kscience.snark.PageContext.Companion.INDEX_PAGE_NAME
 import java.nio.file.Path
 
-data class PageContext(val path: String, val pageMeta: Meta, val data: DataSet<*>) {
+data class PageContext(
+    override val context: Context,
+    val path: String,
+    val pageMeta: Meta,
+    val data: DataSet<*>,
+) : ContextAware {
+
     val language: String? by pageMeta.string()
 
     companion object {
@@ -61,12 +69,13 @@ fun PageContext.findByType(contentType: String, baseName: Name = Name.EMPTY) = r
 
 internal val Data<*>.published: Boolean get() = meta["published"].string != "false"
 
-fun PageContext(rootUrl: String, data: DataSet<*>): PageContext = PageContext(rootUrl, data.meta, data)
+fun PageContext(dfContext: Context, rootUrl: String, data: DataSet<*>): PageContext =
+    PageContext(dfContext, rootUrl, data.meta, data)
 
 fun SnarkPlugin.read(path: Path, rootUrl: String = "/"): PageContext {
     val parsedData: DataSet<Any> = readDirectory(path)
 
-    return PageContext(rootUrl, parsedData)
+    return PageContext(context, rootUrl, parsedData)
 }
 
 /**

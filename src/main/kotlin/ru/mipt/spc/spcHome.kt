@@ -2,13 +2,13 @@ package ru.mipt.spc
 
 import html5up.forty.fortyScripts
 import io.ktor.server.application.Application
-import io.ktor.server.application.call
-import io.ktor.server.application.log
-import io.ktor.server.html.respondHtml
-import io.ktor.server.routing.*
+import io.ktor.server.routing.route
+import io.ktor.server.routing.routing
 import kotlinx.html.*
 import space.kscience.dataforge.context.Context
+import space.kscience.dataforge.context.error
 import space.kscience.dataforge.context.fetch
+import space.kscience.dataforge.context.logger
 import space.kscience.dataforge.data.filterByType
 import space.kscience.dataforge.data.forEach
 import space.kscience.dataforge.meta.Meta
@@ -58,17 +58,13 @@ context(PageContext) internal fun HTML.spcPageContent(
 }
 
 
-context(PageContext) internal fun Route.spcPage(subRoute: String, meta: Meta, fragment: FlowContent.() -> Unit) {
-    get(subRoute) {
-        withRequest(call.request) {
-            call.respondHtml {
-                spcPageContent(meta, fragment = fragment)
-            }
-        }
+context(PageContext) internal fun SnarkRoute.spcPage(subRoute: String, meta: Meta, fragment: FlowContent.() -> Unit) {
+    page(subRoute) {
+        spcPageContent(meta, fragment = fragment)
     }
 }
 
-context(PageContext) internal fun Route.spcPage(
+context(PageContext) internal fun SnarkRoute.spcPage(
     subRoute: String,
     dataPath: Name = subRoute.replace("/", ".").parseAsName(),
     more: FlowContent.() -> Unit = {},
@@ -80,14 +76,14 @@ context(PageContext) internal fun Route.spcPage(
             more()
         }
     } else {
-        application.log.error("Content for page with path $dataPath not found")
+        logger.error { "Content for page with path $dataPath not found" }
     }
 }
 
 /**
  * Route a directory
  */
-context(PageContext) internal fun Route.spcDirectory(
+context(PageContext) internal fun SnarkRoute.spcDirectory(
     subRoute: String,
     dataPath: Name = subRoute.replace("/", ".").parseAsName(),
 ) {
@@ -104,14 +100,14 @@ context(PageContext) internal fun Route.spcDirectory(
     }
 }
 
-context(PageContext) internal fun Route.spcPage(
+context(PageContext) internal fun SnarkRoute.spcPage(
     name: Name,
     more: FlowContent.() -> Unit = {},
 ) {
     spcPage(name.tokens.joinToString("/"), name, more)
 }
 
-context(PageContext) private fun HTML.spcHome() {
+context(PageContext, HTML) private fun HTML.spcHome() {
     spcHead()
     body("is-preload") {
         wrapper {
@@ -309,13 +305,11 @@ internal fun Application.spcHome(context: Context, rootPath: Path, prefix: Strin
             snark(homePageContext) {
                 staticDirectory("assets", rootPath.resolve("assets"))
                 staticDirectory("images", rootPath.resolve("images"))
-                page { spcHome() }
-            }
 
-            with(homePageContext) {
+                page { spcHome() }
 
                 spcDirectory("consulting")
-                spcPage("ru/consulting")
+                spcDirectory("ru/consulting")
 
                 spcSpotlight("team") { _, m -> m["type"].string == "team" }
                 spcSpotlight("research") { name, m -> name.startsWith("projects".asName()) && m["type"].string == "project" }
