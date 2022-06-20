@@ -3,7 +3,9 @@ type: project
 title: VisionForge
 order: 30
 language: en
-image:  images/projects/muon-monitor.png
+image:  
+    path: images/projects/muon-monitor.png
+    position: right
 ---
 
 [![JetBrains Research](https://jb.gg/badges/research.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
@@ -28,3 +30,7 @@ application, currently targeting browser JavaScript and JVM.
 - Scene graph as an object tree with property editor
 - Settings export and import
 - Multiple platform support
+
+## An introduction video
+
+<iframe width="100%" height="315" src="https://www.youtube.com/embed/lzsF0NuhS6g" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>

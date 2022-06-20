@@ -10,6 +10,16 @@ image:
 
 [Repository and documentation](https://github.com/mipt-npm/dataforge-core)
 
+## Publications
+
+* A general overview: https://doi.org/10.1051/epjconf/201817705003
+* An application in "Troitsk nu-mass" experiment: https://doi.org/10.1088/1742-6596/1525/1/012024
+
+## Video
+
+A presentation on application of (old version of) DataForge to Troitsk nu-mass analysis.
+<iframe width="100%" height="315" src="https://www.youtube.com/embed/OpWzLXUZnLI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 ## Questions and Answers
 In this section we will try to cover DataForge main ideas in the form of questions and answers.
 
