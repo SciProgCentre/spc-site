@@ -31,7 +31,7 @@ private fun ChannelSftp.recursiveFolderUpload(sourceFile: File, destinationPath:
             } catch (e: Exception) {
                 println("$directoryPath does not exist")
             }
-            
+
             // else create a directory
             if (attrs != null) {
                 println("Directory $directoryPath exists IsDir=${attrs.isDir()}")

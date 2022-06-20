@@ -98,5 +98,5 @@ if (host != null && user != null || identity != null) {
     }
 
 }else {
-    logger.error("Host, user or ID are not defined")
+    logger.error("Host, user or ID are not defined. Skipping deployment tasks.")
 }
