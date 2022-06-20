@@ -38,7 +38,7 @@ Our research, which primarily includes open source projects, has already been ap
             <img src="images/pic05.jpg" alt="" />
         </span>
         <header class="major">
-            <h3><a>Architecture</a></h3>
+            <h3><a href="consulting/architecture"  class="link">Architecture</a></h3>
             <p>Design the architecture for scientific and technological applications.</p>
         </header>
     </article>
