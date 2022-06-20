@@ -1,6 +1,5 @@
 package space.kscience.snark
 
-import io.ktor.http.ContentType
 import io.ktor.util.extension
 import io.ktor.utils.io.core.readBytes
 import space.kscience.dataforge.context.*
@@ -24,10 +23,11 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
+/**
+ * A parser of binary content including priority flag and file extensions
+ */
 @Type(SnarkParser.TYPE)
 interface SnarkParser<out R : Any> : IOReader<R> {
-    val contentType: ContentType
-
     val fileExtensions: Set<String>
 
     val priority: Int get() = DEFAULT_PRIORITY
@@ -46,16 +46,17 @@ interface SnarkParser<out R : Any> : IOReader<R> {
 internal class SnarkParserWrapper<R : Any>(
     val reader: IOReader<R>,
     override val type: KType,
-    override val contentType: ContentType,
     override val fileExtensions: Set<String>,
 ) : SnarkParser<R>, IOReader<R> by reader
 
+/**
+ * Create a generic parser from reader
+ */
 @Suppress("FunctionName")
 inline fun <reified R : Any> SnarkParser(
     reader: IOReader<R>,
-    contentType: ContentType,
     vararg fileExtensions: String,
-): SnarkParser<R> = SnarkParserWrapper(reader, typeOf<R>(), contentType, fileExtensions.toSet())
+): SnarkParser<R> = SnarkParserWrapper(reader, typeOf<R>(), fileExtensions.toSet())
 
 @OptIn(DFExperimental::class)
 class SnarkPlugin : AbstractPlugin() {
@@ -88,8 +89,11 @@ class SnarkPlugin : AbstractPlugin() {
         SnarkParser.TYPE -> mapOf(
             "html".asName() to SnarkHtmlParser,
             "markdown".asName() to SnarkMarkdownParser,
-            "json".asName() to SnarkParser(JsonMetaFormat, ContentType.Application.Json, "json"),
-            "yaml".asName() to SnarkParser(YamlMetaFormat, ContentType.Application.Json, "yaml", "yml")
+            "json".asName() to SnarkParser(JsonMetaFormat, "json"),
+            "yaml".asName() to SnarkParser(YamlMetaFormat, "yaml", "yml"),
+            "png".asName() to SnarkParser(ImageIOReader, "png"),
+            "jpg".asName() to SnarkParser(ImageIOReader, "jpg", "jpeg"),
+            "gif".asName() to SnarkParser(ImageIOReader, "jpg", "jpeg"),
         )
         else -> super.content(target)
     }

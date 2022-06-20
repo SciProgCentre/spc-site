@@ -5,8 +5,6 @@ import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.application.log
 import io.ktor.server.html.respondHtml
-import io.ktor.server.http.content.files
-import io.ktor.server.http.content.static
 import io.ktor.server.routing.*
 import kotlinx.html.*
 import space.kscience.dataforge.context.Context
@@ -304,26 +302,17 @@ internal fun Application.spcHome(context: Context, rootPath: Path, prefix: Strin
 
     val snark = context.fetch(SnarkPlugin)
 
-    val homePageContext = snark.parse(prefix, rootPath.resolve("content"))
+    val homePageContext = snark.read(rootPath.resolve("content"), prefix)
 
     routing {
         route(prefix) {
+            snark(homePageContext) {
+                staticDirectory("assets", rootPath.resolve("assets"))
+                staticDirectory("images", rootPath.resolve("images"))
+                page { spcHome() }
+            }
+
             with(homePageContext) {
-                static("assets") {
-                    files(rootPath.resolve("assets").toFile())
-                }
-
-                static("images") {
-                    files(rootPath.resolve("images").toFile())
-                }
-
-                get {
-                    withRequest(call.request) {
-                        call.respondHtml {
-                            spcHome()
-                        }
-                    }
-                }
 
                 spcDirectory("consulting")
                 spcPage("ru/consulting")

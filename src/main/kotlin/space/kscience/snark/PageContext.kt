@@ -63,12 +63,15 @@ internal val Data<*>.published: Boolean get() = meta["published"].string != "fal
 
 fun PageContext(rootUrl: String, data: DataSet<*>): PageContext = PageContext(rootUrl, data.meta, data)
 
-fun SnarkPlugin.parse(rootUrl: String, path: Path): PageContext {
+fun SnarkPlugin.read(path: Path, rootUrl: String = "/"): PageContext {
     val parsedData: DataSet<Any> = readDirectory(path)
 
     return PageContext(rootUrl, parsedData)
 }
 
+/**
+ * Substitute uri in [PageContext] with uri in the call to properly resolve relative refs. Only host properties are substituted.
+ */
 context(PageContext) inline fun withRequest(request: ApplicationRequest, block: context(PageContext) () -> Unit) {
     val uri = URLBuilder(
         protocol = URLProtocol.createOrDefault(request.origin.scheme),

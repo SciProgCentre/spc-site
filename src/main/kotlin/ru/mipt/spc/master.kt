@@ -296,7 +296,7 @@ internal fun Application.spcMaster(context: Context, dataPath: Path, prefix: Str
 
     val snark = context.fetch(SnarkPlugin)
 
-    val magProgPageContext: PageContext = snark.parse(prefix, dataPath.resolve("content"))
+    val magProgPageContext: PageContext = snark.read(dataPath.resolve("content"), prefix)
 
     routing {
         route(prefix) {
