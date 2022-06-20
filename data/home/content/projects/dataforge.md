@@ -12,8 +12,8 @@ image:
 
 ## Publications
 
-* A general overview: https://doi.org/10.1051/epjconf/201817705003
-* An application in "Troitsk nu-mass" experiment: https://doi.org/10.1088/1742-6596/1525/1/012024
+* [A general overview](https://doi.org/10.1051/epjconf/201817705003)
+* [An application in "Troitsk nu-mass" experiment](https://doi.org/10.1088/1742-6596/1525/1/012024)
 
 ## Video
 
