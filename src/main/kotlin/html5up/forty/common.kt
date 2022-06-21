@@ -1,7 +1,7 @@
 package html5up.forty
 
 import kotlinx.html.*
-import space.kscience.snark.PageContext
+import space.kscience.snark.SiteContext
 import space.kscience.snark.resolveRef
 
 
@@ -201,7 +201,7 @@ internal fun FlowContent.fortyFooter() {
     }
 }
 
-context(PageContext) internal fun BODY.fortyScripts() {
+context(SiteContext) internal fun BODY.fortyScripts() {
     script {
         src = resolveRef("assets/js/jquery.min.js")
     }

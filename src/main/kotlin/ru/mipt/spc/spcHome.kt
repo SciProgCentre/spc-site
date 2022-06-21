@@ -20,7 +20,7 @@ import space.kscience.snark.*
 import java.nio.file.Path
 
 
-context(PageContext) internal fun HTML.spcPageContent(
+context(SiteContext) internal fun HTML.spcPageContent(
     meta: Meta,
     title: String = meta["title"].string ?: SPC_TITLE,
     fragment: FlowContent.() -> Unit,
@@ -58,13 +58,13 @@ context(PageContext) internal fun HTML.spcPageContent(
 }
 
 
-context(PageContext) internal fun SnarkRoute.spcPage(subRoute: String, meta: Meta, fragment: FlowContent.() -> Unit) {
+context(SiteContext) internal fun SiteBuilder.spcPage(subRoute: String, meta: Meta, fragment: FlowContent.() -> Unit) {
     page(subRoute) {
         spcPageContent(meta, fragment = fragment)
     }
 }
 
-context(PageContext) internal fun SnarkRoute.spcPage(
+context(SiteContext) internal fun SiteBuilder.spcPage(
     subRoute: String,
     dataPath: Name = subRoute.replace("/", ".").parseAsName(),
     more: FlowContent.() -> Unit = {},
@@ -83,12 +83,12 @@ context(PageContext) internal fun SnarkRoute.spcPage(
 /**
  * Route a directory
  */
-context(PageContext) internal fun SnarkRoute.spcDirectory(
+context(SiteContext) internal fun SiteBuilder.spcDirectory(
     subRoute: String,
     dataPath: Name = subRoute.replace("/", ".").parseAsName(),
 ) {
     data.filterByType<HtmlFragment> { name, _ -> name.startsWith(dataPath) }.forEach { html ->
-        val pageName = if (html.name.lastOrNull()?.body == PageContext.INDEX_PAGE_NAME) {
+        val pageName = if (html.name.lastOrNull()?.body == SiteContext.INDEX_PAGE_NAME) {
             html.name.cutLast()
         } else {
             html.name
@@ -100,14 +100,14 @@ context(PageContext) internal fun SnarkRoute.spcDirectory(
     }
 }
 
-context(PageContext) internal fun SnarkRoute.spcPage(
+context(SiteContext) internal fun SiteBuilder.spcPage(
     name: Name,
     more: FlowContent.() -> Unit = {},
 ) {
     spcPage(name.tokens.joinToString("/"), name, more)
 }
 
-context(PageContext, HTML) private fun HTML.spcHome() {
+context(SiteContext, HTML) private fun HTML.spcHome() {
     spcHead()
     body("is-preload") {
         wrapper {
@@ -302,7 +302,7 @@ internal fun Application.spcHome(context: Context, rootPath: Path, prefix: Strin
 
     routing {
         route(prefix) {
-            snark(homePageContext) {
+            snarkSite(homePageContext) {
                 staticDirectory("assets", rootPath.resolve("assets"))
                 staticDirectory("images", rootPath.resolve("images"))
 

@@ -11,15 +11,11 @@ import space.kscience.dataforge.names.parseAsName
 import space.kscience.dataforge.names.withIndex
 import space.kscience.dataforge.values.string
 import space.kscience.snark.*
-import kotlin.collections.Map
 import kotlin.collections.component1
 import kotlin.collections.component2
-import kotlin.collections.forEach
-import kotlin.collections.joinToString
 import kotlin.collections.set
-import kotlin.collections.sortedBy
 
-context(PageContext) private fun FlowContent.spcSpotlightContent(
+context(SiteContext) private fun FlowContent.spcSpotlightContent(
     landing: HtmlData,
     content: Map<Name, HtmlData>,
 ) {
@@ -92,7 +88,7 @@ context(PageContext) private fun FlowContent.spcSpotlightContent(
 }
 
 
-context(PageContext) internal fun SnarkRoute.spcSpotlight(
+context(SiteContext) internal fun SiteBuilder.spcSpotlight(
     name: String,
     contentFilter: (Name, Meta) -> Boolean,
 ) {

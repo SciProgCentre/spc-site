@@ -69,7 +69,6 @@ class SnarkPlugin : AbstractPlugin() {
         context.gather(SnarkParser.TYPE, true)
     }
 
-
     fun readDirectory(path: Path): DataTree<Any> = io.readDataDirectory(path) { dataPath, meta ->
         val fileExtension = meta[FileData.META_FILE_EXTENSION_KEY].string ?: dataPath.extension
         val parser: SnarkParser<*>? = parsers.values.filter { parser ->
@@ -84,6 +83,9 @@ class SnarkPlugin : AbstractPlugin() {
         }
     }
 
+    fun layout(meta: Meta): SiteLayout = when(meta[SiteLayout.LAYOUT_KEY]){
+        else -> DefaultSiteLayout
+    }
 
     override fun content(target: String): Map<Name, Any> = when (target) {
         SnarkParser.TYPE -> mapOf(

@@ -1,10 +1,10 @@
 package html5up.forty
 
 import kotlinx.html.*
-import space.kscience.snark.PageContext
+import space.kscience.snark.SiteContext
 import space.kscience.snark.resolveRef
 
-context(PageContext) internal fun HTML.fortyPage(){
+context(SiteContext) internal fun HTML.fortyPage(){
     head {
         title {
         }
