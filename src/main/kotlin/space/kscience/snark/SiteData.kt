@@ -1,11 +1,5 @@
 package space.kscience.snark
 
-import io.ktor.http.URLBuilder
-import io.ktor.http.URLProtocol
-import io.ktor.server.plugins.origin
-import io.ktor.server.request.ApplicationRequest
-import io.ktor.server.request.host
-import io.ktor.server.request.port
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.ContextAware
 import space.kscience.dataforge.data.*
@@ -93,14 +87,3 @@ internal val Data<*>.published: Boolean get() = meta["published"].string != "fal
 //
 //    return readData(parsedData, rootUrl)
 //}
-
-@PublishedApi
-internal fun SiteData.copyWithRequestHost(request: ApplicationRequest): SiteData {
-    val uri = URLBuilder(
-        protocol = URLProtocol.createOrDefault(request.origin.scheme),
-        host = request.host(),
-        port = request.port(),
-        pathSegments = baseUrlPath.split("/"),
-    )
-    return copy(baseUrlPath = uri.buildString())
-}

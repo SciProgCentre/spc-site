@@ -1,8 +1,5 @@
 package space.kscience.snark
 
-import io.ktor.server.application.Application
-import io.ktor.server.routing.Route
-import io.ktor.server.routing.routing
 import kotlinx.html.HTML
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.ContextAware
@@ -66,27 +63,3 @@ public fun SiteBuilder.mountSite(route: Name, dataRoot: DataTree<*>, block: Site
         withData(mountedData).block()
     }
 }
-
-inline fun Route.mountSnark(
-    data: SiteData,
-    block: context(SiteData, SiteBuilder)() -> Unit,
-) {
-    block(data, KtorSiteBuilder(data, this@mountSnark))
-}
-
-fun Application.mountSnark(
-    data: SiteData,
-    block: context(SiteData, SiteBuilder)() -> Unit,
-) {
-    routing {
-        mountSnark(data, block)
-    }
-}
-
-fun Application.mountSnark(
-    snarkPlugin: SnarkPlugin,
-    block: context(SiteData, SiteBuilder)() -> Unit,
-) {
-    mountSnark(SiteData.empty(snarkPlugin), block)
-}
-

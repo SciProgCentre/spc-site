@@ -221,7 +221,7 @@ context(SiteData) internal fun HTML.magProgHead(title: String) {
         }
         link {
             rel = "stylesheet"
-            href = resolveRef("css/main.css")
+            href = resolveRef("assets/css/main.css")
         }
         link {
             rel = "shortcut icon"
@@ -230,7 +230,7 @@ context(SiteData) internal fun HTML.magProgHead(title: String) {
         noScript {
             link {
                 rel = "stylesheet"
-                href = resolveRef("css/noscript.css")
+                href = resolveRef("assets/css/noscript.css")
             }
         }
     }
@@ -253,25 +253,25 @@ context(SiteData) internal fun BODY.magProgFooter() {
         }
     }
     script {
-        src = resolveRef("js/jquery.min.js")
+        src = resolveRef("assets/js/jquery.min.js")
     }
     script {
-        src = resolveRef("js/jquery.scrollex.min.js")
+        src = resolveRef("assets/js/jquery.scrollex.min.js")
     }
     script {
-        src = resolveRef("js/jquery.scrolly.min.js")
+        src = resolveRef("assets/js/jquery.scrolly.min.js")
     }
     script {
-        src = resolveRef("js/browser.min.js")
+        src = resolveRef("assets/js/browser.min.js")
     }
     script {
-        src = resolveRef("js/breakpoints.min.js")
+        src = resolveRef("assets/js/breakpoints.min.js")
     }
     script {
-        src = resolveRef("js/util.js")
+        src = resolveRef("assets/js/util.js")
     }
     script {
-        src = resolveRef("js/main.js")
+        src = resolveRef("assets/js/main.js")
     }
 }
 
@@ -282,7 +282,7 @@ internal fun SiteBuilder.spcMaster(dataPath: Path, prefix: Name = "magprog".asNa
     val magProgSiteContext = snark.readDirectory(dataPath.resolve("content"))
 
     mountSite(prefix, magProgSiteContext) {
-        assetDirectory("", dataPath.resolve("assets"))
+        assetDirectory("assets", dataPath.resolve("assets"))
         assetDirectory("images", dataPath.resolve("images"))
 
         page {

@@ -8,7 +8,7 @@ import kotlinx.html.style
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.fetch
 import space.kscience.snark.SnarkPlugin
-import space.kscience.snark.mountSnark
+import space.kscience.snark.site
 import java.net.URI
 import java.nio.file.FileSystems
 import java.nio.file.Files
@@ -50,7 +50,7 @@ fun Application.spcModule() {
     val context = Context("spc-site") {
         plugin(SnarkPlugin)
     }
-    val snarkPlugin = context.fetch(SnarkPlugin)
+    val snark = context.fetch(SnarkPlugin)
 
     val dataPath = Path.of("data")
 
@@ -86,16 +86,16 @@ fun Application.spcModule() {
         dataPath.resolve(DEPLOY_DATE_FILE).writeText(date)
     }
 
-    mountSnark(snarkPlugin) {
+    snark.site {
         val homeDataPath = resolveData(
-            javaClass.getResource("/home")!!.toURI(),
+            this@spcModule.javaClass.getResource("/home")!!.toURI(),
             dataPath / "home"
         )
 
         spcHome(rootPath = homeDataPath)
 
         val mastersDataPath = resolveData(
-            javaClass.getResource("/magprog")!!.toURI(),
+            this@spcModule.javaClass.getResource("/magprog")!!.toURI(),
             dataPath / "magprog"
         )
 
