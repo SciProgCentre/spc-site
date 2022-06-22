@@ -79,7 +79,6 @@ fun DataTree<*>.resolveAllHtml(predicate: (name: Name, meta: Meta) -> Boolean): 
 
 val SiteData.homeRef get() = resolveRef("").removeSuffix("/")
 
-
 fun SiteData.findByType(contentType: String, baseName: Name = Name.EMPTY) = resolveAllHtml { name, meta ->
     name.startsWith(baseName) && meta["content_type"].string == contentType
 }

@@ -65,7 +65,7 @@ internal val FortyDataRenderer: SiteBuilder.(Data<*>) -> Unit = { data ->
 }
 
 
-context(SiteData, HTML) private fun HTML.spcHome() {
+context(SiteData, HTML) private fun spcHome() {
     spcHead()
     body("is-preload") {
         wrapper {

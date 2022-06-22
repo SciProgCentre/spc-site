@@ -21,7 +21,7 @@ context(SiteData, FlowContent) private fun spcSpotlightContent(
 ) {
     // Banner
     // Note: The "styleN" class below should match that of the header element.
-    section("style2") {
+    section("style1") {
         id = "banner"
         div("inner") {
             span("image") {
