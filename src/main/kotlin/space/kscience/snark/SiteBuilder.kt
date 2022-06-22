@@ -9,71 +9,78 @@ import io.ktor.server.routing.get
 import kotlinx.html.HTML
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.ContextAware
+import space.kscience.dataforge.names.Name
+import space.kscience.dataforge.names.parseAsName
 import java.nio.file.Path
 
+internal fun Name.toWebPath() = tokens.joinToString(separator = "/")
 /**
  * An abstraction, which is used to render sites to the different rendering engines
  */
 interface SiteBuilder : ContextAware {
 
-    val siteContext: SiteContext
+    val data: SiteData
 
-    override val context: Context get() = siteContext.context
+    override val context: Context get() = data.context
 
-    fun staticFile(remotePath: String, file: Path)
+    fun assetFile(remotePath: String, file: Path)
 
-    fun staticDirectory(remotePath: String, directory: Path)
+    fun assetDirectory(remotePath: String, directory: Path)
 
-    fun staticResourceFile(remotePath: String, resourcesPath: String)
+    fun assetResourceFile(remotePath: String, resourcesPath: String)
 
-    fun staticResourceDirectory(resourcesPath: String)
+    fun assetResourceDirectory(resourcesPath: String)
 
-    fun page(route: String = "", content: context(SiteContext, HTML) () -> Unit)
+    fun page(route: Name = Name.EMPTY, content: context(SiteData, HTML) () -> Unit)
 
     /**
      * Create a route
      */
-    fun route(subRoute: String): SiteBuilder
+    fun route(subRoute: Name): SiteBuilder
 }
 
-public inline fun SiteBuilder.route(route: String, block: SiteBuilder.() -> Unit) {
+public inline fun SiteBuilder.route(route: Name, block: SiteBuilder.() -> Unit) {
     route(route).apply(block)
 }
 
-class KtorSiteRoute(override val siteContext: SiteContext, private val ktorRoute: Route) : SiteBuilder {
-    override fun staticFile(remotePath: String, file: Path) {
+public inline fun SiteBuilder.route(route: String, block: SiteBuilder.() -> Unit) {
+    route(route.parseAsName()).apply(block)
+}
+
+class KtorSiteRoute(override val data: SiteData, private val ktorRoute: Route) : SiteBuilder {
+    override fun assetFile(remotePath: String, file: Path) {
         ktorRoute.file(remotePath, file.toFile())
     }
 
-    override fun staticDirectory(remotePath: String, directory: Path) {
+    override fun assetDirectory(remotePath: String, directory: Path) {
         ktorRoute.static(remotePath) {
             files(directory.toFile())
         }
     }
 
-    override fun page(route: String, content: context(SiteContext, HTML)() -> Unit) {
-        ktorRoute.get(route) {
+    override fun page(route: Name, content: context(SiteData, HTML)() -> Unit) {
+        ktorRoute.get(route.toWebPath()) {
             call.respondHtml {
-                content(siteContext.copyWithRequestHost(call.request), this)
+                content(data.copyWithRequestHost(call.request), this)
             }
         }
     }
 
-    override fun route(subRoute: String): SiteBuilder =
-        KtorSiteRoute(siteContext, ktorRoute.createRouteFromPath(subRoute))
+    override fun route(subRoute: Name): SiteBuilder =
+        KtorSiteRoute(data, ktorRoute.createRouteFromPath(subRoute.toWebPath()))
 
-    override fun staticResourceFile(remotePath: String, resourcesPath: String) {
+    override fun assetResourceFile(remotePath: String, resourcesPath: String) {
         ktorRoute.resource(resourcesPath, resourcesPath)
     }
 
-    override fun staticResourceDirectory(resourcesPath: String) {
+    override fun assetResourceDirectory(resourcesPath: String) {
         ktorRoute.resources(resourcesPath)
     }
 }
 
 inline fun Route.snarkSite(
-    siteContext: SiteContext,
-    block: context(SiteContext, SiteBuilder)() -> Unit,
+    siteContext: SiteData,
+    block: context(SiteData, SiteBuilder)() -> Unit,
 ) {
     block(siteContext, KtorSiteRoute(siteContext, this@snarkSite))
 }

@@ -15,15 +15,15 @@ import space.kscience.dataforge.meta.string
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.plus
 import space.kscience.dataforge.names.startsWith
-import space.kscience.snark.SiteContext.Companion.INDEX_PAGE_NAME
+import space.kscience.snark.SiteData.Companion.INDEX_PAGE_NAME
 import java.nio.file.Path
 
-data class SiteContext(
+data class SiteData(
     val snark: SnarkPlugin,
-    val path: String,
-    val meta: Meta,
     val data: DataTree<*>,
-) : ContextAware {
+    val urlPath: String,
+    override val meta: Meta = data.meta
+) : ContextAware, DataTree<Any> by data {
 
     override val context: Context get() = snark.context
 
@@ -37,15 +37,15 @@ data class SiteContext(
 /**
  * Resolve a resource full path by its name
  */
-fun SiteContext.resolveRef(name: String): String = "${path.removeSuffix("/")}/$name"
+fun SiteData.resolveRef(name: String): String = "${urlPath.removeSuffix("/")}/$name"
 
-fun SiteContext.resolveRef(name: Name): String = "${path.removeSuffix("/")}/${name.tokens.joinToString("/")}"
+fun SiteData.resolveRef(name: Name): String = "${urlPath.removeSuffix("/")}/${name.tokens.joinToString("/")}"
 
 /**
  * Resolve a Html builder by its full name
  */
-fun SiteContext.resolveHtml(name: Name): HtmlData? {
-    val resolved = (data.getByType<HtmlFragment>(name) ?: data.getByType<HtmlFragment>(name + INDEX_PAGE_NAME))
+fun DataTree<*>.resolveHtml(name: Name): HtmlData? {
+    val resolved = (getByType<HtmlFragment>(name) ?: getByType<HtmlFragment>(name + INDEX_PAGE_NAME))
 
     return resolved?.takeIf {
         it.published //TODO add language confirmation
@@ -55,45 +55,45 @@ fun SiteContext.resolveHtml(name: Name): HtmlData? {
 /**
  * Find all Html blocks using given name/meta filter
  */
-fun SiteContext.resolveAllHtml(predicate: (name: Name, meta: Meta) -> Boolean): Map<Name, HtmlData> =
-    data.filterByType<HtmlFragment> { name, meta ->
+fun DataTree<*>.resolveAllHtml(predicate: (name: Name, meta: Meta) -> Boolean): Map<Name, HtmlData> =
+    filterByType<HtmlFragment> { name, meta ->
         predicate(name, meta)
                 && meta["published"].string != "false"
         //TODO add language confirmation
     }.asSequence().associate { it.name to it.data }
 
-val SiteContext.homeRef get() = resolveRef("").removeSuffix("/")
+val SiteData.homeRef get() = resolveRef("").removeSuffix("/")
 
 
-fun SiteContext.findByType(contentType: String, baseName: Name = Name.EMPTY) = resolveAllHtml { name, meta ->
+fun SiteData.findByType(contentType: String, baseName: Name = Name.EMPTY) = resolveAllHtml { name, meta ->
     name.startsWith(baseName) && meta["content_type"].string == contentType
 }
 
 internal val Data<*>.published: Boolean get() = meta["published"].string != "false"
 
-fun SnarkPlugin.siteContext(rootUrl: String, data: DataTree<*>): SiteContext =
-    SiteContext(this, rootUrl, data.meta, data)
+fun SnarkPlugin.readData(data: DataTree<*>, rootUrl: String = "/"): SiteData =
+    SiteData(this, data, rootUrl)
 
-fun SnarkPlugin.read(path: Path, rootUrl: String = "/"): SiteContext {
+fun SnarkPlugin.readDirectory(path: Path, rootUrl: String = "/"): SiteData {
     val parsedData: DataTree<Any> = readDirectory(path)
 
-    return siteContext(rootUrl, parsedData)
+    return readData(parsedData, rootUrl)
 }
 
 @PublishedApi
-internal fun SiteContext.copyWithRequestHost(request: ApplicationRequest): SiteContext {
+internal fun SiteData.copyWithRequestHost(request: ApplicationRequest): SiteData {
     val uri = URLBuilder(
         protocol = URLProtocol.createOrDefault(request.origin.scheme),
         host = request.host(),
         port = request.port(),
-        pathSegments = path.split("/"),
+        pathSegments = urlPath.split("/"),
     )
-    return copy(path = uri.buildString())
+    return copy(urlPath = uri.buildString())
 }
 
 /**
- * Substitute uri in [SiteContext] with uri in the call to properly resolve relative refs. Only host properties are substituted.
+ * Substitute uri in [SiteData] with uri in the call to properly resolve relative refs. Only host properties are substituted.
  */
-context(SiteContext) inline fun withRequest(request: ApplicationRequest, block: context(SiteContext) () -> Unit) {
+context(SiteData) inline fun withRequest(request: ApplicationRequest, block: context(SiteData) () -> Unit) {
     block(copyWithRequestHost(request))
 }

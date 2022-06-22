@@ -1,9 +1,9 @@
 package html5up.forty
 
 import kotlinx.html.*
-import space.kscience.snark.SiteContext
+import space.kscience.snark.SiteData
 
-context(SiteContext) internal fun HTML.landing(){
+context(SiteData) internal fun HTML.landing(){
     head {
         title {
         }

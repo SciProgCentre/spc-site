@@ -1,14 +1,14 @@
 package ru.mipt.spc
 
 import kotlinx.html.*
-import space.kscience.snark.SiteContext
+import space.kscience.snark.SiteData
 import space.kscience.snark.homeRef
 import space.kscience.snark.resolveRef
 
 
 internal const val SPC_TITLE = "Scientific Programming Centre"
 
-context(SiteContext) internal fun HTML.spcHead(title: String = SPC_TITLE) {
+context(SiteData) internal fun HTML.spcHead(title: String = SPC_TITLE) {
     head {
         title {
             +title
@@ -27,7 +27,7 @@ context(SiteContext) internal fun HTML.spcHead(title: String = SPC_TITLE) {
     }
 }
 
-context(SiteContext) internal fun FlowContent.spcHomeMenu() {
+context(SiteData) internal fun FlowContent.spcHomeMenu() {
     nav {
         id = "menu"
         ul("links") {
@@ -79,7 +79,7 @@ context(SiteContext) internal fun FlowContent.spcHomeMenu() {
     }
 }
 
-context(SiteContext) internal fun FlowContent.spcFooter() {
+context(SiteData) internal fun FlowContent.spcFooter() {
     footer {
         id = "footer"
         div("inner") {
@@ -129,7 +129,7 @@ context(SiteContext) internal fun FlowContent.spcFooter() {
     }
 }
 
-context(SiteContext) internal fun FlowContent.wrapper(contentBody: FlowContent.() -> Unit) {
+context(SiteData) internal fun FlowContent.wrapper(contentBody: FlowContent.() -> Unit) {
     div {
         id = "wrapper"
         // Header

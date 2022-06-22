@@ -9,18 +9,20 @@ import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.error
 import space.kscience.dataforge.context.fetch
 import space.kscience.dataforge.context.logger
-import space.kscience.dataforge.data.filterByType
-import space.kscience.dataforge.data.forEach
+import space.kscience.dataforge.data.Data
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.string
-import space.kscience.dataforge.names.*
+import space.kscience.dataforge.names.Name
+import space.kscience.dataforge.names.asName
+import space.kscience.dataforge.names.startsWith
 import space.kscience.dataforge.values.string
 import space.kscience.snark.*
 import java.nio.file.Path
+import kotlin.reflect.typeOf
 
 
-context(SiteContext) internal fun HTML.spcPageContent(
+context(SiteData) internal fun HTML.spcPageContent(
     meta: Meta,
     title: String = meta["title"].string ?: SPC_TITLE,
     fragment: FlowContent.() -> Unit,
@@ -58,18 +60,18 @@ context(SiteContext) internal fun HTML.spcPageContent(
 }
 
 
-context(SiteContext) internal fun SiteBuilder.spcPage(subRoute: String, meta: Meta, fragment: FlowContent.() -> Unit) {
+internal fun SiteBuilder.spcPage(subRoute: Name, meta: Meta, fragment: FlowContent.() -> Unit) {
     page(subRoute) {
         spcPageContent(meta, fragment = fragment)
     }
 }
 
-context(SiteContext) internal fun SiteBuilder.spcPage(
-    subRoute: String,
-    dataPath: Name = subRoute.replace("/", ".").parseAsName(),
+internal fun SiteBuilder.spcPage(
+    subRoute: Name,
+    dataPath: Name = subRoute,
     more: FlowContent.() -> Unit = {},
 ) {
-    val data = resolveHtml(dataPath)
+    val data = data.resolveHtml(dataPath)
     if (data != null) {
         spcPage(subRoute, data.meta) {
             htmlData(data)
@@ -80,34 +82,46 @@ context(SiteContext) internal fun SiteBuilder.spcPage(
     }
 }
 
-/**
- * Route a directory
- */
-context(SiteContext) internal fun SiteBuilder.spcDirectory(
-    subRoute: String,
-    dataPath: Name = subRoute.replace("/", ".").parseAsName(),
-) {
-    data.filterByType<HtmlFragment> { name, _ -> name.startsWith(dataPath) }.forEach { html ->
-        val pageName = if (html.name.lastOrNull()?.body == SiteContext.INDEX_PAGE_NAME) {
-            html.name.cutLast()
-        } else {
-            html.name
-        }
-
-        spcPage(pageName.tokens.joinToString(separator = "/"), html.meta) {
-            htmlData(html)
+@Suppress("UNCHECKED_CAST")
+internal val FortyDataRenderer: SiteBuilder.(Data<*>) -> Unit = { data ->
+    if(data.type == typeOf<HtmlFragment>()) {
+        data as Data<HtmlFragment>
+        page {
+            spcPageContent(data.meta) {
+                htmlData(data)
+            }
         }
     }
 }
 
-context(SiteContext) internal fun SiteBuilder.spcPage(
+///**
+// * Route a directory
+// */
+//internal fun SiteBuilder.spcDirectory(
+//    subRoute: String,
+//    dataPath: Name = subRoute.replace("/", ".").parseAsName(),
+//) {
+//    data.filterByType<HtmlFragment> { name, _ -> name.startsWith(dataPath) }.forEach { html ->
+//        val pageName = if (html.name.lastOrNull()?.body == SiteData.INDEX_PAGE_NAME) {
+//            html.name.cutLast()
+//        } else {
+//            html.name
+//        }
+//
+//        spcPage(pageName.tokens.joinToString(separator = "/"), html.meta) {
+//            htmlData(html)
+//        }
+//    }
+//}
+
+internal fun SiteBuilder.spcPage(
     name: Name,
     more: FlowContent.() -> Unit = {},
 ) {
-    spcPage(name.tokens.joinToString("/"), name, more)
+    spcPage(name, name, more)
 }
 
-context(SiteContext, HTML) private fun HTML.spcHome() {
+context(SiteData, HTML) private fun HTML.spcHome() {
     spcHead()
     body("is-preload") {
         wrapper {
@@ -298,18 +312,18 @@ internal fun Application.spcHome(context: Context, rootPath: Path, prefix: Strin
 
     val snark = context.fetch(SnarkPlugin)
 
-    val homePageContext = snark.read(rootPath.resolve("content"), prefix)
+    val homePageContext = snark.readDirectory(rootPath.resolve("content"), prefix)
 
     routing {
         route(prefix) {
             snarkSite(homePageContext) {
-                staticDirectory("assets", rootPath.resolve("assets"))
-                staticDirectory("images", rootPath.resolve("images"))
+                assetDirectory("assets", rootPath.resolve("assets"))
+                assetDirectory("images", rootPath.resolve("images"))
 
                 page { spcHome() }
 
-                spcDirectory("consulting")
-                spcDirectory("ru/consulting")
+                pages("consulting", dataRenderer = FortyDataRenderer)
+                //pages("ru.consulting".parseAsName(), dataRenderer = FortyDataRenderer)
 
                 spcSpotlight("team") { _, m -> m["type"].string == "team" }
                 spcSpotlight("research") { name, m -> name.startsWith("projects".asName()) && m["type"].string == "project" }

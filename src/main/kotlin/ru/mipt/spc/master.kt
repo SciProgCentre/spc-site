@@ -80,7 +80,7 @@ private val PROGRAM_PATH: Name = CONTENT_NODE_NAME + "program"
 private val RECOMMENDED_COURSES_PATH: Name = CONTENT_NODE_NAME + "recommendedCourses"
 private val PARTNERS_PATH: Name = CONTENT_NODE_NAME + "partners"
 
-context(SiteContext) private fun FlowContent.programSection() {
+context(SiteData) private fun FlowContent.programSection() {
     val programBlock = resolveHtml(PROGRAM_PATH)!!
     val recommendedBlock = resolveHtml(RECOMMENDED_COURSES_PATH)!!
     div("inner") {
@@ -97,7 +97,7 @@ context(SiteContext) private fun FlowContent.programSection() {
     }
 }
 
-context(SiteContext) private fun FlowContent.partners() {
+context(SiteData) private fun FlowContent.partners() {
     //val partnersData: Meta = resolve<Any>(PARTNERS_PATH)?.meta ?: Meta.EMPTY
     val partnersData: Meta = runBlocking { data.getByType<Meta>(PARTNERS_PATH)?.await() } ?: Meta.EMPTY
     div("inner") {
@@ -127,7 +127,7 @@ context(SiteContext) private fun FlowContent.partners() {
 //    val photo: String? by meta.string()
 //}
 
-context(SiteContext) private fun FlowContent.team() {
+context(SiteData) private fun FlowContent.team() {
     val team = findByType("magprog_team").values.sortedBy { it.order }
 
     div("inner") {
@@ -182,7 +182,7 @@ context(SiteContext) private fun FlowContent.team() {
 //    }
 }
 
-context(SiteContext) private fun FlowContent.mentors() {
+context(SiteData) private fun FlowContent.mentors() {
     val mentors = findByType("magprog_mentor").entries.sortedBy { it.value.id }
 
     div("inner") {
@@ -219,12 +219,12 @@ context(SiteContext) private fun FlowContent.mentors() {
     }
 }
 
-context(SiteContext) internal fun FlowContent.contacts() {
+context(SiteData) internal fun FlowContent.contacts() {
 
 }
 
 
-context(SiteContext) internal fun HTML.magProgHead(title: String) {
+context(SiteData) internal fun HTML.magProgHead(title: String) {
     head {
         this.title = title
         meta {
@@ -251,7 +251,7 @@ context(SiteContext) internal fun HTML.magProgHead(title: String) {
     }
 }
 
-context(SiteContext) internal fun BODY.magProgFooter() {
+context(SiteData) internal fun BODY.magProgFooter() {
     footer("wrapper style1-alt") {
         id = "footer"
         div("inner") {
@@ -296,7 +296,7 @@ internal fun Application.spcMaster(context: Context, dataPath: Path, prefix: Str
 
     val snark = context.fetch(SnarkPlugin)
 
-    val magProgSiteContext: SiteContext = snark.read(dataPath.resolve("content"), prefix)
+    val magProgSiteContext: SiteData = snark.readDirectory(dataPath.resolve("content"), prefix)
 
     routing {
         route(prefix) {
