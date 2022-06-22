@@ -1,14 +1,7 @@
 package ru.mipt.spc
 
 import html5up.forty.fortyScripts
-import io.ktor.server.application.Application
-import io.ktor.server.routing.route
-import io.ktor.server.routing.routing
 import kotlinx.html.*
-import space.kscience.dataforge.context.Context
-import space.kscience.dataforge.context.error
-import space.kscience.dataforge.context.fetch
-import space.kscience.dataforge.context.logger
 import space.kscience.dataforge.data.Data
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.get
@@ -59,32 +52,9 @@ context(SiteData) internal fun HTML.spcPageContent(
     }
 }
 
-
-internal fun SiteBuilder.spcPage(subRoute: Name, meta: Meta, fragment: FlowContent.() -> Unit) {
-    page(subRoute) {
-        spcPageContent(meta, fragment = fragment)
-    }
-}
-
-internal fun SiteBuilder.spcPage(
-    subRoute: Name,
-    dataPath: Name = subRoute,
-    more: FlowContent.() -> Unit = {},
-) {
-    val data = data.resolveHtml(dataPath)
-    if (data != null) {
-        spcPage(subRoute, data.meta) {
-            htmlData(data)
-            more()
-        }
-    } else {
-        logger.error { "Content for page with path $dataPath not found" }
-    }
-}
-
 @Suppress("UNCHECKED_CAST")
 internal val FortyDataRenderer: SiteBuilder.(Data<*>) -> Unit = { data ->
-    if(data.type == typeOf<HtmlFragment>()) {
+    if (data.type == typeOf<HtmlFragment>()) {
         data as Data<HtmlFragment>
         page {
             spcPageContent(data.meta) {
@@ -94,32 +64,6 @@ internal val FortyDataRenderer: SiteBuilder.(Data<*>) -> Unit = { data ->
     }
 }
 
-///**
-// * Route a directory
-// */
-//internal fun SiteBuilder.spcDirectory(
-//    subRoute: String,
-//    dataPath: Name = subRoute.replace("/", ".").parseAsName(),
-//) {
-//    data.filterByType<HtmlFragment> { name, _ -> name.startsWith(dataPath) }.forEach { html ->
-//        val pageName = if (html.name.lastOrNull()?.body == SiteData.INDEX_PAGE_NAME) {
-//            html.name.cutLast()
-//        } else {
-//            html.name
-//        }
-//
-//        spcPage(pageName.tokens.joinToString(separator = "/"), html.meta) {
-//            htmlData(html)
-//        }
-//    }
-//}
-
-internal fun SiteBuilder.spcPage(
-    name: Name,
-    more: FlowContent.() -> Unit = {},
-) {
-    spcPage(name, name, more)
-}
 
 context(SiteData, HTML) private fun HTML.spcHome() {
     spcHead()
@@ -308,26 +252,25 @@ context(SiteData, HTML) private fun HTML.spcHome() {
 
 }
 
-internal fun Application.spcHome(context: Context, rootPath: Path, prefix: String = "") {
+internal fun SiteBuilder.spcHome(rootPath: Path, prefix: Name = Name.EMPTY) {
 
-    val snark = context.fetch(SnarkPlugin)
+    val homePageData = snark.readDirectory(rootPath.resolve("content"))
 
-    val homePageContext = snark.readDirectory(rootPath.resolve("content"), prefix)
+    mountSite(prefix, homePageData) {
+        assetDirectory("assets", rootPath.resolve("assets"))
+        assetDirectory("images", rootPath.resolve("images"))
 
-    routing {
-        route(prefix) {
-            snarkSite(homePageContext) {
-                assetDirectory("assets", rootPath.resolve("assets"))
-                assetDirectory("images", rootPath.resolve("images"))
+        page { spcHome() }
 
-                page { spcHome() }
+        pages("consulting", dataRenderer = FortyDataRenderer)
+        //pages("ru.consulting".parseAsName(), dataRenderer = FortyDataRenderer)
 
-                pages("consulting", dataRenderer = FortyDataRenderer)
-                //pages("ru.consulting".parseAsName(), dataRenderer = FortyDataRenderer)
-
-                spcSpotlight("team") { _, m -> m["type"].string == "team" }
-                spcSpotlight("research") { name, m -> name.startsWith("projects".asName()) && m["type"].string == "project" }
-            }
+        spcSpotlight("team") { _, m ->
+            m["type"].string == "team"
+        }
+        spcSpotlight("research") { name, m ->
+            name.startsWith("projects".asName()) && m["type"].string == "project"
         }
     }
+
 }

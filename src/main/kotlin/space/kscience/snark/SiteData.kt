@@ -13,16 +13,18 @@ import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.string
 import space.kscience.dataforge.names.Name
+import space.kscience.dataforge.names.NameToken
 import space.kscience.dataforge.names.plus
 import space.kscience.dataforge.names.startsWith
 import space.kscience.snark.SiteData.Companion.INDEX_PAGE_NAME
-import java.nio.file.Path
+import kotlin.reflect.KType
+import kotlin.reflect.typeOf
 
 data class SiteData(
     val snark: SnarkPlugin,
     val data: DataTree<*>,
-    val urlPath: String,
-    override val meta: Meta = data.meta
+    val baseUrlPath: String,
+    override val meta: Meta = data.meta,
 ) : ContextAware, DataTree<Any> by data {
 
     override val context: Context get() = snark.context
@@ -30,6 +32,19 @@ data class SiteData(
     val language: String? by meta.string()
 
     companion object {
+        fun empty(
+            snark: SnarkPlugin,
+            baseUrlPath: String = "/",
+            meta: Meta = Meta.EMPTY,
+        ): SiteData {
+            val emptyData = object : DataTree<Any> {
+                override val items: Map<NameToken, DataTreeItem<Any>> get() = emptyMap()
+                override val dataType: KType get() = typeOf<Any>()
+                override val meta: Meta get() = meta
+            }
+            return SiteData(snark, emptyData, baseUrlPath)
+        }
+
         const val INDEX_PAGE_NAME: String = "index"
     }
 }
@@ -37,9 +52,9 @@ data class SiteData(
 /**
  * Resolve a resource full path by its name
  */
-fun SiteData.resolveRef(name: String): String = "${urlPath.removeSuffix("/")}/$name"
+fun SiteData.resolveRef(name: String): String = "${baseUrlPath.removeSuffix("/")}/$name"
 
-fun SiteData.resolveRef(name: Name): String = "${urlPath.removeSuffix("/")}/${name.tokens.joinToString("/")}"
+fun SiteData.resolveRef(name: Name): String = "${baseUrlPath.removeSuffix("/")}/${name.tokens.joinToString("/")}"
 
 /**
  * Resolve a Html builder by its full name
@@ -70,15 +85,15 @@ fun SiteData.findByType(contentType: String, baseName: Name = Name.EMPTY) = reso
 }
 
 internal val Data<*>.published: Boolean get() = meta["published"].string != "false"
-
-fun SnarkPlugin.readData(data: DataTree<*>, rootUrl: String = "/"): SiteData =
-    SiteData(this, data, rootUrl)
-
-fun SnarkPlugin.readDirectory(path: Path, rootUrl: String = "/"): SiteData {
-    val parsedData: DataTree<Any> = readDirectory(path)
-
-    return readData(parsedData, rootUrl)
-}
+//
+//fun SnarkPlugin.readData(data: DataTree<*>, rootUrl: String = "/"): SiteData =
+//    SiteData(this, data, rootUrl)
+//
+//fun SnarkPlugin.readDirectory(path: Path, rootUrl: String = "/"): SiteData {
+//    val parsedData: DataTree<Any> = readDirectory(path)
+//
+//    return readData(parsedData, rootUrl)
+//}
 
 @PublishedApi
 internal fun SiteData.copyWithRequestHost(request: ApplicationRequest): SiteData {
@@ -86,14 +101,7 @@ internal fun SiteData.copyWithRequestHost(request: ApplicationRequest): SiteData
         protocol = URLProtocol.createOrDefault(request.origin.scheme),
         host = request.host(),
         port = request.port(),
-        pathSegments = urlPath.split("/"),
+        pathSegments = baseUrlPath.split("/"),
     )
-    return copy(urlPath = uri.buildString())
-}
-
-/**
- * Substitute uri in [SiteData] with uri in the call to properly resolve relative refs. Only host properties are substituted.
- */
-context(SiteData) inline fun withRequest(request: ApplicationRequest, block: context(SiteData) () -> Unit) {
-    block(copyWithRequestHost(request))
+    return copy(baseUrlPath = uri.buildString())
 }

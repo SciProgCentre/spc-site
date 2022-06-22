@@ -1,17 +1,7 @@
 package ru.mipt.spc
 
-import io.ktor.server.application.Application
-import io.ktor.server.application.call
-import io.ktor.server.html.respondHtml
-import io.ktor.server.http.content.files
-import io.ktor.server.http.content.static
-import io.ktor.server.routing.get
-import io.ktor.server.routing.route
-import io.ktor.server.routing.routing
 import kotlinx.coroutines.runBlocking
 import kotlinx.html.*
-import space.kscience.dataforge.context.Context
-import space.kscience.dataforge.context.fetch
 import space.kscience.dataforge.data.await
 import space.kscience.dataforge.data.getByType
 import space.kscience.dataforge.meta.Meta
@@ -219,11 +209,6 @@ context(SiteData) private fun FlowContent.mentors() {
     }
 }
 
-context(SiteData) internal fun FlowContent.contacts() {
-
-}
-
-
 context(SiteData) internal fun HTML.magProgHead(title: String) {
     head {
         this.title = title
@@ -292,147 +277,133 @@ context(SiteData) internal fun BODY.magProgFooter() {
 
 private val HtmlData.mentorPageId get() = "mentor-${id}"
 
-internal fun Application.spcMaster(context: Context, dataPath: Path, prefix: String = "/magprog") {
+internal fun SiteBuilder.spcMaster(dataPath: Path, prefix: Name = "magprog".asName()) {
 
-    val snark = context.fetch(SnarkPlugin)
+    val magProgSiteContext = snark.readDirectory(dataPath.resolve("content"))
 
-    val magProgSiteContext: SiteData = snark.readDirectory(dataPath.resolve("content"), prefix)
+    mountSite(prefix, magProgSiteContext) {
+        assetDirectory("", dataPath.resolve("assets"))
+        assetDirectory("images", dataPath.resolve("images"))
 
-    routing {
-        route(prefix) {
-            with(magProgSiteContext) {
-                static {
-                    files(dataPath.resolve("assets").toFile())
-
-                    static("images") {
-                        files(dataPath.resolve("images").toFile())
-                    }
+        page {
+            val sections = listOf<MagProgSection>(
+                wrapSection(resolveHtml(INTRO_PATH)!!, "intro"),
+                MagProgSection(
+                    id = "partners",
+                    title = "Партнеры",
+                    style = "wrapper style3 fullscreen fade-up"
+                ) {
+                    partners()
+                },
+                // section(props.data.partners),
+                MagProgSection(
+                    id = "mentors",
+                    title = "Научные руководители",
+                    style = "wrapper style2 spotlights",
+                ) {
+                    mentors()
+                },
+                MagProgSection(
+                    id = "program",
+                    title = "Учебная программа",
+                    style = "wrapper style3 fullscreen fade-up"
+                ) {
+                    programSection()
+                },
+                wrapSection(resolveHtml(ENROLL_PATH)!!, "enroll"),
+                wrapSection(id = "contacts", title = "Контакты") {
+                    htmlData(resolveHtml(CONTACTS_PATH)!!)
+                    team()
                 }
-
-
-                get {
-                    call.respondHtml {
-                        val sections = listOf<MagProgSection>(
-                            wrapSection(resolveHtml(INTRO_PATH)!!, "intro"),
-                            MagProgSection(
-                                id = "partners",
-                                title = "Партнеры",
-                                style = "wrapper style3 fullscreen fade-up"
-                            ) {
-                                partners()
-                            },
-                            // section(props.data.partners),
-                            MagProgSection(
-                                id = "mentors",
-                                title = "Научные руководители",
-                                style = "wrapper style2 spotlights",
-                            ) {
-                                mentors()
-                            },
-                            MagProgSection(
-                                id = "program",
-                                title = "Учебная программа",
-                                style = "wrapper style3 fullscreen fade-up"
-                            ) {
-                                programSection()
-                            },
-                            wrapSection(resolveHtml(ENROLL_PATH)!!, "enroll"),
-                            wrapSection(id = "contacts", title = "Контакты") {
-                                htmlData(resolveHtml(CONTACTS_PATH)!!)
-                                team()
-                            }
-                        )
-                        magProgHead("Магистратура \"Научное программирование\"")
-                        body("is-preload magprog-body") {
-                            section {
-                                id = "sidebar"
-                                div("inner") {
-                                    nav {
-                                        ul {
-                                            li {
-                                                a(href = "/"){
-                                                    i("fa fa-home") {
-                                                        attributes["aria-hidden"] = "true"
-                                                    }
-                                                    +"SPC"
-                                                }
-                                            }
-                                            sections.forEach { section ->
-                                                li {
-                                                    a(href = "#${section.id}") {
-                                                        +section.title
-                                                    }
-                                                }
-                                            }
+            )
+            magProgHead("Магистратура \"Научное программирование\"")
+            body("is-preload magprog-body") {
+                section {
+                    id = "sidebar"
+                    div("inner") {
+                        nav {
+                            ul {
+                                li {
+                                    a(classes = "spc-home", href = "/") {
+                                        i("fa fa-home") {
+                                            attributes["aria-hidden"] = "true"
+                                        }
+                                        +"SPC"
+                                    }
+                                }
+                                sections.forEach { section ->
+                                    li {
+                                        a(href = "#${section.id}") {
+                                            +section.title
                                         }
                                     }
                                 }
                             }
-                            div {
-                                id = "wrapper"
-                                sections.forEach { sec ->
-                                    section(sec.style) {
-                                        id = sec.id
-                                        with(sec) { content() }
-                                    }
-                                }
-                            }
-                            magProgFooter()
                         }
                     }
                 }
-
-                val mentors = findByType("magprog_mentor").values.sortedBy {
-                    it.order
+                div {
+                    id = "wrapper"
+                    sections.forEach { sec ->
+                        section(sec.style) {
+                            id = sec.id
+                            with(sec) { content() }
+                        }
+                    }
                 }
+                magProgFooter()
+            }
+        }
 
-                mentors.forEach { mentor ->
-                    get(mentor.mentorPageId) {
-                        call.respondHtml {
-                            magProgHead("Научное программирование: ${mentor.name}")
-                            body("is-preload") {
-                                header {
-                                    id = "header"
-                                    a(classes = "title") {
-                                        href = "$homeRef#mentors"
-                                        +"Научные руководители"
-                                    }
-                                    nav {
-                                        ul {
-                                            mentors.forEach {
-                                                li {
-                                                    a {
-                                                        href = resolveRef(it.mentorPageId)
-                                                        +it.name.substringAfterLast(" ")
-                                                    }
-                                                }
-                                            }
+
+        val mentors = data.findByType("magprog_mentor").values.sortedBy {
+            it.order
+        }
+
+        mentors.forEach { mentor ->
+            page(mentor.mentorPageId.asName()) {
+
+                magProgHead("Научное программирование: ${mentor.name}")
+                body("is-preload") {
+                    header {
+                        id = "header"
+                        a(classes = "title") {
+                            href = "$homeRef#mentors"
+                            +"Научные руководители"
+                        }
+                        nav {
+                            ul {
+                                mentors.forEach {
+                                    li {
+                                        a {
+                                            href = resolveRef(it.mentorPageId)
+                                            +it.name.substringAfterLast(" ")
                                         }
                                     }
                                 }
-                                div {
-                                    id = "wrapper"
-                                    section("wrapper") {
-                                        id = "main"
-                                        div("inner") {
-                                            h1("major") { +mentor.name }
-                                            val imageClass = mentor.meta["image.position"].string ?: "left"
-                                            span("image $imageClass") {
-                                                mentor.imagePath?.let { photoPath ->
-                                                    img(
-                                                        src = resolveRef(photoPath),
-                                                        alt = mentor.name
-                                                    )
-                                                }
-                                            }
-                                            htmlData(mentor)
-                                        }
-                                    }
-                                }
-                                magProgFooter()
                             }
                         }
                     }
+                    div {
+                        id = "wrapper"
+                        section("wrapper") {
+                            id = "main"
+                            div("inner") {
+                                h1("major") { +mentor.name }
+                                val imageClass = mentor.meta["image.position"].string ?: "left"
+                                span("image $imageClass") {
+                                    mentor.imagePath?.let { photoPath ->
+                                        img(
+                                            src = resolveRef(photoPath),
+                                            alt = mentor.name
+                                        )
+                                    }
+                                }
+                                htmlData(mentor)
+                            }
+                        }
+                    }
+                    magProgFooter()
                 }
             }
         }

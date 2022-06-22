@@ -15,7 +15,7 @@ import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set
 
-context(SiteData) private fun FlowContent.spcSpotlightContent(
+context(SiteData, FlowContent) private fun spcSpotlightContent(
     landing: HtmlData,
     content: Map<Name, HtmlData>,
 ) {
@@ -88,13 +88,13 @@ context(SiteData) private fun FlowContent.spcSpotlightContent(
 }
 
 
-context(SiteData) internal fun SiteBuilder.spcSpotlight(
+internal fun SiteBuilder.spcSpotlight(
     address: String,
     contentFilter: (Name, Meta) -> Boolean,
 ) {
     val name = address.parseAsName()
-    val body = resolveHtml(name) ?: error("Could not find body for $name")
-    val content = resolveAllHtml(contentFilter)
+    val body = data.resolveHtml(name) ?: error("Could not find body for $name")
+    val content = data.resolveAllHtml(contentFilter)
 
     val meta = body.meta
     page(name) {
@@ -110,7 +110,7 @@ context(SiteData) internal fun SiteBuilder.spcSpotlight(
     }
 
     content.forEach { (name, contentBody) ->
-        page(name){
+        page(name) {
             spcPageContent(contentBody.meta) {
                 htmlData(contentBody)
             }
