@@ -6,11 +6,8 @@ import space.kscience.dataforge.data.*
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.string
-import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.NameToken
-import space.kscience.dataforge.names.plus
-import space.kscience.dataforge.names.startsWith
-import space.kscience.snark.SiteData.Companion.INDEX_PAGE_NAME
+import space.kscience.dataforge.names.*
+import space.kscience.snark.SiteData.Companion.INDEX_PAGE_TOKEN
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
@@ -18,7 +15,7 @@ data class SiteData(
     val snark: SnarkPlugin,
     val data: DataTree<*>,
     val baseUrlPath: String,
-    override val meta: Meta = data.meta,
+    override val meta: Meta,
 ) : ContextAware, DataTree<Any> by data {
 
     override val context: Context get() = snark.context
@@ -28,33 +25,49 @@ data class SiteData(
     companion object {
         fun empty(
             snark: SnarkPlugin,
-            baseUrlPath: String = "/",
+            baseUrlPath: String = "",
             meta: Meta = Meta.EMPTY,
         ): SiteData {
+            //TODO use empty data from DF
             val emptyData = object : DataTree<Any> {
                 override val items: Map<NameToken, DataTreeItem<Any>> get() = emptyMap()
                 override val dataType: KType get() = typeOf<Any>()
                 override val meta: Meta get() = meta
             }
-            return SiteData(snark, emptyData, baseUrlPath)
+            return SiteData(snark, emptyData, baseUrlPath, meta)
         }
 
-        const val INDEX_PAGE_NAME: String = "index"
+        const val INDEX_PAGE_TOKEN: String = "index"
     }
 }
 
 /**
  * Resolve a resource full path by its name
  */
-fun SiteData.resolveRef(name: String): String = "${baseUrlPath.removeSuffix("/")}/$name"
+fun SiteData.resolveRef(name: String): String = if (baseUrlPath.isEmpty()) {
+    name
+} else {
+    "${baseUrlPath.removeSuffix("/")}/$name"
+}
 
-fun SiteData.resolveRef(name: Name): String = "${baseUrlPath.removeSuffix("/")}/${name.tokens.joinToString("/")}"
+/**
+ * Resolve a page designated by given name. Depending on rendering specifics, some prefixes or suffixes could be added.
+ */
+fun SiteData.resolvePage(name: Name): String =
+    resolveRef(name.tokens.joinToString("/")) + (meta["pageSuffix"].string ?: "")
+
+/**
+ *
+ */
+fun SiteData.resolvePage(name: String): String = resolvePage(name.parseAsName())
+
+val SiteData.homeRef get() = resolvePage(Name.EMPTY)
 
 /**
  * Resolve a Html builder by its full name
  */
 fun DataTree<*>.resolveHtml(name: Name): HtmlData? {
-    val resolved = (getByType<HtmlFragment>(name) ?: getByType<HtmlFragment>(name + INDEX_PAGE_NAME))
+    val resolved = (getByType<HtmlFragment>(name) ?: getByType<HtmlFragment>(name + INDEX_PAGE_TOKEN))
 
     return resolved?.takeIf {
         it.published //TODO add language confirmation
@@ -71,7 +84,6 @@ fun DataTree<*>.resolveAllHtml(predicate: (name: Name, meta: Meta) -> Boolean): 
         //TODO add language confirmation
     }.asSequence().associate { it.name to it.data }
 
-val SiteData.homeRef get() = resolveRef("").removeSuffix("/")
 
 fun SiteData.findByType(contentType: String, baseName: Name = Name.EMPTY) = resolveAllHtml { name, meta ->
     name.startsWith(baseName) && meta["content_type"].string == contentType

@@ -3,6 +3,7 @@ package ru.mipt.spc
 import kotlinx.html.*
 import space.kscience.snark.SiteData
 import space.kscience.snark.homeRef
+import space.kscience.snark.resolvePage
 import space.kscience.snark.resolveRef
 
 
@@ -39,25 +40,25 @@ context(SiteData) internal fun FlowContent.spcHomeMenu() {
             }
             li {
                 a {
-                    href = resolveRef("magprog")
+                    href = resolvePage("magprog")
                     +"""Master"""
                 }
             }
             li {
                 a {
-                    href = resolveRef("research")
+                    href = resolvePage("research")
                     +"""Research"""
                 }
             }
             li {
                 a {
-                    href = resolveRef("consulting")
+                    href = resolvePage("consulting")
                     +"""Consulting"""
                 }
             }
             li {
                 a {
-                    href = resolveRef("team")
+                    href = resolvePage("team")
                     +"""Team"""
                 }
             }

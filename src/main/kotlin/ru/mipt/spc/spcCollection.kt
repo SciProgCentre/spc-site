@@ -45,7 +45,7 @@ context(SiteData, FlowContent) private fun spcSpotlightContent(
         //TODO add smart SNARK ordering
         section("spotlights") {
             content.entries.sortedBy { it.value.meta["order"].int ?: Int.MAX_VALUE }.forEach { (name, data) ->
-                val ref = resolveRef(name)
+                val ref = resolvePage(name)
                 section {
                     id = data.meta["id"].string ?: name.toString()
                     data.meta["image"]?.let { imageMeta: Meta ->

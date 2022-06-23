@@ -4,6 +4,7 @@ import kotlinx.html.HTML
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.ContextAware
 import space.kscience.dataforge.data.DataTree
+import space.kscience.dataforge.meta.Laminate
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.parseAsName
 import java.nio.file.Path
@@ -56,8 +57,8 @@ public inline fun SiteBuilder.route(route: String, block: SiteBuilder.() -> Unit
 public fun SiteBuilder.mountSite(route: Name, dataRoot: DataTree<*>, block: SiteBuilder.() -> Unit) {
     val mountedData = data.copy(
         data = dataRoot,
-        baseUrlPath = data.baseUrlPath.removeSuffix("/") + "/" + route.toWebPath(),
-        meta = dataRoot.meta // TODO consider meshing sub-site meta with the parent site
+        baseUrlPath = data.resolveRef(route.tokens.joinToString(separator = "/")),
+        meta = Laminate(dataRoot.meta, data.meta) //layering dataRoot meta over existing data
     )
     route(route) {
         withData(mountedData).block()

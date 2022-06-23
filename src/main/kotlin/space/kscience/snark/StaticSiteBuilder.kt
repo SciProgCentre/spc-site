@@ -3,21 +3,22 @@ package space.kscience.snark
 import kotlinx.html.HTML
 import kotlinx.html.html
 import kotlinx.html.stream.createHTML
+import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.isEmpty
 import java.nio.file.Files
 import java.nio.file.Path
-import kotlin.io.path.copyTo
-import kotlin.io.path.createDirectories
-import kotlin.io.path.relativeTo
-import kotlin.io.path.writeText
+import kotlin.io.path.*
 
 
 class StaticSiteBuilder(override val data: SiteData, private val path: Path) : SiteBuilder {
     private fun Path.copyRecursively(target: Path) {
         Files.walk(this).forEach { source: Path ->
             val destination: Path = target.resolve(source.relativeTo(this))
-            source.copyTo(destination,true)
+            if(!destination.isDirectory()) {
+                //avoid re-creating directories
+                source.copyTo(destination, true)
+            }
         }
     }
 
@@ -68,5 +69,12 @@ class StaticSiteBuilder(override val data: SiteData, private val path: Path) : S
 }
 
 fun SnarkPlugin.static(path: Path, block: SiteBuilder.() -> Unit) {
-    StaticSiteBuilder(SiteData.empty(this), path).block()
+    val base = SiteData.empty(
+        this,
+        baseUrlPath = path.absolutePathString(),
+        meta = Meta {
+            "pageSuffix" put "/index.html"
+        }
+    )
+    StaticSiteBuilder(base, path).block()
 }

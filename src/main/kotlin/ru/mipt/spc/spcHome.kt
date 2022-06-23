@@ -150,7 +150,7 @@ context(SiteData, HTML) private fun spcHome() {
                         header("major") {
                             h3 {
                                 a(classes = "link") {
-                                    href = resolveRef("magprog")
+                                    href = resolvePage("magprog")
                                     +"""Master's program"""
                                 }
                             }
@@ -167,7 +167,7 @@ context(SiteData, HTML) private fun spcHome() {
                         header("major") {
                             h3 {
                                 a(classes = "link") {
-                                    href = resolveRef("research")
+                                    href = resolvePage("research")
                                     +"""Research"""
                                 }
                             }
@@ -186,7 +186,7 @@ context(SiteData, HTML) private fun spcHome() {
                         header("major") {
                             h3 {
                                 a(classes = "link") {
-                                    href = resolveRef("consulting")
+                                    href = resolvePage("consulting")
                                     +"""Consulting"""
                                 }
                             }
@@ -203,7 +203,7 @@ context(SiteData, HTML) private fun spcHome() {
                         header("major") {
                             h3 {
                                 a(classes = "link") {
-                                    href = resolveRef("team")
+                                    href = resolvePage("team")
                                     +"""Team"""
                                 }
                             }

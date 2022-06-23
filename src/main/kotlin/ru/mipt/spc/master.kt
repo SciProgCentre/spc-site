@@ -183,7 +183,8 @@ context(SiteData) private fun FlowContent.mentors() {
     mentors.forEach { (name, mentor) ->
         section {
             id = mentor.id
-            a(classes = "image", href = resolveRef("mentor-${mentor.id}")) {
+            val ref = resolvePage("mentor-${mentor.id}")
+            a(classes = "image", href = ref) {
                 mentor.imagePath?.let { photoPath ->
                     img(
                         src = resolveRef(photoPath),
@@ -197,7 +198,7 @@ context(SiteData) private fun FlowContent.mentors() {
             div("content") {
                 div("inner") {
                     h2 {
-                        a(href = resolveRef("mentor-${mentor.id}")) { +mentor.name }
+                        a(href = ref) { +mentor.name }
                     }
                     val info = resolveHtml(name.withIndex("info"))
                     if (info != null) {
@@ -376,7 +377,7 @@ internal fun SiteBuilder.spcMaster(dataPath: Path, prefix: Name = "magprog".asNa
                                 mentors.forEach {
                                     li {
                                         a {
-                                            href = resolveRef(it.mentorPageId)
+                                            href = resolvePage(it.mentorPageId)
                                             +it.name.substringAfterLast(" ")
                                         }
                                     }
