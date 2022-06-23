@@ -73,7 +73,7 @@ fun SnarkPlugin.static(path: Path, block: SiteBuilder.() -> Unit) {
         this,
         baseUrlPath = path.absolutePathString(),
         meta = Meta {
-            "pageSuffix" put "/index.html"
+            "pageSuffix" put ".html"
         }
     )
     StaticSiteBuilder(base, path).block()

@@ -33,6 +33,7 @@ dependencies {
     implementation("io.ktor:ktor-server-host-common:$ktorVersion")
     implementation("io.ktor:ktor-server-status-pages:$ktorVersion")
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
+    implementation("io.ktor:ktor-server-http-redirect:$ktorVersion")
     implementation("ch.qos.logback:logback-classic:1.2.11")
     implementation("space.kscience:dataforge-workspace:$dataforgeVersion")
     implementation("space.kscience:dataforge-io-yaml:$dataforgeVersion")

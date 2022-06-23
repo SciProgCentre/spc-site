@@ -37,7 +37,7 @@ data class SiteData(
             return SiteData(snark, emptyData, baseUrlPath, meta)
         }
 
-        const val INDEX_PAGE_TOKEN: String = "index"
+        val INDEX_PAGE_TOKEN: NameToken = NameToken("index")
     }
 }
 
@@ -53,8 +53,9 @@ fun SiteData.resolveRef(name: String): String = if (baseUrlPath.isEmpty()) {
 /**
  * Resolve a page designated by given name. Depending on rendering specifics, some prefixes or suffixes could be added.
  */
-fun SiteData.resolvePage(name: Name): String =
-    resolveRef(name.tokens.joinToString("/")) + (meta["pageSuffix"].string ?: "")
+fun SiteData.resolvePage(name: Name): String {
+    return resolveRef(name.tokens.joinToString("/")) + (meta["pageSuffix"].string ?: "")
+}
 
 /**
  *

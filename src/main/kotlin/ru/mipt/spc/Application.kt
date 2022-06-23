@@ -1,7 +1,9 @@
 package ru.mipt.spc
 
 import io.ktor.server.application.Application
+import io.ktor.server.application.install
 import io.ktor.server.application.log
+import io.ktor.server.plugins.httpsredirect.HttpsRedirect
 import kotlinx.css.CssBuilder
 import kotlinx.html.CommonAttributeGroupFacade
 import kotlinx.html.style
@@ -47,6 +49,8 @@ const val BUILD_DATE_FILE = "/buildDate"
 
 @Suppress("unused")
 fun Application.spcModule() {
+    install(HttpsRedirect)
+
     val context = Context("spc-site") {
         plugin(SnarkPlugin)
     }
