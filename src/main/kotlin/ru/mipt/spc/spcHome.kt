@@ -150,7 +150,7 @@ context(PageBuilder) private fun HTML.spcHome() {
                         header("major") {
                             h3 {
                                 a(classes = "link") {
-                                    href = resolvePageRef("magprog")
+                                    href = resolvePageRef("magprog.index")
                                     +"""Master's program"""
                                 }
                             }

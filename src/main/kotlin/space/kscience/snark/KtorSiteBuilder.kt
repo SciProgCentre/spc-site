@@ -19,6 +19,8 @@ import space.kscience.dataforge.data.DataTree
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.withDefault
 import space.kscience.dataforge.names.Name
+import space.kscience.dataforge.names.cutLast
+import space.kscience.dataforge.names.endsWith
 import java.nio.file.Path
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -57,7 +59,11 @@ internal class KtorSiteBuilder(
 
         override fun resolveRef(ref: String): String = resolveRef(pageBaseUrl, ref)
 
-        override fun resolvePageRef(pageName: Name): String = resolveRef(pageName.tokens.joinToString(separator = "/"))
+        override fun resolvePageRef(pageName: Name): String = if(pageName.endsWith(SiteBuilder.INDEX_PAGE_TOKEN)){
+            resolveRef(pageName.cutLast().tokens.joinToString(separator = "/"))
+        } else {
+            resolveRef(pageName.tokens.joinToString(separator = "/"))
+        }
     }
 
     override fun page(route: Name, content: context(PageBuilder, HTML)() -> Unit) {

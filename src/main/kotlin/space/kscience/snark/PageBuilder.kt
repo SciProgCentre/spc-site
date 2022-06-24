@@ -25,7 +25,7 @@ interface PageBuilder : ContextAware {
 
 fun PageBuilder.resolvePageRef(pageName: String) = resolvePageRef(pageName.parseAsName())
 
-val PageBuilder.homeRef get() = resolvePageRef(Name.EMPTY)
+val PageBuilder.homeRef get() = resolvePageRef(Name.EMPTY).removeSuffix("/")
 
 /**
  * Resolve a Html builder by its full name

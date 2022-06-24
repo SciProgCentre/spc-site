@@ -56,19 +56,23 @@ internal class StaticSiteBuilder(
         javaClass.getResource(resourcesPath)?.let { Path.of(it.toURI()) }?.copyRecursively(path)
     }
 
+    private fun resolveRef(baseUrl: String, ref: String) = if (baseUrl.isEmpty()) {
+        ref
+    } else {
+        "${baseUrl.removeSuffix("/")}/$ref"
+    }
+
     inner class StaticPageBuilder : PageBuilder {
         override val data: DataTree<*> get() = this@StaticSiteBuilder.data
         override val meta: Meta get() = this@StaticSiteBuilder.meta
         override val context: Context get() = this@StaticSiteBuilder.context
 
 
-        override fun resolveRef(ref: String): String {
-            TODO("Not yet implemented")
-        }
+        override fun resolveRef(ref: String): String = resolveRef(baseUrl, ref)
 
-        override fun resolvePageRef(pageName: Name): String {
-            TODO("Not yet implemented")
-        }
+        override fun resolvePageRef(pageName: Name): String = resolveRef(
+            pageName.tokens.joinToString(separator = "/", postfix = ".html")
+        )
     }
 
 
@@ -98,14 +102,23 @@ internal class StaticSiteBuilder(
         snark = snark,
         data = dataOverride ?: data,
         meta = metaOverride?.withDefault(meta) ?: meta,
-        baseUrl = baseUrl,
+        baseUrl = if (setAsRoot) {
+            resolveRef(baseUrl, routeName.toWebPath())
+        } else {
+            baseUrl
+        },
         path = path.resolve(routeName.toWebPath())
     )
 }
 
-fun SnarkPlugin.static(outputPath: Path, data: DataTree<*> = DataTree.empty(), block: SiteBuilder.() -> Unit) {
+fun SnarkPlugin.static(
+    outputPath: Path,
+    data: DataTree<*> = DataTree.empty(),
+    siteUrl: String = outputPath.absolutePathString(),
+    block: SiteBuilder.() -> Unit,
+) {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
-    StaticSiteBuilder(this, data, meta, "", outputPath).block()
+    StaticSiteBuilder(this, data, meta, siteUrl, outputPath).block()
 }

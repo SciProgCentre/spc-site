@@ -2,6 +2,7 @@ package ru.mipt.spc
 
 import kotlinx.coroutines.runBlocking
 import kotlinx.html.*
+import space.kscience.dataforge.data.DataTree
 import space.kscience.dataforge.data.await
 import space.kscience.dataforge.data.getByType
 import space.kscience.dataforge.meta.Meta
@@ -280,9 +281,9 @@ private val HtmlData.mentorPageId get() = "mentor-${id}"
 
 internal fun SiteBuilder.spcMaster(dataPath: Path, prefix: Name = "magprog".asName()) {
 
-    val magProgSiteContext = snark.readDirectory(dataPath.resolve("content"))
+    val magProgData: DataTree<Any> = snark.readDirectory(dataPath.resolve("content"))
 
-    route(prefix, magProgSiteContext, setAsRoot = true) {
+    route(prefix, magProgData, setAsRoot = true) {
         assetDirectory("assets", dataPath.resolve("assets"))
         assetDirectory("images", dataPath.resolve("images"))
 
@@ -356,57 +357,57 @@ internal fun SiteBuilder.spcMaster(dataPath: Path, prefix: Name = "magprog".asNa
                 magProgFooter()
             }
         }
-    }
 
 
-    val mentors = data.findByContentType("magprog_mentor").values.sortedBy {
-        it.order
-    }
+        val mentors = data.findByContentType("magprog_mentor").values.sortedBy {
+            it.order
+        }
 
-    mentors.forEach { mentor ->
-        page(mentor.mentorPageId.asName()) {
+        mentors.forEach { mentor ->
+            page(mentor.mentorPageId.asName()) {
 
-            magProgHead("Научное программирование: ${mentor.name}")
-            body("is-preload") {
-                header {
-                    id = "header"
-                    a(classes = "title") {
-                        href = "$homeRef#mentors"
-                        +"Научные руководители"
-                    }
-                    nav {
-                        ul {
-                            mentors.forEach {
-                                li {
-                                    a {
-                                        href = resolvePageRef(it.mentorPageId)
-                                        +it.name.substringAfterLast(" ")
+                magProgHead("Научное программирование: ${mentor.name}")
+                body("is-preload") {
+                    header {
+                        id = "header"
+                        a(classes = "title") {
+                            href = "$homeRef#mentors"
+                            +"Научные руководители"
+                        }
+                        nav {
+                            ul {
+                                mentors.forEach {
+                                    li {
+                                        a {
+                                            href = resolvePageRef(it.mentorPageId)
+                                            +it.name.substringAfterLast(" ")
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-                }
-                div {
-                    id = "wrapper"
-                    section("wrapper") {
-                        id = "main"
-                        div("inner") {
-                            h1("major") { +mentor.name }
-                            val imageClass = mentor.meta["image.position"].string ?: "left"
-                            span("image $imageClass") {
-                                mentor.imagePath?.let { photoPath ->
-                                    img(
-                                        src = resolveRef(photoPath),
-                                        alt = mentor.name
-                                    )
+                    div {
+                        id = "wrapper"
+                        section("wrapper") {
+                            id = "main"
+                            div("inner") {
+                                h1("major") { +mentor.name }
+                                val imageClass = mentor.meta["image.position"].string ?: "left"
+                                span("image $imageClass") {
+                                    mentor.imagePath?.let { photoPath ->
+                                        img(
+                                            src = resolveRef(photoPath),
+                                            alt = mentor.name
+                                        )
+                                    }
                                 }
+                                htmlData(mentor)
                             }
-                            htmlData(mentor)
                         }
                     }
+                    magProgFooter()
                 }
-                magProgFooter()
             }
         }
     }
