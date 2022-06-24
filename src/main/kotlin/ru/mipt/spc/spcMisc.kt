@@ -1,15 +1,14 @@
 package ru.mipt.spc
 
 import kotlinx.html.*
-import space.kscience.snark.SiteData
+import space.kscience.snark.PageBuilder
 import space.kscience.snark.homeRef
-import space.kscience.snark.resolvePage
-import space.kscience.snark.resolveRef
+import space.kscience.snark.resolvePageRef
 
 
 internal const val SPC_TITLE = "Scientific Programming Centre"
 
-context(SiteData) internal fun HTML.spcHead(title: String = SPC_TITLE) {
+context(PageBuilder) internal fun HTML.spcHead(title: String = SPC_TITLE) {
     head {
         title {
             +title
@@ -28,7 +27,7 @@ context(SiteData) internal fun HTML.spcHead(title: String = SPC_TITLE) {
     }
 }
 
-context(SiteData) internal fun FlowContent.spcHomeMenu() {
+context(PageBuilder) internal fun FlowContent.spcHomeMenu() {
     nav {
         id = "menu"
         ul("links") {
@@ -40,25 +39,25 @@ context(SiteData) internal fun FlowContent.spcHomeMenu() {
             }
             li {
                 a {
-                    href = resolvePage("magprog")
+                    href = resolvePageRef("magprog")
                     +"""Master"""
                 }
             }
             li {
                 a {
-                    href = resolvePage("research")
+                    href = resolvePageRef("research")
                     +"""Research"""
                 }
             }
             li {
                 a {
-                    href = resolvePage("consulting")
+                    href = resolvePageRef("consulting")
                     +"""Consulting"""
                 }
             }
             li {
                 a {
-                    href = resolvePage("team")
+                    href = resolvePageRef("team")
                     +"""Team"""
                 }
             }
@@ -80,7 +79,7 @@ context(SiteData) internal fun FlowContent.spcHomeMenu() {
     }
 }
 
-context(SiteData) internal fun FlowContent.spcFooter() {
+context(PageBuilder) internal fun FlowContent.spcFooter() {
     footer {
         id = "footer"
         div("inner") {
@@ -130,7 +129,7 @@ context(SiteData) internal fun FlowContent.spcFooter() {
     }
 }
 
-context(SiteData) internal fun FlowContent.wrapper(contentBody: FlowContent.() -> Unit) {
+context(PageBuilder) internal fun FlowContent.wrapper(contentBody: FlowContent.() -> Unit) {
     div {
         id = "wrapper"
         // Header

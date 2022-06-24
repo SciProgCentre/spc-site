@@ -15,7 +15,7 @@ import java.nio.file.Path
 import kotlin.reflect.typeOf
 
 
-context(SiteData) internal fun HTML.spcPageContent(
+context(PageBuilder) internal fun HTML.spcPageContent(
     meta: Meta,
     title: String = meta["title"].string ?: SPC_TITLE,
     fragment: FlowContent.() -> Unit,
@@ -65,7 +65,7 @@ internal val FortyDataRenderer: SiteBuilder.(Data<*>) -> Unit = { data ->
 }
 
 
-context(SiteData, HTML) private fun spcHome() {
+context(PageBuilder) private fun HTML.spcHome() {
     spcHead()
     body("is-preload") {
         wrapper {
@@ -150,7 +150,7 @@ context(SiteData, HTML) private fun spcHome() {
                         header("major") {
                             h3 {
                                 a(classes = "link") {
-                                    href = resolvePage("magprog")
+                                    href = resolvePageRef("magprog")
                                     +"""Master's program"""
                                 }
                             }
@@ -167,7 +167,7 @@ context(SiteData, HTML) private fun spcHome() {
                         header("major") {
                             h3 {
                                 a(classes = "link") {
-                                    href = resolvePage("research")
+                                    href = resolvePageRef("research")
                                     +"""Research"""
                                 }
                             }
@@ -186,7 +186,7 @@ context(SiteData, HTML) private fun spcHome() {
                         header("major") {
                             h3 {
                                 a(classes = "link") {
-                                    href = resolvePage("consulting")
+                                    href = resolvePageRef("consulting")
                                     +"""Consulting"""
                                 }
                             }
@@ -203,7 +203,7 @@ context(SiteData, HTML) private fun spcHome() {
                         header("major") {
                             h3 {
                                 a(classes = "link") {
-                                    href = resolvePage("team")
+                                    href = resolvePageRef("team")
                                     +"""Team"""
                                 }
                             }
@@ -256,7 +256,7 @@ internal fun SiteBuilder.spcHome(rootPath: Path, prefix: Name = Name.EMPTY) {
 
     val homePageData = snark.readDirectory(rootPath.resolve("content"))
 
-    mountSite(prefix, homePageData) {
+    route(prefix, homePageData, setAsRoot = true) {
         assetDirectory("assets", rootPath.resolve("assets"))
         assetDirectory("images", rootPath.resolve("images"))
 

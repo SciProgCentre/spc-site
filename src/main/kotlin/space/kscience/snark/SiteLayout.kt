@@ -60,7 +60,7 @@ fun SiteBuilder.pages(
     val layoutMeta = data.meta[LAYOUT_KEY]
     if (layoutMeta != null) {
         //use layout if it is defined
-        this.data.snark.layout(layoutMeta).render(data)
+        snark.layout(layoutMeta).render(data)
     } else {
         when (data) {
             is DataTreeItem.Node -> {

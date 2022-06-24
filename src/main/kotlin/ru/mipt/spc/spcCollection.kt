@@ -15,7 +15,7 @@ import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set
 
-context(SiteData, FlowContent) private fun spcSpotlightContent(
+context(PageBuilder) private fun FlowContent.spcSpotlightContent(
     landing: HtmlData,
     content: Map<Name, HtmlData>,
 ) {
@@ -44,11 +44,11 @@ context(SiteData, FlowContent) private fun spcSpotlightContent(
         id = "main"
         //TODO add smart SNARK ordering
         section("spotlights") {
-            content.entries.sortedBy { it.value.meta["order"].int ?: Int.MAX_VALUE }.forEach { (name, data) ->
-                val ref = resolvePage(name)
+            content.entries.sortedBy { it.value.meta["order"].int ?: Int.MAX_VALUE }.forEach { (name, entry) ->
+                val ref = resolvePageRef(name)
                 section {
-                    id = data.meta["id"].string ?: name.toString()
-                    data.meta["image"]?.let { imageMeta: Meta ->
+                    id = entry.meta["id"].string ?: name.toString()
+                    entry.meta["image"]?.let { imageMeta: Meta ->
                         val imagePath =
                             imageMeta.value?.string ?: imageMeta["path"].string ?: error("Image path not provided")
                         a(classes = "image") {
@@ -63,11 +63,11 @@ context(SiteData, FlowContent) private fun spcSpotlightContent(
                     div("content") {
                         div("inner") {
                             header("major") {
-                                h3 { +(data.meta["title"].string ?: "???") }
+                                h3 { +(entry.meta["title"].string ?: "???") }
                             }
-                            val infoData = resolveHtml(name.withIndex("info"))
+                            val infoData = data.resolveHtml(name.withIndex("info"))
                             if (infoData == null) {
-                                htmlData(data)
+                                htmlData(entry)
                             } else {
                                 htmlData(infoData)
                             }

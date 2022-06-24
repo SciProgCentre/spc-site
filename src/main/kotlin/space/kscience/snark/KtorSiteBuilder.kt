@@ -7,7 +7,6 @@ import io.ktor.server.application.call
 import io.ktor.server.html.respondHtml
 import io.ktor.server.http.content.*
 import io.ktor.server.plugins.origin
-import io.ktor.server.request.ApplicationRequest
 import io.ktor.server.request.host
 import io.ktor.server.request.port
 import io.ktor.server.routing.Route
@@ -15,10 +14,23 @@ import io.ktor.server.routing.createRouteFromPath
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import kotlinx.html.HTML
+import space.kscience.dataforge.context.Context
+import space.kscience.dataforge.data.DataTree
+import space.kscience.dataforge.meta.Meta
+import space.kscience.dataforge.meta.withDefault
 import space.kscience.dataforge.names.Name
 import java.nio.file.Path
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
-class KtorSiteBuilder(override val data: SiteData, private val ktorRoute: Route) : SiteBuilder {
+@PublishedApi
+internal class KtorSiteBuilder(
+    override val snark: SnarkPlugin,
+    override val data: DataTree<*>,
+    override val meta: Meta,
+    private val baseUrl: String,
+    private val ktorRoute: Route,
+) : SiteBuilder {
 
     override fun assetFile(remotePath: String, file: Path) {
         ktorRoute.file(remotePath, file.toFile())
@@ -30,17 +42,57 @@ class KtorSiteBuilder(override val data: SiteData, private val ktorRoute: Route)
         }
     }
 
-    override fun page(route: Name, content: context(SiteData, HTML)() -> Unit) {
+    private fun resolveRef(baseUrl: String, ref: String) = if (baseUrl.isEmpty()) {
+        ref
+    } else {
+        "${baseUrl.removeSuffix("/")}/$ref"
+    }
+
+    inner class KtorPageBuilder(
+        val pageBaseUrl: String,
+        override val meta: Meta = this@KtorSiteBuilder.meta,
+    ) : PageBuilder {
+        override val context: Context get() = this@KtorSiteBuilder.context
+        override val data: DataTree<*> get() = this@KtorSiteBuilder.data
+
+        override fun resolveRef(ref: String): String = resolveRef(pageBaseUrl, ref)
+
+        override fun resolvePageRef(pageName: Name): String = resolveRef(pageName.tokens.joinToString(separator = "/"))
+    }
+
+    override fun page(route: Name, content: context(PageBuilder, HTML)() -> Unit) {
         ktorRoute.get(route.toWebPath()) {
             call.respondHtml {
-                val dataWithUrl = data.copyWithRequestHost(call.request)
-                content(dataWithUrl, this)
+                val request = call.request
+                //substitute host for url for backwards calls
+                val url = URLBuilder(baseUrl).apply {
+                    protocol = URLProtocol.createOrDefault(request.origin.scheme)
+                    host = request.host()
+                    port = request.port()
+                }
+                val pageBuilder = KtorPageBuilder(url.buildString())
+                content(pageBuilder, this)
             }
         }
     }
 
-    override fun route(subRoute: Name): SiteBuilder =
-        KtorSiteBuilder(data, ktorRoute.createRouteFromPath(subRoute.toWebPath()))
+    override fun route(
+        routeName: Name,
+        dataOverride: DataTree<*>?,
+        metaOverride: Meta?,
+        setAsRoot: Boolean,
+    ): SiteBuilder = KtorSiteBuilder(
+        snark = snark,
+        data = dataOverride ?: data,
+        meta = metaOverride?.withDefault(meta) ?: meta,
+        baseUrl = if (setAsRoot) {
+            resolveRef(baseUrl, routeName.toWebPath())
+        } else {
+            baseUrl
+        },
+        ktorRoute = ktorRoute.createRouteFromPath(routeName.toWebPath())
+    )
+
 
     override fun assetResourceFile(remotePath: String, resourcesPath: String) {
         ktorRoute.resource(resourcesPath, resourcesPath)
@@ -49,39 +101,27 @@ class KtorSiteBuilder(override val data: SiteData, private val ktorRoute: Route)
     override fun assetResourceDirectory(resourcesPath: String) {
         ktorRoute.resources(resourcesPath)
     }
-
-    override fun withData(newData: SiteData): SiteBuilder = KtorSiteBuilder(newData, ktorRoute)
-}
-
-@PublishedApi
-internal fun SiteData.copyWithRequestHost(request: ApplicationRequest): SiteData {
-    val uri = URLBuilder(
-        protocol = URLProtocol.createOrDefault(request.origin.scheme),
-        host = request.host(),
-        port = request.port(),
-        pathSegments = baseUrlPath.split("/"),
-    )
-    return copy(baseUrlPath = uri.buildString())
 }
 
 inline fun Route.snarkSite(
-    data: SiteData,
+    snark: SnarkPlugin,
+    data: DataTree<*>,
+    meta: Meta = data.meta,
     block: SiteBuilder.() -> Unit,
 ) {
-    block(KtorSiteBuilder(data, this@snarkSite))
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+    block(KtorSiteBuilder(snark, data, meta, "", this@snarkSite))
 }
 
 fun Application.snarkSite(
-    data: SiteData,
+    snark: SnarkPlugin,
+    data: DataTree<*> = DataTree.empty(),
+    meta: Meta = data.meta,
     block: SiteBuilder.() -> Unit,
 ) {
     routing {
-        snarkSite(data, block)
+        snarkSite(snark, data, meta, block)
     }
-}
-
-context (Application) fun SnarkPlugin.site(
-    block: SiteBuilder.() -> Unit,
-) {
-    snarkSite(SiteData.empty(this), block)
 }

@@ -34,14 +34,14 @@ import kotlin.collections.set
 private val HtmlData.imagePath: String? get() = meta["image"]?.string ?: meta["image.path"].string
 private val HtmlData.name: String get() = meta["name"].string ?: error("Name not found")
 
-class MagProgSection(
+context(PageBuilder) class MagProgSection(
     val id: String,
     val title: String,
     val style: String,
     val content: FlowContent.() -> Unit,
 )
 
-private fun wrapSection(
+context(PageBuilder) private fun wrapSection(
     id: String,
     title: String,
     sectionContent: FlowContent.() -> Unit,
@@ -52,7 +52,7 @@ private fun wrapSection(
     }
 }
 
-private fun wrapSection(
+context(PageBuilder) private fun wrapSection(
     block: HtmlData,
     idOverride: String? = null,
 ): MagProgSection = wrapSection(
@@ -70,9 +70,9 @@ private val PROGRAM_PATH: Name = CONTENT_NODE_NAME + "program"
 private val RECOMMENDED_COURSES_PATH: Name = CONTENT_NODE_NAME + "recommendedCourses"
 private val PARTNERS_PATH: Name = CONTENT_NODE_NAME + "partners"
 
-context(SiteData) private fun FlowContent.programSection() {
-    val programBlock = resolveHtml(PROGRAM_PATH)!!
-    val recommendedBlock = resolveHtml(RECOMMENDED_COURSES_PATH)!!
+context(PageBuilder) private fun FlowContent.programSection() {
+    val programBlock = data.resolveHtml(PROGRAM_PATH)!!
+    val recommendedBlock = data.resolveHtml(RECOMMENDED_COURSES_PATH)!!
     div("inner") {
         h2 { +"Учебная программа" }
         htmlData(programBlock)
@@ -87,7 +87,7 @@ context(SiteData) private fun FlowContent.programSection() {
     }
 }
 
-context(SiteData) private fun FlowContent.partners() {
+context(PageBuilder) private fun FlowContent.partners() {
     //val partnersData: Meta = resolve<Any>(PARTNERS_PATH)?.meta ?: Meta.EMPTY
     val partnersData: Meta = runBlocking { data.getByType<Meta>(PARTNERS_PATH)?.await() } ?: Meta.EMPTY
     div("inner") {
@@ -117,8 +117,8 @@ context(SiteData) private fun FlowContent.partners() {
 //    val photo: String? by meta.string()
 //}
 
-context(SiteData) private fun FlowContent.team() {
-    val team = findByType("magprog_team").values.sortedBy { it.order }
+context(PageBuilder) private fun FlowContent.team() {
+    val team = data.findByContentType("magprog_team").values.sortedBy { it.order }
 
     div("inner") {
         h2 { +"Команда" }
@@ -172,8 +172,8 @@ context(SiteData) private fun FlowContent.team() {
 //    }
 }
 
-context(SiteData) private fun FlowContent.mentors() {
-    val mentors = findByType("magprog_mentor").entries.sortedBy { it.value.id }
+context(PageBuilder) private fun FlowContent.mentors() {
+    val mentors = data.findByContentType("magprog_mentor").entries.sortedBy { it.value.id }
 
     div("inner") {
         h2 {
@@ -183,7 +183,7 @@ context(SiteData) private fun FlowContent.mentors() {
     mentors.forEach { (name, mentor) ->
         section {
             id = mentor.id
-            val ref = resolvePage("mentor-${mentor.id}")
+            val ref = resolvePageRef("mentor-${mentor.id}")
             a(classes = "image", href = ref) {
                 mentor.imagePath?.let { photoPath ->
                     img(
@@ -200,7 +200,7 @@ context(SiteData) private fun FlowContent.mentors() {
                     h2 {
                         a(href = ref) { +mentor.name }
                     }
-                    val info = resolveHtml(name.withIndex("info"))
+                    val info = data.resolveHtml(name.withIndex("info"))
                     if (info != null) {
                         htmlData(info)
                     }
@@ -210,7 +210,7 @@ context(SiteData) private fun FlowContent.mentors() {
     }
 }
 
-context(SiteData) internal fun HTML.magProgHead(title: String) {
+context(PageBuilder) internal fun HTML.magProgHead(title: String) {
     head {
         this.title = title
         meta {
@@ -237,7 +237,7 @@ context(SiteData) internal fun HTML.magProgHead(title: String) {
     }
 }
 
-context(SiteData) internal fun BODY.magProgFooter() {
+context(PageBuilder) internal fun BODY.magProgFooter() {
     footer("wrapper style1-alt") {
         id = "footer"
         div("inner") {
@@ -282,13 +282,13 @@ internal fun SiteBuilder.spcMaster(dataPath: Path, prefix: Name = "magprog".asNa
 
     val magProgSiteContext = snark.readDirectory(dataPath.resolve("content"))
 
-    mountSite(prefix, magProgSiteContext) {
+    route(prefix, magProgSiteContext, setAsRoot = true) {
         assetDirectory("assets", dataPath.resolve("assets"))
         assetDirectory("images", dataPath.resolve("images"))
 
         page {
             val sections = listOf<MagProgSection>(
-                wrapSection(resolveHtml(INTRO_PATH)!!, "intro"),
+                wrapSection(data.resolveHtml(INTRO_PATH)!!, "intro"),
                 MagProgSection(
                     id = "partners",
                     title = "Партнеры",
@@ -311,12 +311,13 @@ internal fun SiteBuilder.spcMaster(dataPath: Path, prefix: Name = "magprog".asNa
                 ) {
                     programSection()
                 },
-                wrapSection(resolveHtml(ENROLL_PATH)!!, "enroll"),
+                wrapSection(data.resolveHtml(ENROLL_PATH)!!, "enroll"),
                 wrapSection(id = "contacts", title = "Контакты") {
-                    htmlData(resolveHtml(CONTACTS_PATH)!!)
+                    htmlData(data.resolveHtml(CONTACTS_PATH)!!)
                     team()
                 }
             )
+
             magProgHead("Магистратура \"Научное программирование\"")
             body("is-preload magprog-body") {
                 section {
@@ -355,57 +356,57 @@ internal fun SiteBuilder.spcMaster(dataPath: Path, prefix: Name = "magprog".asNa
                 magProgFooter()
             }
         }
+    }
 
 
-        val mentors = data.findByType("magprog_mentor").values.sortedBy {
-            it.order
-        }
+    val mentors = data.findByContentType("magprog_mentor").values.sortedBy {
+        it.order
+    }
 
-        mentors.forEach { mentor ->
-            page(mentor.mentorPageId.asName()) {
+    mentors.forEach { mentor ->
+        page(mentor.mentorPageId.asName()) {
 
-                magProgHead("Научное программирование: ${mentor.name}")
-                body("is-preload") {
-                    header {
-                        id = "header"
-                        a(classes = "title") {
-                            href = "$homeRef#mentors"
-                            +"Научные руководители"
-                        }
-                        nav {
-                            ul {
-                                mentors.forEach {
-                                    li {
-                                        a {
-                                            href = resolvePage(it.mentorPageId)
-                                            +it.name.substringAfterLast(" ")
-                                        }
+            magProgHead("Научное программирование: ${mentor.name}")
+            body("is-preload") {
+                header {
+                    id = "header"
+                    a(classes = "title") {
+                        href = "$homeRef#mentors"
+                        +"Научные руководители"
+                    }
+                    nav {
+                        ul {
+                            mentors.forEach {
+                                li {
+                                    a {
+                                        href = resolvePageRef(it.mentorPageId)
+                                        +it.name.substringAfterLast(" ")
                                     }
                                 }
                             }
                         }
                     }
-                    div {
-                        id = "wrapper"
-                        section("wrapper") {
-                            id = "main"
-                            div("inner") {
-                                h1("major") { +mentor.name }
-                                val imageClass = mentor.meta["image.position"].string ?: "left"
-                                span("image $imageClass") {
-                                    mentor.imagePath?.let { photoPath ->
-                                        img(
-                                            src = resolveRef(photoPath),
-                                            alt = mentor.name
-                                        )
-                                    }
-                                }
-                                htmlData(mentor)
-                            }
-                        }
-                    }
-                    magProgFooter()
                 }
+                div {
+                    id = "wrapper"
+                    section("wrapper") {
+                        id = "main"
+                        div("inner") {
+                            h1("major") { +mentor.name }
+                            val imageClass = mentor.meta["image.position"].string ?: "left"
+                            span("image $imageClass") {
+                                mentor.imagePath?.let { photoPath ->
+                                    img(
+                                        src = resolveRef(photoPath),
+                                        alt = mentor.name
+                                    )
+                                }
+                            }
+                            htmlData(mentor)
+                        }
+                    }
+                }
+                magProgFooter()
             }
         }
     }

@@ -3,19 +3,30 @@ package space.kscience.snark
 import kotlinx.html.HTML
 import kotlinx.html.html
 import kotlinx.html.stream.createHTML
+import space.kscience.dataforge.context.Context
+import space.kscience.dataforge.data.DataTree
 import space.kscience.dataforge.meta.Meta
+import space.kscience.dataforge.meta.withDefault
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.isEmpty
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.io.path.*
 
 
-class StaticSiteBuilder(override val data: SiteData, private val path: Path) : SiteBuilder {
+internal class StaticSiteBuilder(
+    override val snark: SnarkPlugin,
+    override val data: DataTree<*>,
+    override val meta: Meta,
+    private val baseUrl: String,
+    private val path: Path,
+) : SiteBuilder {
     private fun Path.copyRecursively(target: Path) {
         Files.walk(this).forEach { source: Path ->
             val destination: Path = target.resolve(source.relativeTo(this))
-            if(!destination.isDirectory()) {
+            if (!destination.isDirectory()) {
                 //avoid re-creating directories
                 source.copyTo(destination, true)
             }
@@ -37,7 +48,7 @@ class StaticSiteBuilder(override val data: SiteData, private val path: Path) : S
     override fun assetResourceFile(remotePath: String, resourcesPath: String) {
         val targetPath = path.resolve(remotePath)
         targetPath.parent.createDirectories()
-        javaClass.getResource(resourcesPath)?.let { Path.of(it.toURI()) }?.copyTo(targetPath,true)
+        javaClass.getResource(resourcesPath)?.let { Path.of(it.toURI()) }?.copyTo(targetPath, true)
     }
 
     override fun assetResourceDirectory(resourcesPath: String) {
@@ -45,11 +56,27 @@ class StaticSiteBuilder(override val data: SiteData, private val path: Path) : S
         javaClass.getResource(resourcesPath)?.let { Path.of(it.toURI()) }?.copyRecursively(path)
     }
 
-    override fun page(route: Name, content: context(SiteData, HTML) () -> Unit) {
+    inner class StaticPageBuilder : PageBuilder {
+        override val data: DataTree<*> get() = this@StaticSiteBuilder.data
+        override val meta: Meta get() = this@StaticSiteBuilder.meta
+        override val context: Context get() = this@StaticSiteBuilder.context
+
+
+        override fun resolveRef(ref: String): String {
+            TODO("Not yet implemented")
+        }
+
+        override fun resolvePageRef(pageName: Name): String {
+            TODO("Not yet implemented")
+        }
+    }
+
+
+    override fun page(route: Name, content: context(PageBuilder, HTML) () -> Unit) {
         val htmlBuilder = createHTML()
 
         htmlBuilder.html {
-            content(data, this)
+            content(StaticPageBuilder(), this)
         }
 
         val newPath = if (route.isEmpty()) {
@@ -62,19 +89,23 @@ class StaticSiteBuilder(override val data: SiteData, private val path: Path) : S
         newPath.writeText(htmlBuilder.finalize())
     }
 
-    override fun route(subRoute: Name): SiteBuilder = StaticSiteBuilder(data, path.resolve(subRoute.toWebPath()))
-
-    override fun withData(newData: SiteData): SiteBuilder = StaticSiteBuilder(newData, path)
-
+    override fun route(
+        routeName: Name,
+        dataOverride: DataTree<*>?,
+        metaOverride: Meta?,
+        setAsRoot: Boolean,
+    ): SiteBuilder = StaticSiteBuilder(
+        snark = snark,
+        data = dataOverride ?: data,
+        meta = metaOverride?.withDefault(meta) ?: meta,
+        baseUrl = baseUrl,
+        path = path.resolve(routeName.toWebPath())
+    )
 }
 
-fun SnarkPlugin.static(path: Path, block: SiteBuilder.() -> Unit) {
-    val base = SiteData.empty(
-        this,
-        baseUrlPath = path.absolutePathString(),
-        meta = Meta {
-            "pageSuffix" put ".html"
-        }
-    )
-    StaticSiteBuilder(base, path).block()
+fun SnarkPlugin.static(outputPath: Path, data: DataTree<*> = DataTree.empty(), block: SiteBuilder.() -> Unit) {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+    StaticSiteBuilder(this, data, meta, "", outputPath).block()
 }

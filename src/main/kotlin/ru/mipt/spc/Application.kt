@@ -1,16 +1,14 @@
 package ru.mipt.spc
 
 import io.ktor.server.application.Application
-import io.ktor.server.application.install
 import io.ktor.server.application.log
-import io.ktor.server.plugins.httpsredirect.HttpsRedirect
 import kotlinx.css.CssBuilder
 import kotlinx.html.CommonAttributeGroupFacade
 import kotlinx.html.style
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.fetch
 import space.kscience.snark.SnarkPlugin
-import space.kscience.snark.site
+import space.kscience.snark.snarkSite
 import java.net.URI
 import java.nio.file.FileSystems
 import java.nio.file.Files
@@ -49,7 +47,7 @@ const val BUILD_DATE_FILE = "/buildDate"
 
 @Suppress("unused")
 fun Application.spcModule() {
-    install(HttpsRedirect)
+//    install(HttpsRedirect)
 
     val context = Context("spc-site") {
         plugin(SnarkPlugin)
@@ -65,7 +63,7 @@ fun Application.spcModule() {
 
     val inProduction: Boolean = environment.config.propertyOrNull("ktor.environment.production") != null
 
-    if(inProduction){
+    if (inProduction) {
         log.info("Production mode activated")
         log.info("Build date: $buildDate")
         log.info("Deploy date: $deployDate")
@@ -90,7 +88,7 @@ fun Application.spcModule() {
         dataPath.resolve(DEPLOY_DATE_FILE).writeText(date)
     }
 
-    snark.site {
+    snarkSite(snark) {
         val homeDataPath = resolveData(
             this@spcModule.javaClass.getResource("/home")!!.toURI(),
             dataPath / "home"
