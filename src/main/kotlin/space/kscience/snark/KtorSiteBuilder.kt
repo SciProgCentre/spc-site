@@ -46,9 +46,12 @@ internal class KtorSiteBuilder(
 
     private fun resolveRef(baseUrl: String, ref: String) = if (baseUrl.isEmpty()) {
         ref
+    } else if (ref.isEmpty()) {
+        baseUrl
     } else {
         "${baseUrl.removeSuffix("/")}/$ref"
     }
+
 
     inner class KtorPageBuilder(
         val pageBaseUrl: String,
@@ -59,7 +62,7 @@ internal class KtorSiteBuilder(
 
         override fun resolveRef(ref: String): String = resolveRef(pageBaseUrl, ref)
 
-        override fun resolvePageRef(pageName: Name): String = if(pageName.endsWith(SiteBuilder.INDEX_PAGE_TOKEN)){
+        override fun resolvePageRef(pageName: Name): String = if (pageName.endsWith(SiteBuilder.INDEX_PAGE_TOKEN)) {
             resolveRef(pageName.cutLast().tokens.joinToString(separator = "/"))
         } else {
             resolveRef(pageName.tokens.joinToString(separator = "/"))

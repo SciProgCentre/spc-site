@@ -5,10 +5,7 @@ import space.kscience.dataforge.data.*
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.string
-import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.parseAsName
-import space.kscience.dataforge.names.plus
-import space.kscience.dataforge.names.startsWith
+import space.kscience.dataforge.names.*
 
 internal fun Name.toWebPath() = tokens.joinToString(separator = "/")
 
@@ -25,7 +22,7 @@ interface PageBuilder : ContextAware {
 
 fun PageBuilder.resolvePageRef(pageName: String) = resolvePageRef(pageName.parseAsName())
 
-val PageBuilder.homeRef get() = resolvePageRef(Name.EMPTY).removeSuffix("/")
+val PageBuilder.homeRef get() = resolvePageRef(SiteBuilder.INDEX_PAGE_TOKEN.asName())
 
 /**
  * Resolve a Html builder by its full name

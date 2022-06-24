@@ -58,6 +58,8 @@ internal class StaticSiteBuilder(
 
     private fun resolveRef(baseUrl: String, ref: String) = if (baseUrl.isEmpty()) {
         ref
+    } else if (ref.isEmpty()) {
+        baseUrl
     } else {
         "${baseUrl.removeSuffix("/")}/$ref"
     }
