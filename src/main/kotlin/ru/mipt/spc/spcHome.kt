@@ -186,7 +186,7 @@ context(PageBuilder) private fun HTML.spcHome() {
                         header("major") {
                             h3 {
                                 a(classes = "link") {
-                                    href = resolvePageRef("consulting")
+                                    href = resolvePageRef("consulting.index")
                                     +"""Consulting"""
                                 }
                             }

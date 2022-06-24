@@ -63,9 +63,9 @@ internal class KtorSiteBuilder(
         override fun resolveRef(ref: String): String = resolveRef(pageBaseUrl, ref)
 
         override fun resolvePageRef(pageName: Name): String = if (pageName.endsWith(SiteBuilder.INDEX_PAGE_TOKEN)) {
-            resolveRef(pageName.cutLast().tokens.joinToString(separator = "/"))
+            resolveRef(pageName.cutLast().toWebPath())
         } else {
-            resolveRef(pageName.tokens.joinToString(separator = "/"))
+            resolveRef(pageName.toWebPath())
         }
     }
 

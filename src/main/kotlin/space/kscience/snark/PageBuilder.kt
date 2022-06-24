@@ -7,7 +7,13 @@ import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.string
 import space.kscience.dataforge.names.*
 
-internal fun Name.toWebPath() = tokens.joinToString(separator = "/")
+internal fun Name.toWebPath() = tokens.joinToString(separator = "/"){
+    if (it.hasIndex()) {
+        "${it.body}[${it.index}]"
+    } else {
+        it.body
+    }
+}
 
 interface PageBuilder : ContextAware {
     val data: DataTree<*>

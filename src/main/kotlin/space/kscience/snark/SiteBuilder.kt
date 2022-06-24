@@ -50,6 +50,7 @@ interface SiteBuilder : ContextAware {
 
     companion object {
         val INDEX_PAGE_TOKEN: NameToken = NameToken("index")
+        val UP_PAGE_TOKEN: NameToken = NameToken("..")
     }
 }
 

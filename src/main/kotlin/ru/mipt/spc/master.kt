@@ -327,7 +327,10 @@ internal fun SiteBuilder.spcMaster(dataPath: Path, prefix: Name = "magprog".asNa
                         nav {
                             ul {
                                 li {
-                                    a(classes = "spc-home", href = "/") {
+                                    a(
+                                        classes = "spc-home",
+                                        href = resolvePageRef(Name.of("..") + SiteBuilder.INDEX_PAGE_TOKEN)
+                                    ) {
                                         i("fa fa-home") {
                                             attributes["aria-hidden"] = "true"
                                         }

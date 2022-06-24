@@ -73,7 +73,7 @@ internal class StaticSiteBuilder(
         override fun resolveRef(ref: String): String = resolveRef(baseUrl, ref)
 
         override fun resolvePageRef(pageName: Name): String = resolveRef(
-            pageName.tokens.joinToString(separator = "/", postfix = ".html")
+            pageName.toWebPath() + ".html"
         )
     }
 
@@ -116,7 +116,7 @@ internal class StaticSiteBuilder(
 fun SnarkPlugin.static(
     outputPath: Path,
     data: DataTree<*> = DataTree.empty(),
-    siteUrl: String = outputPath.absolutePathString(),
+    siteUrl: String = outputPath.absolutePathString().replace("\\", "/"),
     block: SiteBuilder.() -> Unit,
 ) {
     contract {
