@@ -1,9 +1,10 @@
 package space.kscience.snark
 
-import kotlinx.coroutines.runBlocking
+import kotlinx.html.body
+import kotlinx.html.head
+import kotlinx.html.title
 import space.kscience.dataforge.data.Data
 import space.kscience.dataforge.data.DataTreeItem
-import space.kscience.dataforge.data.await
 import space.kscience.dataforge.data.getItem
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.get
@@ -117,12 +118,16 @@ fun interface SiteLayout {
         const val ASSETS_KEY = "assets"
         val INDEX_PAGE_TOKEN = NameToken("index")
 
-        val defaultDataRenderer: SiteBuilder.(Data<*>) -> Unit = { data ->
+        val defaultDataRenderer: SiteBuilder.(Data<*>) -> Unit = { data: Data<*> ->
             if (data.type == typeOf<HtmlData>()) {
                 page {
-                    @Suppress("UNCHECKED_CAST")
-                    val pageFragment: HtmlFragment = runBlocking { data.await() as HtmlFragment }
-                    pageFragment.invoke(consumer)
+                    head {
+                        title = data.meta["title"].string ?: "Untitled page"
+                    }
+                    body {
+                        @Suppress("UNCHECKED_CAST")
+                        htmlData(data as HtmlData)
+                    }
                 }
             }
         }

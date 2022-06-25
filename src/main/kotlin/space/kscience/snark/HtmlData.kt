@@ -13,22 +13,18 @@ import space.kscience.dataforge.meta.string
 
 
 //TODO replace by VisionForge type
-typealias HtmlFragment = TagConsumer<*>.() -> Unit
+typealias HtmlFragment = context(PageBuilder, TagConsumer<*>) () -> Unit
 
 typealias HtmlData = Data<HtmlFragment>
 
-fun HtmlData(meta: Meta, content: TagConsumer<*>.() -> Unit): HtmlData = Data(content, meta)
+fun HtmlData(meta: Meta, content: context(PageBuilder, TagConsumer<*>) () -> Unit): HtmlData =
+    Data(content, meta)
 
-val HtmlData.id: String get() = meta["id"]?.string ?: "block[${hashCode()}]"
-val HtmlData.language: String? get() = meta["language"].string?.lowercase()
+internal val HtmlData.id: String get() = meta["id"]?.string ?: "block[${hashCode()}]"
+internal val HtmlData.language: String? get() = meta["language"].string?.lowercase()
 
-val HtmlData.order: Int? get() = meta["order"]?.int
+internal val HtmlData.order: Int? get() = meta["order"]?.int
 
-fun TagConsumer<*>.htmlData(data: HtmlData) = runBlocking(Dispatchers.IO) {
-    data.await().invoke(this@htmlData)
+context(PageBuilder) fun FlowContent.htmlData(data: HtmlData) = runBlocking(Dispatchers.IO) {
+    data.await().invoke(this@PageBuilder, consumer)
 }
-
-fun FlowContent.htmlData(data: HtmlData) = runBlocking(Dispatchers.IO) {
-    data.await().invoke(consumer)
-}
-

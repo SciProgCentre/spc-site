@@ -1,12 +1,14 @@
 package space.kscience.snark
 
 import io.ktor.util.extension
+import io.ktor.utils.io.core.Input
 import io.ktor.utils.io.core.readBytes
 import space.kscience.dataforge.context.*
 import space.kscience.dataforge.data.DataTree
 import space.kscience.dataforge.io.IOReader
 import space.kscience.dataforge.io.JsonMetaFormat
 import space.kscience.dataforge.io.asBinary
+import space.kscience.dataforge.io.readWith
 import space.kscience.dataforge.io.yaml.YamlMetaFormat
 import space.kscience.dataforge.io.yaml.YamlPlugin
 import space.kscience.dataforge.meta.Meta
@@ -27,13 +29,19 @@ import kotlin.reflect.typeOf
  * A parser of binary content including priority flag and file extensions
  */
 @Type(SnarkParser.TYPE)
-interface SnarkParser<out R : Any> : IOReader<R> {
+interface SnarkParser<out R> {
+    val type: KType
+
     val fileExtensions: Set<String>
 
     val priority: Int get() = DEFAULT_PRIORITY
 
-    suspend fun parse(bytes: ByteArray, meta: Meta): R = bytes.asBinary().read {
-        readObject(this)
+    fun parse(snark: SnarkPlugin, meta: Meta, bytes: ByteArray): R
+
+    fun reader(snark: SnarkPlugin, meta: Meta) = object : IOReader<R> {
+        override val type: KType get() = this@SnarkParser.type
+
+        override fun readObject(input: Input): R = parse(snark, meta, input.readBytes())
     }
 
     companion object {
@@ -47,7 +55,9 @@ internal class SnarkParserWrapper<R : Any>(
     val reader: IOReader<R>,
     override val type: KType,
     override val fileExtensions: Set<String>,
-) : SnarkParser<R>, IOReader<R> by reader
+) : SnarkParser<R> {
+    override fun parse(snark: SnarkPlugin, meta: Meta, bytes: ByteArray): R = bytes.asBinary().readWith(reader)
+}
 
 /**
  * Create a generic parser from reader
@@ -65,25 +75,25 @@ class SnarkPlugin : AbstractPlugin() {
 
     override val tag: PluginTag get() = Companion.tag
 
-    private val parsers: Map<Name, SnarkParser<*>> by lazy {
+    private val parsers: Map<Name, SnarkParser<Any>> by lazy {
         context.gather(SnarkParser.TYPE, true)
     }
 
     fun readDirectory(path: Path): DataTree<Any> = io.readDataDirectory(path) { dataPath, meta ->
         val fileExtension = meta[FileData.META_FILE_EXTENSION_KEY].string ?: dataPath.extension
-        val parser: SnarkParser<*>? = parsers.values.filter { parser ->
+        val parser: SnarkParser<Any> = parsers.values.filter { parser ->
             fileExtension in parser.fileExtensions
         }.maxByOrNull {
             it.priority
+        } ?: run {
+            logger.warn { "The parser is not found for file $dataPath with meta $meta" }
+            byteArraySnarkParser
         }
 
-        parser ?: run {
-            logger.warn { "The parser is not found for file $dataPath with meta $meta" }
-            byteArrayIOReader
-        }
+        parser.reader(this, meta)
     }
 
-    fun layout(meta: Meta): SiteLayout = when(meta[SiteLayout.LAYOUT_KEY]){
+    fun layout(meta: Meta): SiteLayout = when (meta[SiteLayout.LAYOUT_KEY]) {
         else -> DefaultSiteLayout
     }
 
@@ -95,7 +105,7 @@ class SnarkPlugin : AbstractPlugin() {
             "yaml".asName() to SnarkParser(YamlMetaFormat, "yaml", "yml"),
             "png".asName() to SnarkParser(ImageIOReader, "png"),
             "jpg".asName() to SnarkParser(ImageIOReader, "jpg", "jpeg"),
-            "gif".asName() to SnarkParser(ImageIOReader, "jpg", "jpeg"),
+            "gif".asName() to SnarkParser(ImageIOReader, "gif"),
         )
         else -> super.content(target)
     }
@@ -109,5 +119,7 @@ class SnarkPlugin : AbstractPlugin() {
         private val byteArrayIOReader = IOReader {
             readBytes()
         }
+
+        private val byteArraySnarkParser = SnarkParser(byteArrayIOReader)
     }
 }
