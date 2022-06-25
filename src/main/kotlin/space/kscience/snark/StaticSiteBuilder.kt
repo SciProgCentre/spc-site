@@ -3,7 +3,6 @@ package space.kscience.snark
 import kotlinx.html.HTML
 import kotlinx.html.html
 import kotlinx.html.stream.createHTML
-import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.data.DataTree
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.withDefault
@@ -67,7 +66,8 @@ internal class StaticSiteBuilder(
     inner class StaticPageBuilder : PageBuilder {
         override val data: DataTree<*> get() = this@StaticSiteBuilder.data
         override val meta: Meta get() = this@StaticSiteBuilder.meta
-        override val context: Context get() = this@StaticSiteBuilder.context
+        override val snark: SnarkPlugin get() = this@StaticSiteBuilder.snark
+
 
 
         override fun resolveRef(ref: String): String = resolveRef(baseUrl, ref)

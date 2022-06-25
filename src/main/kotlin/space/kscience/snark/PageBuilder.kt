@@ -1,5 +1,6 @@
 package space.kscience.snark
 
+import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.ContextAware
 import space.kscience.dataforge.data.*
 import space.kscience.dataforge.meta.Meta
@@ -16,6 +17,11 @@ internal fun Name.toWebPath() = tokens.joinToString(separator = "/"){
 }
 
 interface PageBuilder : ContextAware {
+
+    val snark: SnarkPlugin
+
+    override val context: Context get() = snark.context
+
     val data: DataTree<*>
 
     val meta: Meta

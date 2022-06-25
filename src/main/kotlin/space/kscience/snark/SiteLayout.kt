@@ -10,6 +10,7 @@ import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.getIndexed
 import space.kscience.dataforge.meta.string
+import space.kscience.dataforge.misc.Type
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.NameToken
 import space.kscience.dataforge.names.asName
@@ -109,11 +110,14 @@ fun SiteBuilder.pages(
 }
 
 
+
+@Type(SiteLayout.TYPE)
 fun interface SiteLayout {
 
     context(SiteBuilder) fun render(item: DataTreeItem<*>)
 
     companion object {
+        const val TYPE = "snark.layout"
         const val LAYOUT_KEY = "layout"
         const val ASSETS_KEY = "assets"
         val INDEX_PAGE_TOKEN = NameToken("index")
@@ -133,6 +137,7 @@ fun interface SiteLayout {
         }
     }
 }
+
 
 object DefaultSiteLayout : SiteLayout {
     context(SiteBuilder) override fun render(item: DataTreeItem<*>) {

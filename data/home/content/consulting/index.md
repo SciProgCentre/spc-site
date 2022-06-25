@@ -1,6 +1,7 @@
 ---
 type: page
 title: Consulting
+transformation: snark.replaceLinks
 language: en
 ---
 
@@ -20,7 +21,7 @@ Our research, which primarily includes open source projects, has already been ap
             <img src="images/pic03.jpg" alt="" />
         </span>
         <header class="major">
-            <h3><a href="consulting/research"  class="link">Research</a></h3>
+            <h3><a href="${homeRef}/consulting/research"  class="link">Research</a></h3>
             <p>Analytics, prototyping and research for fundamental science and industry.</p>
         </header>
     </article>
@@ -29,7 +30,7 @@ Our research, which primarily includes open source projects, has already been ap
             <img src="images/pic04.jpg" alt="" />
         </span>
         <header class="major">
-            <h3><a href="consulting/expert"  class="link">Expert activity</a></h3>
+            <h3><a href="${homeRef}/consulting/expert"  class="link">Expert activity</a></h3>
             <p>Analysis and improvement of existing scientific software and projects.</p>
         </header>
     </article>
@@ -38,7 +39,7 @@ Our research, which primarily includes open source projects, has already been ap
             <img src="images/pic05.jpg" alt="" />
         </span>
         <header class="major">
-            <h3><a href="consulting/architecture"  class="link">Architecture</a></h3>
+            <h3><a href="${homeRef}/consulting/architecture"  class="link">Architecture</a></h3>
             <p>Design the architecture for scientific and technological applications.</p>
         </header>
     </article>
@@ -47,7 +48,7 @@ Our research, which primarily includes open source projects, has already been ap
             <img src="images/pic06.jpg" alt="" />
         </span>
         <header class="major">
-            <h3><a href="consulting/development"  class="link">Development</a></h3>
+            <h3><a href="${homeRef}/consulting/development"  class="link">Development</a></h3>
             <p>The development and support of open-source and in-house solutions( libraries, frameworks and end-user application).</p>
         </header>
     </article>

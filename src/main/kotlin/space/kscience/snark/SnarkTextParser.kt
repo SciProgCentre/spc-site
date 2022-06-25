@@ -7,8 +7,10 @@ import kotlinx.html.unsafe
 import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
 import org.intellij.markdown.html.HtmlGenerator
 import org.intellij.markdown.parser.MarkdownParser
+import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.io.IOReader
 import space.kscience.dataforge.meta.Meta
+import space.kscience.dataforge.meta.get
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
 import kotlin.reflect.KType
@@ -17,8 +19,13 @@ import kotlin.reflect.typeOf
 abstract class SnarkTextParser<R> : SnarkParser<R> {
     abstract fun parseText(text: String, meta: Meta): R
 
-    override fun parse(snark: SnarkPlugin, meta: Meta, bytes: ByteArray): R =
+    override fun parse(context: Context, meta: Meta, bytes: ByteArray): R =
         parseText(bytes.decodeToString(), meta)
+
+    fun transformText(text: String, meta: Meta, page: PageBuilder): String =
+        meta[TextTransformation.TEXT_TRANSFORMATION_KEY]?.let {
+            with(page){ page.snark.textTransformation(it).transform(text)}
+        } ?: text
 }
 
 
@@ -26,9 +33,9 @@ internal object SnarkHtmlParser : SnarkTextParser<HtmlFragment>() {
     override val fileExtensions: Set<String> = setOf("html")
     override val type: KType = typeOf<HtmlFragment>()
 
-    override fun parseText(text: String, meta: Meta): HtmlFragment = {
+    override fun parseText(text: String, meta: Meta): HtmlFragment = HtmlFragment { page ->
         div {
-            unsafe { +text }
+            unsafe { +transformText(text, meta, page) }
         }
     }
 }
@@ -44,10 +51,10 @@ internal object SnarkMarkdownParser : SnarkTextParser<HtmlFragment>() {
         val parsedTree = markdownParser.buildMarkdownTreeFromString(text)
         val htmlString = HtmlGenerator(text, parsedTree, markdownFlavor).generateHtml()
 
-        return {
+        return HtmlFragment { page ->
             div {
                 unsafe {
-                    +htmlString
+                    +SnarkHtmlParser.transformText(htmlString, meta, page)
                 }
             }
         }

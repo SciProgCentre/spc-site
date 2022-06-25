@@ -18,6 +18,7 @@ import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.misc.Type
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
+import space.kscience.dataforge.names.parseAsName
 import space.kscience.dataforge.workspace.FileData
 import space.kscience.dataforge.workspace.readDataDirectory
 import java.nio.file.Path
@@ -36,12 +37,12 @@ interface SnarkParser<out R> {
 
     val priority: Int get() = DEFAULT_PRIORITY
 
-    fun parse(snark: SnarkPlugin, meta: Meta, bytes: ByteArray): R
+    fun parse(context: Context, meta: Meta, bytes: ByteArray): R
 
-    fun reader(snark: SnarkPlugin, meta: Meta) = object : IOReader<R> {
+    fun reader(context: Context, meta: Meta) = object : IOReader<R> {
         override val type: KType get() = this@SnarkParser.type
 
-        override fun readObject(input: Input): R = parse(snark, meta, input.readBytes())
+        override fun readObject(input: Input): R = parse(context, meta, input.readBytes())
     }
 
     companion object {
@@ -56,7 +57,7 @@ internal class SnarkParserWrapper<R : Any>(
     override val type: KType,
     override val fileExtensions: Set<String>,
 ) : SnarkParser<R> {
-    override fun parse(snark: SnarkPlugin, meta: Meta, bytes: ByteArray): R = bytes.asBinary().readWith(reader)
+    override fun parse(context: Context, meta: Meta, bytes: ByteArray): R = bytes.asBinary().readWith(reader)
 }
 
 /**
@@ -79,6 +80,14 @@ class SnarkPlugin : AbstractPlugin() {
         context.gather(SnarkParser.TYPE, true)
     }
 
+    private val layouts: Map<Name, SiteLayout> by lazy {
+        context.gather(SiteLayout.TYPE, true)
+    }
+
+    private val textTransformations: Map<Name, TextTransformation> by lazy {
+        context.gather(TextTransformation.TYPE, true)
+    }
+
     fun readDirectory(path: Path): DataTree<Any> = io.readDataDirectory(path) { dataPath, meta ->
         val fileExtension = meta[FileData.META_FILE_EXTENSION_KEY].string ?: dataPath.extension
         val parser: SnarkParser<Any> = parsers.values.filter { parser ->
@@ -90,11 +99,20 @@ class SnarkPlugin : AbstractPlugin() {
             byteArraySnarkParser
         }
 
-        parser.reader(this, meta)
+        parser.reader(context, meta)
     }
 
-    fun layout(meta: Meta): SiteLayout = when (meta[SiteLayout.LAYOUT_KEY]) {
-        else -> DefaultSiteLayout
+    internal fun layout(layoutMeta: Meta): SiteLayout {
+        val layoutName = layoutMeta.string
+            ?: layoutMeta["name"].string ?: error("Layout name not defined in $layoutMeta")
+        return layouts[layoutName.parseAsName()] ?: error("Layout with name $layoutName not found in $this")
+    }
+
+    internal fun textTransformation(transformationMeta: Meta): TextTransformation {
+        val transformationName = transformationMeta.string
+            ?: transformationMeta["name"].string ?: error("Transformation name not defined in $transformationMeta")
+        return textTransformations[transformationName.parseAsName()]
+            ?: error("Text transformation with name $transformationName not found in $this")
     }
 
     override fun content(target: String): Map<Name, Any> = when (target) {
@@ -106,6 +124,9 @@ class SnarkPlugin : AbstractPlugin() {
             "png".asName() to SnarkParser(ImageIOReader, "png"),
             "jpg".asName() to SnarkParser(ImageIOReader, "jpg", "jpeg"),
             "gif".asName() to SnarkParser(ImageIOReader, "gif"),
+        )
+        TextTransformation.TYPE -> mapOf(
+            "replaceLinks".asName() to TextTransformation.replaceLinks
         )
         else -> super.content(target)
     }

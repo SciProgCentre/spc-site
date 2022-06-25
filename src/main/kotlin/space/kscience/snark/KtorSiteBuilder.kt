@@ -14,7 +14,6 @@ import io.ktor.server.routing.createRouteFromPath
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import kotlinx.html.HTML
-import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.data.DataTree
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.withDefault
@@ -57,7 +56,7 @@ internal class KtorSiteBuilder(
         val pageBaseUrl: String,
         override val meta: Meta = this@KtorSiteBuilder.meta,
     ) : PageBuilder {
-        override val context: Context get() = this@KtorSiteBuilder.context
+        override val snark: SnarkPlugin get() = this@KtorSiteBuilder.snark
         override val data: DataTree<*> get() = this@KtorSiteBuilder.data
 
         override fun resolveRef(ref: String): String = resolveRef(pageBaseUrl, ref)
