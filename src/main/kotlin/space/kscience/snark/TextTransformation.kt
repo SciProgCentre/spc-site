@@ -10,10 +10,26 @@ fun interface TextTransformation {
     companion object {
         const val TYPE = "snark.textTransformation"
         val TEXT_TRANSFORMATION_KEY = NameToken("transformation")
+    }
+}
 
-        val replaceLinks: TextTransformation = object : TextTransformation {
-            context(PageBuilder) override fun transform(text: String): String {
-                return text.replace("\${homeRef}", homeRef)
+object BasicTextTransformation : TextTransformation {
+
+    private val regex = "\\\$\\{(\\w*)(?>\\(\"(.*)\"\\))?\\}".toRegex()
+
+    context(PageBuilder) override fun transform(text: String): String {
+        return text.replace(regex) { match ->
+            when (match.groups[1]!!.value) {
+                "homeRef" -> homeRef
+                "resolveRef" -> {
+                    val refString = match.groups[2]?.value ?: error("resolveRef requires a string (quoted) argument")
+                    resolveRef(refString)
+                }
+                "resolvePageRef" -> {
+                    val refString = match.groups[2]?.value ?: error("resolvePageRef requires a string (quoted) argument")
+                    resolvePageRef(refString)
+                }
+                else -> match.value
             }
         }
     }

@@ -126,7 +126,7 @@ class SnarkPlugin : AbstractPlugin() {
             "gif".asName() to SnarkParser(ImageIOReader, "gif"),
         )
         TextTransformation.TYPE -> mapOf(
-            "replaceLinks".asName() to TextTransformation.replaceLinks
+            "basic".asName() to BasicTextTransformation
         )
         else -> super.content(target)
     }
