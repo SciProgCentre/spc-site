@@ -19,4 +19,4 @@ The idea is the following:
 
 ## References
 
-Currently we use two different designs from https://html5up.net/
+Currently, we use two different designs from https://html5up.net/

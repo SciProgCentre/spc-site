@@ -12,7 +12,7 @@ repositories {
 }
 
 group = "ru.mipt.npm"
-version = "0.1.0-SNAPSHOT"
+version = "0.1.0"
 
 application {
     mainClass.set("io.ktor.server.netty.EngineMain")
@@ -58,6 +58,20 @@ sourceSets {
     }
 }
 
+readme {
+    maturity = ru.mipt.npm.gradle.Maturity.EXPERIMENTAL
+    feature("data") { "Data-based processing. Instead of traditional layout-based" }
+    feature("layouts") { "Use custom layouts to represent a data tree" }
+    feature("parsers") { "Add custom file formats and parsers using DataForge dependency injection" }
+    feature("preprocessor") { "Preprocessing text files using templates" }
+    feature("metadata") { "Trademark DataForge metadata layering and transformations" }
+    feature("dynamic") { "Generating dynamic site using KTor server" }
+    feature("static") { "Generating static site" }
+}
+
+/**
+ * This task updates the site build date in resource automatically
+ */
 val writeBuildDate: Task by tasks.creating {
     doLast {
         val deployDate = LocalDateTime.now()
