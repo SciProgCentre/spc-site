@@ -51,13 +51,15 @@ internal fun SiteBuilder.assetsFrom(rootMeta: Meta) {
     }
 }
 
+typealias DataRenderer = SiteBuilder.(name: Name, data: Data<Any>) -> Unit
+
 /**
  * Recursively renders the data items in [data]. If [LAYOUT_KEY] is defined in an item, use it to load
  * layout from the context, otherwise render children nodes as name segments and individual data items using [dataRenderer].
  */
 fun SiteBuilder.pages(
     data: DataTreeItem<*>,
-    dataRenderer: SiteBuilder.(Data<*>) -> Unit = SiteLayout.defaultDataRenderer,
+    dataRenderer: DataRenderer = SiteLayout.defaultDataRenderer,
 ) {
     val layoutMeta = data.meta[LAYOUT_KEY]
     if (layoutMeta != null) {
@@ -70,14 +72,17 @@ fun SiteBuilder.pages(
                     //Don't apply index token
                     if (token == INDEX_PAGE_TOKEN) {
                         pages(item, dataRenderer)
-                    }
-                    route(token.toString()) {
-                        pages(item, dataRenderer)
+                    } else if (item is DataTreeItem.Leaf) {
+                        dataRenderer(this, token.asName(), item.data)
+                    } else {
+                        route(token.asName()) {
+                            pages(item, dataRenderer)
+                        }
                     }
                 }
             }
             is DataTreeItem.Leaf -> {
-                dataRenderer.invoke(this, data.data)
+                dataRenderer.invoke(this, Name.EMPTY, data.data)
             }
         }
         data.meta[ASSETS_KEY]?.let {
@@ -93,7 +98,7 @@ fun SiteBuilder.pages(
 fun SiteBuilder.pages(
     dataPath: Name,
     remotePath: Name = dataPath,
-    dataRenderer: SiteBuilder.(Data<*>) -> Unit = SiteLayout.defaultDataRenderer,
+    dataRenderer: DataRenderer = SiteLayout.defaultDataRenderer,
 ) {
     val item = data.getItem(dataPath) ?: error("No data found by name $dataPath")
     route(remotePath) {
@@ -104,11 +109,10 @@ fun SiteBuilder.pages(
 fun SiteBuilder.pages(
     dataPath: String,
     remotePath: Name = dataPath.parseAsName(),
-    dataRenderer: SiteBuilder.(Data<*>) -> Unit = SiteLayout.defaultDataRenderer,
+    dataRenderer: DataRenderer = SiteLayout.defaultDataRenderer,
 ) {
     pages(dataPath.parseAsName(), remotePath, dataRenderer = dataRenderer)
 }
-
 
 
 @Type(SiteLayout.TYPE)
@@ -122,9 +126,9 @@ fun interface SiteLayout {
         const val ASSETS_KEY = "assets"
         val INDEX_PAGE_TOKEN = NameToken("index")
 
-        val defaultDataRenderer: SiteBuilder.(Data<*>) -> Unit = { data: Data<*> ->
+        val defaultDataRenderer: SiteBuilder.(name: Name, data: Data<*>) -> Unit = { name: Name, data: Data<*> ->
             if (data.type == typeOf<HtmlData>()) {
-                page {
+                page(name) {
                     head {
                         title = data.meta["title"].string ?: "Untitled page"
                     }

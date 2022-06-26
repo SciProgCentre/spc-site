@@ -53,10 +53,10 @@ context(PageBuilder) internal fun HTML.spcPageContent(
 }
 
 @Suppress("UNCHECKED_CAST")
-internal val FortyDataRenderer: SiteBuilder.(Data<*>) -> Unit = { data ->
+internal val FortyDataRenderer: DataRenderer = { name, data ->
     if (data.type == typeOf<HtmlFragment>()) {
         data as Data<HtmlFragment>
-        page {
+        page(name) {
             spcPageContent(data.meta) {
                 htmlData(data)
             }
