@@ -10,12 +10,12 @@ import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.startsWith
 import space.kscience.dataforge.values.string
-import space.kscience.snark.*
+import space.kscience.snark.html.*
 import java.nio.file.Path
 import kotlin.reflect.typeOf
 
 
-context(PageBuilder) internal fun HTML.spcPageContent(
+context(Page) internal fun HTML.spcPageContent(
     meta: Meta,
     title: String = meta["title"].string ?: SPC_TITLE,
     fragment: FlowContent.() -> Unit,
@@ -65,7 +65,7 @@ internal val FortyDataRenderer: DataRenderer = { name, data ->
 }
 
 
-context(PageBuilder) private fun HTML.spcHome() {
+context(Page) private fun HTML.spcHome() {
     spcHead()
     body("is-preload") {
         wrapper {

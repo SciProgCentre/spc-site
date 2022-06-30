@@ -7,8 +7,8 @@ import kotlinx.html.CommonAttributeGroupFacade
 import kotlinx.html.style
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.fetch
-import space.kscience.snark.SnarkPlugin
-import space.kscience.snark.snarkSite
+import space.kscience.snark.html.SnarkPlugin
+import space.kscience.snark.ktor.snarkSite
 import java.net.URI
 import java.nio.file.FileSystems
 import java.nio.file.Files
