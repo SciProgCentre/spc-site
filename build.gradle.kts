@@ -21,7 +21,7 @@ application {
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment", "-Xmx200M")
 }
 
-val snarkVersion by extra("0.1.0-dev-1")
+val snarkVersion: String by extra
 val ktorVersion = KScienceVersions.ktorVersion
 
 dependencies {

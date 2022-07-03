@@ -6,6 +6,7 @@ enableFeaturePreview("VERSION_CATALOGS")
 pluginManagement {
 
     val toolsVersion: String by extra
+    val snarkVersion: String by extra
 
     repositories {
         maven("https://repo.kotlin.link")
@@ -18,7 +19,7 @@ pluginManagement {
         id("ru.mipt.npm.gradle.mpp") version toolsVersion
         id("ru.mipt.npm.gradle.jvm") version toolsVersion
         id("ru.mipt.npm.gradle.js") version toolsVersion
-        id("space.kscience.snark") version "0.1.0-dev-1"
+        id("space.kscience.snark") version snarkVersion
     }
 }
 
