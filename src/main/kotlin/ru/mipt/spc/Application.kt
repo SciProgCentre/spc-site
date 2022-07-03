@@ -82,6 +82,12 @@ fun Application.spcModule() {
     }
 
     SnarkEnvironment.default.site {
+
+        resolveData(
+            this@spcModule.javaClass.getResource("/common")!!.toURI(),
+            dataPath / "common"
+        )
+
         val homeDataPath = resolveData(
             this@spcModule.javaClass.getResource("/home")!!.toURI(),
             dataPath / "home"
