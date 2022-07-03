@@ -15,7 +15,7 @@ import space.kscience.dataforge.names.plus
 import space.kscience.dataforge.names.withIndex
 import space.kscience.snark.*
 import space.kscience.snark.html.*
-import space.kscience.snark.html.Page
+import space.kscience.snark.html.WebPage
 import java.nio.file.Path
 import kotlin.collections.component1
 import kotlin.collections.component2
@@ -37,14 +37,14 @@ import kotlin.collections.set
 private val HtmlData.imagePath: String? get() = meta["image"]?.string ?: meta["image.path"].string
 private val HtmlData.name: String get() = meta["name"].string ?: error("Name not found")
 
-context(Page) class MagProgSection(
+context(WebPage) class MagProgSection(
     val id: String,
     val title: String,
     val style: String,
     val content: FlowContent.() -> Unit,
 )
 
-context(Page) private fun wrapSection(
+context(WebPage) private fun wrapSection(
     id: String,
     title: String,
     sectionContent: FlowContent.() -> Unit,
@@ -55,7 +55,7 @@ context(Page) private fun wrapSection(
     }
 }
 
-context(Page) private fun wrapSection(
+context(WebPage) private fun wrapSection(
     block: HtmlData,
     idOverride: String? = null,
 ): MagProgSection = wrapSection(
@@ -73,7 +73,7 @@ private val PROGRAM_PATH: Name = CONTENT_NODE_NAME + "program"
 private val RECOMMENDED_COURSES_PATH: Name = CONTENT_NODE_NAME + "recommendedCourses"
 private val PARTNERS_PATH: Name = CONTENT_NODE_NAME + "partners"
 
-context(Page) private fun FlowContent.programSection() {
+context(WebPage) private fun FlowContent.programSection() {
     val programBlock = data.resolveHtml(PROGRAM_PATH)!!
     val recommendedBlock = data.resolveHtml(RECOMMENDED_COURSES_PATH)!!
     div("inner") {
@@ -90,7 +90,7 @@ context(Page) private fun FlowContent.programSection() {
     }
 }
 
-context(Page) private fun FlowContent.partners() {
+context(WebPage) private fun FlowContent.partners() {
     //val partnersData: Meta = resolve<Any>(PARTNERS_PATH)?.meta ?: Meta.EMPTY
     val partnersData: Meta = runBlocking { data.getByType<Meta>(PARTNERS_PATH)?.await() } ?: Meta.EMPTY
     div("inner") {
@@ -120,7 +120,7 @@ context(Page) private fun FlowContent.partners() {
 //    val photo: String? by meta.string()
 //}
 
-context(Page) private fun FlowContent.team() {
+context(WebPage) private fun FlowContent.team() {
     val team = data.findByContentType("magprog_team").values.sortedBy { it.order }
 
     div("inner") {
@@ -175,7 +175,7 @@ context(Page) private fun FlowContent.team() {
 //    }
 }
 
-context(Page) private fun FlowContent.mentors() {
+context(WebPage) private fun FlowContent.mentors() {
     val mentors = data.findByContentType("magprog_mentor").entries.sortedBy { it.value.id }
 
     div("inner") {
@@ -213,7 +213,7 @@ context(Page) private fun FlowContent.mentors() {
     }
 }
 
-context(Page) internal fun HTML.magProgHead(title: String) {
+context(WebPage) internal fun HTML.magProgHead(title: String) {
     head {
         this.title = title
         meta {
@@ -237,10 +237,31 @@ context(Page) internal fun HTML.magProgHead(title: String) {
                 href = resolveRef("assets/css/noscript.css")
             }
         }
+        link {
+            rel = "apple-touch-icon"
+            sizes = "180x180"
+            href = "/apple-touch-icon.png"
+        }
+        link {
+            rel = "icon"
+            type = "image/png"
+            sizes = "32x32"
+            href = "/favicon-32x32.png"
+        }
+        link {
+            rel = "icon"
+            type = "image/png"
+            sizes = "16x16"
+            href = "/favicon-16x16.png"
+        }
+        link {
+            rel = "manifest"
+            href = "/site.webmanifest"
+        }
     }
 }
 
-context(Page) internal fun BODY.magProgFooter() {
+context(WebPage) internal fun BODY.magProgFooter() {
     footer("wrapper style1-alt") {
         id = "footer"
         div("inner") {
@@ -281,13 +302,14 @@ context(Page) internal fun BODY.magProgFooter() {
 
 context(SnarkContext) private val HtmlData.mentorPageId get() = "mentor-${id}"
 
-internal fun SiteBuilder.spcMaster(dataPath: Path, prefix: Name = "magprog".asName()) {
+internal fun SiteBuilder.spcMasters(dataPath: Path, prefix: Name = "magprog".asName()) {
 
     val magProgData: DataTree<Any> = snark.readDirectory(dataPath.resolve("content"))
 
     route(prefix, magProgData, setAsRoot = true) {
-        assetDirectory("assets", dataPath.resolve("assets"))
-        assetDirectory("images", dataPath.resolve("images"))
+        file(dataPath.resolve("assets"))
+        file(dataPath.resolve("images"))
+        file(dataPath.resolve("../common"), "")
 
         page {
             val sections = listOf<MagProgSection>(

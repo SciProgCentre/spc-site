@@ -29,6 +29,7 @@ dependencies {
 
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-server-http-redirect:$ktorVersion")
+    implementation("ch.qos.logback:logback-classic:1.2.11")
 
     testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
 }
@@ -43,7 +44,7 @@ apiValidation{
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions {
-        freeCompilerArgs = freeCompilerArgs + "-Xcontext-receivers"
+        freeCompilerArgs = freeCompilerArgs  + "-Xcontext-receivers"
     }
 }
 

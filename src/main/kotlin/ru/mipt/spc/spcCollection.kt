@@ -15,7 +15,7 @@ import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set
 
-context(Page) private fun FlowContent.spcSpotlightContent(
+context(WebPage) private fun FlowContent.spcSpotlightContent(
     landing: HtmlData,
     content: Map<Name, HtmlData>,
 ) {

@@ -5,10 +5,8 @@ import io.ktor.server.application.log
 import kotlinx.css.CssBuilder
 import kotlinx.html.CommonAttributeGroupFacade
 import kotlinx.html.style
-import space.kscience.dataforge.context.Context
-import space.kscience.dataforge.context.fetch
-import space.kscience.snark.html.SnarkPlugin
-import space.kscience.snark.ktor.snarkSite
+import space.kscience.snark.SnarkEnvironment
+import space.kscience.snark.ktor.site
 import java.net.URI
 import java.nio.file.FileSystems
 import java.nio.file.Files
@@ -49,11 +47,6 @@ const val BUILD_DATE_FILE = "/buildDate"
 fun Application.spcModule() {
 //    install(HttpsRedirect)
 
-    val context = Context("spc-site") {
-        plugin(SnarkPlugin)
-    }
-    val snark = context.fetch(SnarkPlugin)
-
     val dataPath = Path.of("data")
 
     // Clear data directory if it is outdated
@@ -88,20 +81,20 @@ fun Application.spcModule() {
         dataPath.resolve(DEPLOY_DATE_FILE).writeText(date)
     }
 
-    snarkSite(snark) {
+    SnarkEnvironment.default.site {
         val homeDataPath = resolveData(
             this@spcModule.javaClass.getResource("/home")!!.toURI(),
             dataPath / "home"
         )
 
-        spcHome(rootPath = homeDataPath)
+        spcHome(dataPath = homeDataPath)
 
         val mastersDataPath = resolveData(
             this@spcModule.javaClass.getResource("/magprog")!!.toURI(),
             dataPath / "magprog"
         )
 
-        spcMaster(dataPath = mastersDataPath)
+        spcMasters(dataPath = mastersDataPath)
     }
 }
 

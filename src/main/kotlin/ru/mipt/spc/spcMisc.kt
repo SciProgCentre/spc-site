@@ -1,14 +1,14 @@
 package ru.mipt.spc
 
 import kotlinx.html.*
-import space.kscience.snark.html.Page
+import space.kscience.snark.html.WebPage
 import space.kscience.snark.html.homeRef
 import space.kscience.snark.html.resolvePageRef
 
 
 internal const val SPC_TITLE = "Scientific Programming Centre"
 
-context(Page) internal fun HTML.spcHead(title: String = SPC_TITLE) {
+context(WebPage) internal fun HTML.spcHead(title: String = SPC_TITLE) {
     head {
         title {
             +title
@@ -24,10 +24,31 @@ context(Page) internal fun HTML.spcHead(title: String = SPC_TITLE) {
         noScript {
             link(rel = "stylesheet", href = resolveRef("assets/css/noscript.css"))
         }
+        link {
+            rel = "apple-touch-icon"
+            sizes = "180x180"
+            href = "/apple-touch-icon.png"
+        }
+        link {
+            rel = "icon"
+            type = "image/png"
+            sizes = "32x32"
+            href = "/favicon-32x32.png"
+        }
+        link {
+            rel = "icon"
+            type = "image/png"
+            sizes = "16x16"
+            href = "/favicon-16x16.png"
+        }
+        link {
+            rel = "manifest"
+            href = "/site.webmanifest"
+        }
     }
 }
 
-context(Page) internal fun FlowContent.spcHomeMenu() {
+context(WebPage) internal fun FlowContent.spcHomeMenu() {
     nav {
         id = "menu"
         ul("links") {
@@ -39,7 +60,7 @@ context(Page) internal fun FlowContent.spcHomeMenu() {
             }
             li {
                 a {
-                    href = resolvePageRef("magprog")
+                    href = resolvePageRef("magprog.index")
                     +"""Master"""
                 }
             }
@@ -51,7 +72,7 @@ context(Page) internal fun FlowContent.spcHomeMenu() {
             }
             li {
                 a {
-                    href = resolvePageRef("consulting")
+                    href = resolvePageRef("consulting.index")
                     +"""Consulting"""
                 }
             }
@@ -79,7 +100,7 @@ context(Page) internal fun FlowContent.spcHomeMenu() {
     }
 }
 
-context(Page) internal fun FlowContent.spcFooter() {
+context(WebPage) internal fun FlowContent.spcFooter() {
     footer {
         id = "footer"
         div("inner") {
@@ -129,7 +150,7 @@ context(Page) internal fun FlowContent.spcFooter() {
     }
 }
 
-context(Page) internal fun FlowContent.wrapper(contentBody: FlowContent.() -> Unit) {
+context(WebPage) internal fun FlowContent.wrapper(contentBody: FlowContent.() -> Unit) {
     div {
         id = "wrapper"
         // Header

@@ -1,7 +1,7 @@
 package html5up.forty
 
 import kotlinx.html.*
-import space.kscience.snark.html.Page
+import space.kscience.snark.html.WebPage
 
 
 internal fun FlowContent.fortyMenu() {
@@ -200,7 +200,7 @@ internal fun FlowContent.fortyFooter() {
     }
 }
 
-context(Page) internal fun BODY.fortyScripts() {
+context(WebPage) internal fun BODY.fortyScripts() {
     script {
         src = resolveRef("assets/js/jquery.min.js")
     }
