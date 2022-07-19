@@ -10,12 +10,12 @@ import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.parseAsName
 import space.kscience.dataforge.names.withIndex
 import space.kscience.dataforge.values.string
-import space.kscience.snark.*
+import space.kscience.snark.html.*
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set
 
-context(PageBuilder) private fun FlowContent.spcSpotlightContent(
+context(WebPage) private fun FlowContent.spcSpotlightContent(
     landing: HtmlData,
     content: Map<Name, HtmlData>,
 ) {
