@@ -125,7 +125,7 @@ context(WebPage) internal fun FlowContent.spcFooter() {
 //                }
                 li {
                     a(classes = "icon brands alt fa-github") {
-                        href = "https://github.com/mipt-npm"
+                        href = "https://github.com/SciProgCentre"
                         span("label") { +"""GitHub""" }
                     }
                 }
