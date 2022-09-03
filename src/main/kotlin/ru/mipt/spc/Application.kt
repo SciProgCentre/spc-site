@@ -3,6 +3,7 @@ package ru.mipt.spc
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.plugins.forwardedheaders.ForwardedHeaders
+import io.ktor.server.plugins.forwardedheaders.XForwardedHeaders
 import space.kscience.snark.SnarkEnvironment
 import space.kscience.snark.ktor.extractResources
 import space.kscience.snark.ktor.prepareSnarkDataCacheDirectory
@@ -14,6 +15,7 @@ import kotlin.io.path.div
 fun Application.spcModule() {
 //    install(HttpsRedirect)
     install(ForwardedHeaders)
+    install(XForwardedHeaders)
 
     val dataPath = Path.of("data")
 
