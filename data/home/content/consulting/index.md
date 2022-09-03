@@ -15,6 +15,7 @@ Our research, which primarily includes open source projects, has already been ap
 
 ## We do
 
+<!--suppress HtmlUnknownTarget -->
 <section id="one" class="tiles">
     <article>
         <span class="image">

@@ -149,11 +149,11 @@ context(WebPage) private fun HTML.spcHome() {
                         header("major") {
                             h3 {
                                 a(classes = "link") {
-                                    href = resolvePageRef("magprog.index")
-                                    +"""Master's program"""
+                                    href = resolvePageRef("education")
+                                    +"""Education"""
                                 }
                             }
-                            p { +"""Master's program: "Scientific programming" """ }
+                            p { +""" Educational projects""" }
                         }
                     }
                     article {
@@ -265,11 +265,14 @@ internal fun SiteBuilder.spcHome(dataPath: Path, prefix: Name = Name.EMPTY) {
         pages("consulting", dataRenderer = FortyDataRenderer)
         //pages("ru.consulting".parseAsName(), dataRenderer = FortyDataRenderer)
 
-        spcSpotlight("team") { _, m ->
-            m["type"].string == "team"
+        pages("education", dataRenderer = FortyDataRenderer)
+
+        spcSpotlight("team") { _, meta ->
+            meta["type"].string == "team"
         }
-        spcSpotlight("research") { name, m ->
-            name.startsWith("projects".asName()) && m["type"].string == "project"
+
+        spcSpotlight("research") { name, meta ->
+            name.startsWith("projects".asName()) && meta["type"].string == "project"
         }
     }
 

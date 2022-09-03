@@ -9,13 +9,9 @@ import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.getIndexed
 import space.kscience.dataforge.meta.string
-import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.asName
-import space.kscience.dataforge.names.plus
-import space.kscience.dataforge.names.withIndex
-import space.kscience.snark.*
+import space.kscience.dataforge.names.*
+import space.kscience.snark.SnarkContext
 import space.kscience.snark.html.*
-import space.kscience.snark.html.WebPage
 import java.nio.file.Path
 import kotlin.collections.component1
 import kotlin.collections.component2
@@ -302,7 +298,7 @@ context(WebPage) internal fun BODY.magProgFooter() {
 
 context(SnarkContext) private val HtmlData.mentorPageId get() = "mentor-${id}"
 
-internal fun SiteBuilder.spcMasters(dataPath: Path, prefix: Name = "magprog".asName()) {
+internal fun SiteBuilder.spcMasters(dataPath: Path, prefix: Name = "education.masters".parseAsName()) {
 
     val magProgData: DataTree<Any> = snark.readDirectory(dataPath.resolve("content"))
 
@@ -353,7 +349,7 @@ internal fun SiteBuilder.spcMasters(dataPath: Path, prefix: Name = "magprog".asN
                                 li {
                                     a(
                                         classes = "spc-home",
-                                        href = resolvePageRef(Name.of("..") + SiteBuilder.INDEX_PAGE_TOKEN)
+                                        href = "/" //TODO provide a way to navigate out-of-site
                                     ) {
                                         i("fa fa-home") {
                                             attributes["aria-hidden"] = "true"

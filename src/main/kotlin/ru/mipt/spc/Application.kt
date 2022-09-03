@@ -1,9 +1,13 @@
 package ru.mipt.spc
 
 import io.ktor.server.application.Application
+import io.ktor.server.application.call
 import io.ktor.server.application.install
 import io.ktor.server.plugins.forwardedheaders.ForwardedHeaders
 import io.ktor.server.plugins.forwardedheaders.XForwardedHeaders
+import io.ktor.server.response.respondRedirect
+import io.ktor.server.routing.get
+import io.ktor.server.routing.routing
 import space.kscience.snark.SnarkEnvironment
 import space.kscience.snark.ktor.extractResources
 import space.kscience.snark.ktor.prepareSnarkDataCacheDirectory
@@ -41,6 +45,13 @@ fun Application.spcModule() {
         )
 
         spcMasters(dataPath = mastersDataPath)
+    }
+
+    routing{
+        get("magprog"){
+            call.respondRedirect("education/masters")
+        }
+
     }
 }
 
