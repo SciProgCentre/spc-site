@@ -9,7 +9,6 @@ import space.kscience.dataforge.meta.string
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.parseAsName
 import space.kscience.dataforge.names.withIndex
-import space.kscience.dataforge.values.string
 import space.kscience.snark.html.*
 import kotlin.collections.component1
 import kotlin.collections.component2

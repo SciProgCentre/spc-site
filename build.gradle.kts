@@ -1,12 +1,12 @@
-import ru.mipt.npm.gradle.KScienceVersions
+import space.kscience.gradle.KScienceVersions
 import space.kscience.snark.plugin.JSch
 import space.kscience.snark.plugin.execute
 import space.kscience.snark.plugin.uploadDirectory
 import space.kscience.snark.plugin.useSession
 
 plugins {
-    id("ru.mipt.npm.gradle.project")
-    id("ru.mipt.npm.gradle.jvm")
+    id("space.kscience.gradle.project")
+    id("space.kscience.gradle.jvm")
     id("space.kscience.snark")
     application
 }
@@ -40,18 +40,6 @@ kotlin {
 
 apiValidation{
     validationDisabled = true
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs = freeCompilerArgs  + "-Xcontext-receivers"
-    }
-}
-
-sourceSets {
-    main {
-        resources.srcDir(project.rootDir.resolve("data"))
-    }
 }
 
 /* Upload with JSch */
