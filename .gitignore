@@ -5,3 +5,6 @@ build/
 
 !gradle/wrapper/gradle-wrapper.jar
 /deploy.ps1
+
+.sass-cache
+*.css.map
