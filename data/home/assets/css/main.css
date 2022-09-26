@@ -1305,14 +1305,14 @@ a.icon.alt:active:before {
 ol {
   list-style: decimal;
   margin: 0 0 2em 0;
-  padding-left: 1.25em; }
+  list-style-position: inside; }
   ol li {
     padding-left: 0.25em; }
 
 ul {
   list-style: disc;
   margin: 0 0 2em 0;
-  padding-left: 1em; }
+  list-style-position: inside; }
   ul li {
     padding-left: 0.5em; }
   ul.alt {
