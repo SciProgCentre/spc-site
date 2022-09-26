@@ -2491,4 +2491,14 @@ body.is-menu-visible #menu {
     opacity: 1;
     visibility: visible; }
 
+#main div.inner.home_creationinfo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 2.25em; }
+  #main div.inner.home_creationinfo a > span {
+    display: block; }
+  #main div.inner.home_creationinfo p {
+    margin: 0 0 0 1em; }
+
 /*# sourceMappingURL=main.css.map */

@@ -585,8 +585,11 @@
 	};
 
 	// Remove `border-bottom` from all `<a>` elements that also contain an `<img>`
-	document.querySelectorAll("a > img").forEach(
-		imgEl => { imgEl.parentElement.style.borderBottom = "none" }
+	document.querySelectorAll("a > img, a > span > img").forEach(
+		imgEl => {
+			while (imgEl.tagName != "A") imgEl = imgEl.parentElement;
+			imgEl.style.borderBottom = "none";
+		}
 	);
 
 })(jQuery);
