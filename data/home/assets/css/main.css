@@ -180,6 +180,8 @@ blockquote {
   font-style: italic;
   margin: 0 0 2em 0;
   padding: 0.5em 0 0.5em 2em; }
+  blockquote ul:last-child {
+    margin-bottom: .25em; }
 
 code {
   background: rgba(212, 212, 255, 0.035);
