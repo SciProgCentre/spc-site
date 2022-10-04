@@ -13,6 +13,7 @@
 			@include padding(5em, 5em);
 			max-width: 100%;
 			width: _size(inner-width);
+			overflow: auto;
 
 			@include breakpoint('<=xlarge') {
 				@include padding(4em, 4em);

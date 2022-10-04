@@ -137,7 +137,7 @@ context(WebPage) internal fun FlowContent.spcFooter() {
 //                }
             }
             ul("copyright") {
-                li { +"""SPC""" }
+                li { +"""SPC. All rights reserved.""" }
                 li {
                     +"""Design:"""
                     a {

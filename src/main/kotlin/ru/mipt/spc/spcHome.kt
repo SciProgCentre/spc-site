@@ -97,9 +97,9 @@ context(WebPage) private fun HTML.spcHome() {
             div {
                 id = "main"
                 section {
-                    div("inner") {
+                    div("inner home_creationinfo") {
                         a(href = "https://mipt.ru/education/departments/fpmi/") {
-                            span("image left") {
+                            span("image") {
                                 img {
                                     src = "images/FPMI.jpg"
                                     alt = "FPMI"

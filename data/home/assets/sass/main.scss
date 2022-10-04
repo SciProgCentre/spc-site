@@ -32,6 +32,7 @@
 			margin: 0 auto;
 			max-width: _size(inner);
 			width: calc(100% - 6em);
+			overflow: auto;
 
 			@include breakpoint('<=small') {
 				@include padding(3em, 0);
@@ -73,3 +74,6 @@
 	@import 'layout/footer';
 	@import 'layout/wrapper';
 	@import 'layout/menu';
+
+// Custom modifications.
+	@import 'custom/home_creationinfo';
