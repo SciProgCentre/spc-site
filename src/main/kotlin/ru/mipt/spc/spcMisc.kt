@@ -60,8 +60,8 @@ context(WebPage) internal fun FlowContent.spcHomeMenu() {
             }
             li {
                 a {
-                    href = resolvePageRef("magprog.index")
-                    +"""Master"""
+                    href = resolvePageRef("education.index")
+                    +"""Education"""
                 }
             }
             li {

@@ -1,6 +1,7 @@
 ---
 type: page
 title: Research
+pageName: SPC.research
 language: en
 ---
 

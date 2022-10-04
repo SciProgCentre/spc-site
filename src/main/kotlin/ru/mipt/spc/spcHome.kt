@@ -16,10 +16,11 @@ import kotlin.reflect.typeOf
 
 context(WebPage) internal fun HTML.spcPageContent(
     meta: Meta,
-    title: String = meta["title"].string ?: SPC_TITLE,
     fragment: FlowContent.() -> Unit,
 ) {
-    spcHead(title)
+    val title by meta.string { SPC_TITLE }
+    val pageName by meta.string { title }
+    spcHead(pageName)
     body("is-preload") {
         wrapper {
             div("alt") {
@@ -73,7 +74,9 @@ context(WebPage) private fun HTML.spcHome() {
                 id = "banner"
                 div("inner") {
                     header("major") {
-                        h1 { +"""Scientific Programming Centre""" }
+                        h1 {
+                            +"""Scientific Programming Centre"""
+                        }
                     }
                     div("content") {
                         p {
@@ -103,8 +106,8 @@ context(WebPage) private fun HTML.spcHome() {
                                 img {
                                     src = "images/FPMI.jpg"
                                     alt = "FPMI"
-                                    height = "60"
-                                    width = "60"
+                                    height = "60dp"
+                                    width = "60dp"
                                 }
                             }
                         }

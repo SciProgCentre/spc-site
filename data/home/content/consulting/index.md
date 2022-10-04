@@ -1,6 +1,7 @@
 ---
 type: page
 title: Consulting
+pageName: SPC.consulting
 transformation: snark.basic
 language: en
 ---

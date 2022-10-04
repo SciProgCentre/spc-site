@@ -1,6 +1,7 @@
 ---
 type: page
 title: Education
+pageName: SPC.education
 transformation: snark.basic
 language: en
 ---
@@ -21,25 +22,32 @@ language: en
 
 ## Courses in 2022-2023:
 
-* Scientific literature seminar
+### Scientific literature seminar
 
   curated by Aleksandr Svetlichnyi
 
-* [Statistical methods and data analysis](https://t.me/mipt_statmethods) ([SPC-A-6](https://npm.mipt.ru/youtrack/articles/SPC-A-6))
+### [Statistical methods and data analysis](https://t.me/mipt_statmethods) 
+Program: [SPC-A-6](https://npm.mipt.ru/youtrack/articles/SPC-A-6)
   
   by Alexander Nozik and Vladimir Palmin
 
 
-* Численные методы ([SPC-A-3](https://npm.mipt.ru/youtrack/articles/SPC-A-3))
+### Численные методы 
+Program: [SPC-A-3](https://npm.mipt.ru/youtrack/articles/SPC-A-3)
   
   by Konstantin Tikhonov and Rolan Grinis
 
-* Instruments of development ([SPC-A-5](https://npm.mipt.ru/youtrack/articles/SPC-A-5))
+### Instruments of development 
+Program: [SPC-A-5](https://npm.mipt.ru/youtrack/articles/SPC-A-5)
+  
+  curated by Alexander Nozik
 
-* [Advanced Python](https://t.me/mipt_npm_python) ([SPC-A-4](https://npm.mipt.ru/youtrack/articles/SPC-A-4))
+### [Advanced Python](https://t.me/mipt_npm_python) 
+Program: [SPC-A-4](https://npm.mipt.ru/youtrack/articles/SPC-A-4)
 
   by Mikhail Zelenyy
 
-* Computational finance ([SPC-A-10](https://npm.mipt.ru/youtrack/articles/SPC-A-10))
+### Computational finance 
+Program: [SPC-A-10](https://npm.mipt.ru/youtrack/articles/SPC-A-10)
 
   by Rolan Grinis

@@ -97,8 +97,9 @@ internal fun SiteBuilder.spcSpotlight(
 
     val meta = body.meta
     page(name) {
-        val title = meta["title"].string ?: SPC_TITLE
-        spcHead(title)
+        val title by meta.string { SPC_TITLE }
+        val pageName by meta.string { title }
+        spcHead(pageName)
         body("is-preload") {
             wrapper {
                 spcSpotlightContent(body, content)
