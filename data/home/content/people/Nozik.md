@@ -11,9 +11,7 @@ image: images/people/nozik_2.png
 
 * PhD in particle physics.
 * Director of [Scientific Programming Centre](/).
-* Senior researcher at https://npm.mipt.ru.
-* (ex) Team lead at [JetBrains Research](https://research.jetbrains.org/groups/npm/).
-* Google developer expert in Kotlin.
+* Teacher of General Physics, Data Analysis and Kotlin at [MIPT](https://mipt.ru/).
 
 email: <a href="mailto:&#100;&#105;&#114;&#101;&#099;&#116;&#111;&#114;&#064;&#115;&#099;&#105;&#112;&#114;&#111;&#103;&#046;&#099;&#101;&#110;&#116;&#101;&#114;">&#100;&#105;&#114;&#101;&#099;&#116;&#111;&#114;&#064;&#115;&#099;&#105;&#112;&#114;&#111;&#103;&#046;&#099;&#101;&#110;&#116;&#101;&#114;</a>
 
@@ -28,9 +26,9 @@ email: <a href="mailto:&#100;&#105;&#114;&#101;&#099;&#116;&#111;&#114;&#064;&#1
 
 ## About me
 
-When I finished the school, I had two choices: I liked physics and I liked programming. In the end I decided that physics is more interesting. Now I am doing programming in physics. Currently I am doing software and physical data analysis for a number of experiments in particle physics (Troitsk nu-mass, IAXO and other experiments). I am leading development of scientific libraries and leading the development of new simulation software and models.
+When I finished the school, I had two choices: I liked physics and I liked programming. In the end I decided that physics is more interesting. Now I am doing programming in physics. Currently, I am doing software and physical data analysis for a number of experiments in particle physics (Troitsk nu-mass, IAXO and other experiments). I am leading development of scientific libraries and leading the development of new simulation software and models.
 
-The laboratory at MIPT, we created in the last years includes young passionate researchers in different fields connected to particle and nuclear physics methods. The aim of the laboratory is to prepare the new generation of researchers, familiar with modern scientific tools and able to develop new ones.
+The [laboratory](https://npm.mipt.ru/) and the [centre](/) at MIPT, we created in the last years include young passionate researchers in different fields. My aim is to prepare the new generation of researchers, familiar with modern scientific software tools and able to develop new ones.
 
 ## Social
 
@@ -52,13 +50,18 @@ The laboratory at MIPT, we created in the last years includes young passionate r
 * INR RAS Senior researcher, 2012–present
 * MIPT Assistant, 2013–2018, The department of general physics laboratory practice and seminars. Special courses on programming and statistics.
 * MIPT Associate professor, 2019–present
-* MIPT Senior researcher, 2019–present, Deputy head of the nuclear physics methods laboratory.
-* JetBrains Research, 2020–present, Head of the research group.
+* MIPT Senior researcher, 2019–2022, Deputy head of the [nuclear physics methods](https://npm.mipt.ru/) laboratory.
+* JetBrains Research, 2020–2022, Head of the research group.
+* SPC MIPT, 2022-present, Director.
+
+## Other experience
+* [Society of Scientific Workers](http://onr-russia.ru/), 2012-2022, member, board member, secretary of the board.
+* Google Developer Expert in Kotlin, 2021-2022.
 
 ## The code
 
-* Private GitHub account: https://github.com/altavir
-* Laboratory / centre GitHub account: https://github.com/mipt-npm
+* Private GitHub account: https://github.com/altavir (blocked by GitHub for working at MIPT).
+* The Centre GitHub account: https://github.com/SciProgCentre
 
 ## Achievements
 
@@ -70,9 +73,9 @@ The laboratory at MIPT, we created in the last years includes young passionate r
 
 ## Publications
 * ORCID: https://orcid.org/0000-0001-9075-0080
-* Scopus ID: 24071435300
+* Scopus ID: [24071435300](https://www.scopus.com/authid/detail.uri?authorId=24071435300)
 * Web of Science ID: H-3844-2019
 
 ## Keywords
 
-Particle physics, Neutrino, Data analysis, Mathematical statistics, Scientific programming, Java, Kotlin
+Scientific programming, Java, Kotlin, Particle physics, Neutrino, Data analysis, Mathematical statistics

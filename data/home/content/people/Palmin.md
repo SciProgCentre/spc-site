@@ -9,6 +9,6 @@ image:
     position: left
 ---
 
-**Researcher**
+**Analytics team lead**
 
 Student at MIPT.

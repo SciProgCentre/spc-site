@@ -4,6 +4,7 @@ import kotlinx.html.*
 import space.kscience.snark.html.WebPage
 import space.kscience.snark.html.homeRef
 import space.kscience.snark.html.resolvePageRef
+import java.time.LocalDate
 
 
 internal const val SPC_TITLE = "Scientific Programming Centre"
@@ -138,6 +139,7 @@ context(WebPage) internal fun FlowContent.spcFooter() {
             }
             ul("copyright") {
                 li { +"""SPC. All rights reserved.""" }
+                li { +"Updated on ${LocalDate.now()}"}
                 li {
                     +"""Design:"""
                     a {

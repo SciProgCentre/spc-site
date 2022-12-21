@@ -9,6 +9,6 @@ image:
     position: left
 ---
 
-**Product manager for consulting**
+**Vice-director for research**
 
 Student at MIPT and Space Research Institute RAS

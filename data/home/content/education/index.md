@@ -22,32 +22,43 @@ language: en
 
 ## Courses in 2022-2023:
 
-### Scientific literature seminar
+### [Scientific literature seminar](#)
+*curated by [Aleksandr Svetlichnyi](team#svetlichnyi)*
 
-  curated by Aleksandr Svetlichnyi
+[Telegram](https://t.me/spc_seminar)
 
-### [Statistical methods and data analysis](https://t.me/mipt_statmethods) 
-Program: [SPC-A-6](https://npm.mipt.ru/youtrack/articles/SPC-A-6)
+### [Statistical methods and data analysis](${resolvePageRef("education.stat-methods")})
+*by [Alexander Nozik](team#nozik) and [Vladimir Palmin](team#palmin)*
+
+Actual program: [SPC-A-6](https://npm.mipt.ru/youtrack/articles/SPC-A-6)
+
+[Telegram](https://t.me/mipt_statmethods) 
+
+### [Introduction to scientific programming in Kotlin](${resolvePageRef("education.kotlin")})
+*by [Alexander Nozik](team#nozik)*
+
+Actual program: [SPC-A-6](https://npm.mipt.ru/youtrack/articles/SPC-A-6)
+
+[Telegram](https://t.me/kotlin_mipt)
+
+### [Numeric methods](https://npm.mipt.ru/youtrack/articles/SPC-A-3)
+*by Konstantin Tikhonov and Rolan Grinis*
+
+Actual program: [SPC-A-3](https://npm.mipt.ru/youtrack/articles/SPC-A-3)
+
+### [Instruments of development](https://npm.mipt.ru/youtrack/articles/SPC-A-5)
+*curated by [Alexander Nozik](team#nozik)*
+
+Actual program: [SPC-A-5](https://npm.mipt.ru/youtrack/articles/SPC-A-5)
   
-  by Alexander Nozik and Vladimir Palmin
+### [Advanced Python](https://npm.mipt.ru/youtrack/articles/SPC-A-4)
+*by Mikhail Zelenyy*
 
+Actual program: [SPC-A-4](https://npm.mipt.ru/youtrack/articles/SPC-A-4)
 
-### Численные методы 
-Program: [SPC-A-3](https://npm.mipt.ru/youtrack/articles/SPC-A-3)
-  
-  by Konstantin Tikhonov and Rolan Grinis
+[Telegram](https://t.me/mipt_npm_python)
 
-### Instruments of development 
-Program: [SPC-A-5](https://npm.mipt.ru/youtrack/articles/SPC-A-5)
-  
-  curated by Alexander Nozik
+### [Computational finance](https://npm.mipt.ru/youtrack/articles/SPC-A-10)
+*by Rolan Grinis*
 
-### [Advanced Python](https://t.me/mipt_npm_python) 
-Program: [SPC-A-4](https://npm.mipt.ru/youtrack/articles/SPC-A-4)
-
-  by Mikhail Zelenyy
-
-### Computational finance 
-Program: [SPC-A-10](https://npm.mipt.ru/youtrack/articles/SPC-A-10)
-
-  by Rolan Grinis
+Actual program: [SPC-A-10](https://npm.mipt.ru/youtrack/articles/SPC-A-10)
