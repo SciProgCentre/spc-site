@@ -2,13 +2,12 @@ package ru.mipt.spc
 
 import html5up.forty.fortyScripts
 import kotlinx.html.*
+import space.kscience.dataforge.data.Data
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.int
 import space.kscience.dataforge.meta.string
-import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.parseAsName
-import space.kscience.dataforge.names.withIndex
+import space.kscience.dataforge.names.*
 import space.kscience.snark.html.*
 import kotlin.collections.component1
 import kotlin.collections.component2
@@ -91,15 +90,17 @@ internal fun SiteBuilder.spcSpotlight(
     address: String,
     contentFilter: (Name, Meta) -> Boolean,
 ) {
-    val name = address.parseAsName()
-    val body = data.resolveHtml(name) ?: error("Could not find body for $name")
-    val content = data.resolveAllHtml(contentFilter)
+    val pageName = address.parseAsName()
+    val languagePrefix = languagePrefix
+    val body = data.resolveHtml(languagePrefix + pageName)
+        ?: data.resolveHtml(pageName) ?: error("Could not find body for $pageName")
+    val content: Map<Name, Data<HtmlFragment>> =
+        data.resolveAllHtml { name, meta -> name.startsWith(languagePrefix) && contentFilter(name, meta) }
 
     val meta = body.meta
-    page(name) {
+    page(pageName) {
         val title by meta.string { SPC_TITLE }
-        val pageName by meta.string { title }
-        spcHead(pageName)
+        spcHead(title)
         body("is-preload") {
             wrapper {
                 spcSpotlightContent(body, content)
@@ -110,8 +111,8 @@ internal fun SiteBuilder.spcSpotlight(
     }
 
     content.forEach { (name, contentBody) ->
-        page(name) {
-            spcPageContent(contentBody.meta) {
+        page(name, contentBody.meta) {
+            spcPageContent {
                 htmlData(contentBody)
             }
         }

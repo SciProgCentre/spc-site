@@ -13,11 +13,10 @@ import kotlin.reflect.typeOf
 
 
 context(WebPage) internal fun HTML.spcPageContent(
-    meta: Meta,
     fragment: FlowContent.() -> Unit,
 ) {
-    val title by meta.string { SPC_TITLE }
-    val pageName by meta.string { title }
+    val title by pageMeta.string { SPC_TITLE }
+    val pageName by pageMeta.string { title }
     spcHead(pageName)
     body("is-preload") {
         wrapper {
@@ -29,7 +28,7 @@ context(WebPage) internal fun HTML.spcPageContent(
                         header("major") {
                             h1 { +title }
                         }
-                        meta["image"]?.let { imageMeta ->
+                        pageMeta["image"]?.let { imageMeta ->
                             val imagePath =
                                 imageMeta.value?.string ?: imageMeta["path"].string ?: error("Image path not provided")
                             val imageClass = imageMeta["position"].string ?: "main"
@@ -63,12 +62,12 @@ internal val FortyDataRenderer: DataRenderer = object : DataRenderer {
                 data.meta
             } else {
                 data.meta.toMutableMeta().apply {
-                    "language" put languageMeta
+                    "languages" put languageMeta
                 }
             }
 
-            page(name, data.meta) {
-                spcPageContent(dataMeta) {
+            page(name, dataMeta) {
+                spcPageContent{
                     htmlData(data)
                 }
             }
@@ -279,9 +278,9 @@ internal fun SiteBuilder.spcHome(dataPath: Path, prefix: Name = Name.EMPTY) {
         ) {
             page { spcHome() }
 
-            pages("consulting", dataRenderer = FortyDataRenderer)
+            localizedPages("consulting", dataRenderer = FortyDataRenderer)
 
-            pages("education", dataRenderer = FortyDataRenderer)
+            localizedPages("education", dataRenderer = FortyDataRenderer)
 
             spcSpotlight("team") { _, meta ->
                 meta["type"].string == "team"

@@ -1,15 +1,19 @@
 package ru.mipt.spc
 
 import kotlinx.html.*
+import space.kscience.dataforge.meta.get
+import space.kscience.dataforge.meta.string
 import space.kscience.snark.html.WebPage
 import space.kscience.snark.html.homeRef
+import space.kscience.snark.html.languages
 import space.kscience.snark.html.resolvePageRef
 import java.time.LocalDate
 
 
 internal const val SPC_TITLE = "Scientific Programming Centre"
 
-context(WebPage) internal fun HTML.spcHead(title: String = SPC_TITLE) {
+context(WebPage)
+internal fun HTML.spcHead(title: String = SPC_TITLE) {
     head {
         title {
             +title
@@ -49,7 +53,8 @@ context(WebPage) internal fun HTML.spcHead(title: String = SPC_TITLE) {
     }
 }
 
-context(WebPage) internal fun FlowContent.spcHomeMenu() {
+context(WebPage)
+internal fun FlowContent.spcHomeMenu() {
     nav {
         id = "menu"
         ul("links") {
@@ -101,7 +106,8 @@ context(WebPage) internal fun FlowContent.spcHomeMenu() {
     }
 }
 
-context(WebPage) internal fun FlowContent.spcFooter() {
+context(WebPage)
+internal fun FlowContent.spcFooter() {
     footer {
         id = "footer"
         div("inner") {
@@ -139,7 +145,7 @@ context(WebPage) internal fun FlowContent.spcFooter() {
             }
             ul("copyright") {
                 li { +"""SPC. All rights reserved.""" }
-                li { +"Updated on ${LocalDate.now()}"}
+                li { +"Updated on ${LocalDate.now()}" }
                 li {
                     +"""Design:"""
                     a {
@@ -152,7 +158,8 @@ context(WebPage) internal fun FlowContent.spcFooter() {
     }
 }
 
-context(WebPage) internal fun FlowContent.wrapper(contentBody: FlowContent.() -> Unit) {
+context(WebPage)
+internal fun FlowContent.wrapper(contentBody: FlowContent.() -> Unit) {
     div {
         id = "wrapper"
         // Header
@@ -163,6 +170,19 @@ context(WebPage) internal fun FlowContent.wrapper(contentBody: FlowContent.() ->
                 strong { +"""SPC""" }
                 span { +"""Scientific Programming Centre""" }
             }
+
+
+            if (languages.isNotEmpty()) {
+                div {
+                    languages.forEach { (key, meta) ->
+                        a(classes = "button primary small") {
+                            href = resolvePageRef(meta["target"].string ?: "#")
+                            +key
+                        }
+                    }
+                }
+            }
+
             nav {
                 a {
                     href = "#menu"
