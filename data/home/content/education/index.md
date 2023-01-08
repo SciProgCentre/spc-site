@@ -23,19 +23,19 @@ language: en
 ## Courses in 2022-2023:
 
 ### [Scientific literature seminar](#)
-*curated by [Aleksandr Svetlichnyi](team#svetlichnyi)*
+*curated by [Aleksandr Svetlichnyi](${resolvePageRef("team")}#svetlichnyi)*
 
 [Telegram](https://t.me/spc_seminar)
 
 ### [Statistical methods and data analysis](${resolvePageRef("education.stat-methods")})
-*by [Alexander Nozik](team#nozik) and [Vladimir Palmin](team#palmin)*
+*by [Alexander Nozik](team#nozik) and [Vladimir Palmin](${resolvePageRef("team.index")}#palmin)*
 
 Actual program: [SPC-A-6](https://npm.mipt.ru/youtrack/articles/SPC-A-6)
 
 [Telegram](https://t.me/mipt_statmethods) 
 
 ### [Introduction to scientific programming in Kotlin](${resolvePageRef("education.kotlin")})
-*by [Alexander Nozik](team#nozik)*
+*by [Alexander Nozik](${resolvePageRef("team.index")}#nozik)*
 
 Actual program: [SPC-A-6](https://npm.mipt.ru/youtrack/articles/SPC-A-6)
 
@@ -47,7 +47,7 @@ Actual program: [SPC-A-6](https://npm.mipt.ru/youtrack/articles/SPC-A-6)
 Actual program: [SPC-A-3](https://npm.mipt.ru/youtrack/articles/SPC-A-3)
 
 ### [Instruments of development](https://npm.mipt.ru/youtrack/articles/SPC-A-5)
-*curated by [Alexander Nozik](team#nozik)*
+*curated by [Alexander Nozik](${resolvePageRef("team.index")}#nozik)*
 
 Actual program: [SPC-A-5](https://npm.mipt.ru/youtrack/articles/SPC-A-5)
   

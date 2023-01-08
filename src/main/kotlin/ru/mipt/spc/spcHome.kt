@@ -3,9 +3,7 @@ package ru.mipt.spc
 import html5up.forty.fortyScripts
 import kotlinx.html.*
 import space.kscience.dataforge.data.Data
-import space.kscience.dataforge.meta.Meta
-import space.kscience.dataforge.meta.get
-import space.kscience.dataforge.meta.string
+import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.startsWith
@@ -53,12 +51,26 @@ context(WebPage) internal fun HTML.spcPageContent(
 }
 
 @Suppress("UNCHECKED_CAST")
-internal val FortyDataRenderer: DataRenderer = { name, data ->
-    if (data.type == typeOf<HtmlFragment>()) {
-        data as Data<HtmlFragment>
-        page(name) {
-            spcPageContent(data.meta) {
-                htmlData(data)
+internal val FortyDataRenderer: DataRenderer = object : DataRenderer {
+
+    context(SiteBuilder)
+    override fun invoke(name: Name, data: Data<Any>) {
+        if (data.type == typeOf<HtmlFragment>()) {
+            data as Data<HtmlFragment>
+            val languageMeta: Meta = DataRenderer.buildLanguageMeta(name)
+
+            val dataMeta: Meta = if (languageMeta.isEmpty()) {
+                data.meta
+            } else {
+                data.meta.toMutableMeta().apply {
+                    "language" put languageMeta
+                }
+            }
+
+            page(name, data.meta) {
+                spcPageContent(dataMeta) {
+                    htmlData(data)
+                }
             }
         }
     }
@@ -248,34 +260,36 @@ context(WebPage) private fun HTML.spcHome() {
                 }
             }
         }
-
         fortyScripts()
     }
-
 }
 
 internal fun SiteBuilder.spcHome(dataPath: Path, prefix: Name = Name.EMPTY) {
 
     val homePageData = snark.readDirectory(dataPath.resolve("content"))
 
-    route(prefix, homePageData, setAsRoot = true) {
+    site(prefix, homePageData) {
         file(dataPath.resolve("assets"))
         file(dataPath.resolve("images"))
         file(dataPath.resolve("../common"), "")
 
-        page { spcHome() }
+        withLanguages(
+            "en" to "",
+            "ru" to "ru"
+        ) {
+            page { spcHome() }
 
-        pages("consulting", dataRenderer = FortyDataRenderer)
-        //pages("ru.consulting".parseAsName(), dataRenderer = FortyDataRenderer)
+            pages("consulting", dataRenderer = FortyDataRenderer)
 
-        pages("education", dataRenderer = FortyDataRenderer)
+            pages("education", dataRenderer = FortyDataRenderer)
 
-        spcSpotlight("team") { _, meta ->
-            meta["type"].string == "team"
-        }
+            spcSpotlight("team") { _, meta ->
+                meta["type"].string == "team"
+            }
 
-        spcSpotlight("research") { name, meta ->
-            name.startsWith("projects".asName()) && meta["type"].string == "project"
+            spcSpotlight("research") { name, meta ->
+                name.startsWith("projects".asName()) && meta["type"].string == "project"
+            }
         }
     }
 

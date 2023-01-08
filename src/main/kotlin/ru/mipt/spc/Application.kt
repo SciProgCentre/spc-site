@@ -51,7 +51,6 @@ fun Application.spcModule() {
         get("magprog"){
             call.respondRedirect("education/masters")
         }
-
     }
 }
 

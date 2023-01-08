@@ -302,7 +302,7 @@ internal fun SiteBuilder.spcMasters(dataPath: Path, prefix: Name = "education.ma
 
     val magProgData: DataTree<Any> = snark.readDirectory(dataPath.resolve("content"))
 
-    route(prefix, magProgData, setAsRoot = true) {
+    site(prefix, magProgData) {
         file(dataPath.resolve("assets"))
         file(dataPath.resolve("images"))
         file(dataPath.resolve("../common"), "")
