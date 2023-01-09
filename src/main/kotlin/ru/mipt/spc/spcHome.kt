@@ -56,13 +56,13 @@ internal val FortyDataRenderer: DataRenderer = object : DataRenderer {
     override fun invoke(name: Name, data: Data<Any>) {
         if (data.type == typeOf<HtmlFragment>()) {
             data as Data<HtmlFragment>
-            val languageMeta: Meta = DataRenderer.buildLanguageMeta(name)
+            val languageMeta: Meta = Language.forName(name)
 
             val dataMeta: Meta = if (languageMeta.isEmpty()) {
                 data.meta
             } else {
                 data.meta.toMutableMeta().apply {
-                    "languages" put languageMeta
+                    Language.LANGUAGES_KEY put languageMeta
                 }
             }
 
