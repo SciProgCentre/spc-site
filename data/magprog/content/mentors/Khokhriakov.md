@@ -4,6 +4,7 @@ name: Igor Khokhriakov
 id: Khokhriakov
 image: images/mentors/Khokhriakov.jpg
 language: ru
+published: false
 ---
 
 #### Организация

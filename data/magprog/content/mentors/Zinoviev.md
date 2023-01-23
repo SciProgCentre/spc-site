@@ -4,6 +4,7 @@ name: Алексей Викторович Зиновьев
 id: Zinoviev
 image: images/mentors/Zinoviev.jpg
 language: ru
+published: false
 ---
 #### Организация
 AproximaLabs, руководитель исследовательской группы в области машинного обучения

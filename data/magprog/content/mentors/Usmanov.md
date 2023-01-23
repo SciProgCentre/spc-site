@@ -4,6 +4,7 @@ name: Ильмир Усманов
 id: Usmanov
 image: images/mentors/Usmanov.jpg
 language: ru
+published: false
 ---
 
 #### Организация

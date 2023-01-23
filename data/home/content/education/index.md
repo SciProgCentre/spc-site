@@ -9,9 +9,9 @@ language: en
 <section id="masters">
     <div class="inner">
         <header class="major">
-            <h2>Masters program</h2>
+            <h2>Master program</h2>
         </header>
-        <p>Masters program "Scientific programming" at MIPT aims to prepare specialists both in application programming and domain field (such as physics, biology, biotechnology, computer science and other research areas).</p>
+        <p>Master program "Scientific programming" at MIPT aims to prepare specialists both in application programming and domain field (such as physics, biology, biotechnology, computer science and other research areas).</p>
         <p> In modern science and technology application level programming is an integral part of any major work. And in order to be successful in this field one needs to know both software engineering and the domain field. </p>
         <ul class="actions">
             <li><a href="${resolvePageRef("education.masters")}" class="button next">More</a></li>

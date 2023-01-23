@@ -4,6 +4,7 @@ name: Максим Сергеевич Долгоносов
 id: Dolgonosov
 image: images/mentors/Dolgonosov.jpg
 language: ru
+published: false
 ---
 
 #### Организация
