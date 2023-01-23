@@ -17,7 +17,7 @@ In our course, we will try to analyze in detail the issues of the practical appl
 The course is planned in the optional format once a week, while lectures will be held every second week, and practical classes (seminars) will be held between the lectures, discussing examples and solving problems from modern experimental physics and everyday life (including laboratory work) .
 
 
-Announcements of important events, as well as discussion of any issues related to the course, are available in the Telegram group (<https://t.me/mipt_statmethods>).
+Announcements of important events, as well as discussion of any issues related to the course, are available in the Telegram group (https://t.me/mipt_statmethods).
 
 [Materials](https://github.com/mipt-npm-study/stat-methods)
 

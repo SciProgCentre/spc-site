@@ -1,4 +1,4 @@
-package ru.mipt.spc
+package center.sciprog
 
 import kotlinx.html.*
 import space.kscience.dataforge.meta.get

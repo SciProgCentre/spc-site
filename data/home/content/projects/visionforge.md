@@ -25,7 +25,7 @@ application, currently targeting browser JavaScript and JVM.
 
 - 3D visualization of complex experimental set-ups
 - Event display such as particle tracks, etc.
-- Scales up to few hundred thousands of elements
+- Scales up to few hundred thousand elements
 - Camera move, rotate, zoom-in and zoom-out
 - Scene graph as an object tree with property editor
 - Settings export and import

@@ -1,4 +1,4 @@
-package ru.mipt.spc
+package center.sciprog
 
 import kotlinx.coroutines.runBlocking
 import kotlinx.html.*

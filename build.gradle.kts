@@ -11,7 +11,7 @@ plugins {
     application
 }
 
-group = "ru.mipt.npm"
+group = "center.sciprog"
 version = "0.1.0"
 
 application {

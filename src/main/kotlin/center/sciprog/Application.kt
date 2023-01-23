@@ -1,4 +1,4 @@
-package ru.mipt.spc
+package center.sciprog
 
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
@@ -45,6 +45,14 @@ fun Application.spcModule() {
         )
 
         spcMasters(dataPath = mastersDataPath)
+
+        val bmkDataPath = extractResources(
+            "/bmk",
+            dataPath / "bmk"
+        )
+
+        bmk(dataPath = bmkDataPath)
+
     }
 
     routing{

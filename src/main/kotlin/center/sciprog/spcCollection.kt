@@ -1,4 +1,4 @@
-package ru.mipt.spc
+package center.sciprog
 
 import html5up.forty.fortyScripts
 import kotlinx.html.*

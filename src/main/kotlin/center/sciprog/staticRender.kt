@@ -1,4 +1,4 @@
-package ru.mipt.spc
+package center.sciprog
 
 import space.kscience.snark.SnarkEnvironment
 import space.kscience.snark.html.static

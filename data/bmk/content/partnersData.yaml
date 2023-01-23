@@ -1,0 +1,25 @@
+content:
+  - title: Институт физики Земли им. О.Ю. Шмидта РАН
+    target: "https://ifz.ru/"
+    image: images/ifz.jpeg
+  - title: Институт океанологии им. П.П. Ширшова
+    target: "https://ocean.ru/"
+    image: images/IMG_8289.jpg
+  - title: ООО «СПЛИТ»
+    target: "https://split-k.com/"
+    image: images/scf.jpg
+  - title: ООО «СКФ ГЕО»
+    target: "https://www.scf-group.ru/"
+    image: images/split.png
+  - title: АО «Морская арктическая геологоразведочная экспедиция»
+    target: "https://mage.ru/ru/"
+    image: images/IMG_8287.jpg
+  - title: АО «Росгеология»
+    target: "https://rusgeology.ru/"
+    image: images/rosgeo.jpeg
+  - title: МФТИ
+    target: "https://mipt.ru/"
+    image: images/IMG_8290.jpg
+  - title:  ФГБОУ «Фонд содействия развитию малых форм предприятий в научно-технической сфере»
+    target: "https://fasie.ru/"
+    image: images/IMG_8284.jpg
