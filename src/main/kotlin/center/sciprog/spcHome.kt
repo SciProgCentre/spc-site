@@ -3,6 +3,7 @@ package center.sciprog
 import html5up.forty.fortyScripts
 import kotlinx.html.*
 import space.kscience.dataforge.data.Data
+import space.kscience.dataforge.data.DataTree
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
@@ -265,11 +266,12 @@ context(WebPage) private fun HTML.spcHome() {
 
 internal fun SiteBuilder.spcHome(dataPath: Path, prefix: Name = Name.EMPTY) {
 
-    val homePageData = snark.readDirectory(dataPath.resolve("content"))
+    val homePageData: DataTree<Any> = snark.readDirectory(dataPath.resolve("content"))
 
     site(prefix, homePageData) {
         file(dataPath.resolve("assets"))
         file(dataPath.resolve("images"))
+        file(dataPath.resolve("../common/assets/webfonts"), "assets/webfonts")
         file(dataPath.resolve("../common"), "")
 
         withLanguages(

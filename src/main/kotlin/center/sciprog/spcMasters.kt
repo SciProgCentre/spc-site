@@ -305,6 +305,7 @@ internal fun SiteBuilder.spcMasters(dataPath: Path, prefix: Name = "education.ma
     site(prefix, magProgData) {
         file(dataPath.resolve("assets"))
         file(dataPath.resolve("images"))
+        file(dataPath.resolve("../common/assets/webfonts"), "assets/webfonts")
         file(dataPath.resolve("../common"), "")
 
         page {

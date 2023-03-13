@@ -30,6 +30,7 @@ internal fun SiteBuilder.bmk(dataPath: Path, prefix: Name = "bmk".parseAsName())
     site(prefix, data) {
         file(dataPath.resolve("assets"))
         file(dataPath.resolve("images"))
+        file(dataPath.resolve("../common/assets/webfonts"), "assets/webfonts")
         file(dataPath.resolve("../common"), "")
 
         val about: Data<HtmlFragment> = data.resolveHtml("about")!!
@@ -176,6 +177,7 @@ internal fun SiteBuilder.bmk(dataPath: Path, prefix: Name = "bmk".parseAsName())
                                                     img {
                                                         src = resolveRef(it["image"].string!!)
                                                         height = "120dp"
+                                                        width = "auto"
                                                     }
                                                 }
                                                 h3 {

@@ -9,7 +9,7 @@ import kotlin.test.assertEquals
 class ApplicationTest {
     @Test
     fun testRoot() = testApplication {
-        client.get("/magprog").apply {
+        client.get("/").apply {
             assertEquals(HttpStatusCode.OK, status)
          }
     }

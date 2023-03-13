@@ -24,6 +24,11 @@ application {
 val snarkVersion: String by extra
 val ktorVersion = KScienceVersions.ktorVersion
 
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
 dependencies {
     implementation("space.kscience:snark-ktor:$snarkVersion")
 
