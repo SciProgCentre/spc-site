@@ -12,15 +12,15 @@ content:
   - title: JetBrains Research (до 2022)
     link: "https://research.jetbrains.org/groups/npm/"
     logo: /images/partners/JBR.png
-  - title: Таврида Электрик
-    link: "https://www.tavrida.com/ter/"
-    logo: /images/partners/Tavrida.png
+  - title: КПМ РИТМ
+    link: "https://kpm-ritm.ru/"
+    logo: /images/partners/RITM.jpg
   - title: ИЯИ РАН
     link: "https://www.inr.ru/"
     logo: /images/partners/inr_logo.png
-  - title: ИКИ РАН
-    link: "http://www.iki.rssi.ru/"
-    logo: /images/partners/iki.jpg
+#  - title: ИКИ РАН
+#    link: "http://www.iki.rssi.ru/"
+#    logo: /images/partners/iki.jpg
   - title: ОИЯИ
     link: "https://bmn.jinr.ru/"
     logo: /images/partners/jinr.png
@@ -33,6 +33,6 @@ content:
   - title: Тинькофф
     link: "https://fintech.tinkoff.ru/"
     logo: /images/partners/tink.jpg
-  - title: ФИЦ Биотехнологии РАН
-    link: "https://www.fbras.ru/"
-    logo: /images/partners/biotech.png
+#  - title: ФИЦ Биотехнологии РАН
+#    link: "https://www.fbras.ru/"
+#    logo: /images/partners/biotech.png
