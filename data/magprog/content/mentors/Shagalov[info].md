@@ -2,4 +2,4 @@
 
 Разработка информационных систем, SCADA платформ
 
-Ключевые слова: *Kotlin, Java, Linux, frontend, SCADA*
+Ключевые слова: *Kotlin, Java, Linux, frontend, SCADA.*
