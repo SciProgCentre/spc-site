@@ -2447,3 +2447,13 @@ table {
       background-attachment: scroll; } }
 
 /*# sourceMappingURL=main.css.map */
+
+/*from https://www.w3schools.com/howto/howto_js_collapsible.asp*/
+
+/* Style the collapsible content. Note: hidden by default */
+.collapsible-content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+}

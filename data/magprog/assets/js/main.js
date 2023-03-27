@@ -190,17 +190,17 @@
 })(jQuery);
 
 //From https://www.w3schools.com/howto/howto_js_collapsible.asp
-let collapsibles = document.getElementsByClassName("collapsible");
+const coll = document.getElementsByClassName("collapsible");
+let i;
 
-Array.from(collapsibles).forEach(item => {
-    item.addEventListener("click", function () {
-        this.classList.toggle("collapsible-expanded");
-        let target = item.attributes.getNamedItem("data-target").value;
-        let content = document.getElementById(target);
-        if (content.style.maxHeight) {
+for (i = 0; i < coll.length; i++) {
+    coll[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        const content = this.nextElementSibling;
+        if (content.style.maxHeight){
             content.style.maxHeight = null;
         } else {
             content.style.maxHeight = content.scrollHeight + "px";
         }
     });
-})
+}
