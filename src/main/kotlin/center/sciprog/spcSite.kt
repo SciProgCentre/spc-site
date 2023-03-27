@@ -14,7 +14,6 @@ private fun <T : Any> DataSet<T>.siteData(branchName: String): DataTree<T> = Dat
 }
 
 fun SiteBuilder.spcSite() {
-//    val commonData = data.branch("common")
     spcHome(data.siteData("home"))
     spcMasters(data.siteData("magprog"))
 //    bmk(data.branch("bmk").withBranch("common", commonData))
