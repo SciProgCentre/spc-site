@@ -5,5 +5,6 @@ id: Aivazov
 order: 4
 image: images/team/Aivazov.jpg
 language: ru
+published: false
 ---
 Консультант от ФПМИ

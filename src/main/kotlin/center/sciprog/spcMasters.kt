@@ -211,7 +211,9 @@ context(WebPage) private fun FlowContent.mentors() {
 
 context(WebPage) internal fun HTML.magProgHead(title: String) {
     head {
-        this.title = title
+        title {
+            +title
+        }
         meta {
             charset = "utf-8"
         }

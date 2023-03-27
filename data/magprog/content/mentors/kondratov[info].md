@@ -2,4 +2,4 @@
 
 Технологии масштабирования реляционных баз данных и управляемые базы данных
 
-Ключевые слова: *C++, Go, базы данных, Distributed SQL, Managed Databases*
+Ключевые слова: *C++, Go, базы данных, Distributed SQL, Managed Databases.*

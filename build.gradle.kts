@@ -52,6 +52,7 @@ apiValidation{
 
 val host = System.getenv("SPC_HOST")
 val user = System.getenv("SPC_USER")
+//val password = System.getenv("SPC_PASSWORD")
 val identityString = System.getenv("SPC_ID")
 val serviceName = "sciprog-site"
 

@@ -4,6 +4,7 @@ name: Лев Михайлович Шагалов
 id: Shagalov
 image: images/mentors/Shagalov.jpg
 language: ru
+published: false
 ---
 
 #### Организация
