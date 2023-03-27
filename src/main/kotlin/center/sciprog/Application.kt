@@ -8,12 +8,20 @@ import io.ktor.server.plugins.forwardedheaders.XForwardedHeaders
 import io.ktor.server.response.respondRedirect
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
-import space.kscience.snark.SnarkEnvironment
-import space.kscience.snark.ktor.extractResources
+import space.kscience.dataforge.context.Global
+import space.kscience.dataforge.context.request
+import space.kscience.dataforge.data.DataSet
+import space.kscience.dataforge.data.DataTree
+import space.kscience.dataforge.data.node
+import space.kscience.dataforge.data.populateFrom
+import space.kscience.dataforge.misc.DFExperimental
+import space.kscience.snark.html.SiteBuilder
+import space.kscience.snark.html.SnarkHtmlPlugin
+import space.kscience.snark.html.readDirectory
 import space.kscience.snark.ktor.prepareSnarkDataCacheDirectory
 import space.kscience.snark.ktor.site
 import java.nio.file.Path
-import kotlin.io.path.div
+
 
 @Suppress("unused")
 fun Application.spcModule() {
@@ -25,38 +33,13 @@ fun Application.spcModule() {
 
     prepareSnarkDataCacheDirectory(dataPath)
 
-    SnarkEnvironment.default.site {
+    val snark = Global.request(SnarkHtmlPlugin)
+    val siteData = snark.readDirectory(dataPath)
 
-        extractResources(
-            "/common",
-            dataPath / "common"
-        )
+    site(snark, siteData, block = SiteBuilder::spcSite)
 
-        val homeDataPath = extractResources(
-            "/home",
-            dataPath / "home"
-        )
-
-        spcHome(dataPath = homeDataPath)
-
-        val mastersDataPath = extractResources(
-            "/magprog",
-            dataPath / "magprog"
-        )
-
-        spcMasters(dataPath = mastersDataPath)
-
-        val bmkDataPath = extractResources(
-            "/bmk",
-            dataPath / "bmk"
-        )
-
-        bmk(dataPath = bmkDataPath)
-
-    }
-
-    routing{
-        get("magprog"){
+    routing {
+        get("magprog") {
             call.respondRedirect("education/masters")
         }
     }

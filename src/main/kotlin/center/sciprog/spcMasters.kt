@@ -12,7 +12,6 @@ import space.kscience.dataforge.meta.string
 import space.kscience.dataforge.names.*
 import space.kscience.snark.SnarkContext
 import space.kscience.snark.html.*
-import java.nio.file.Path
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set
@@ -70,8 +69,8 @@ private val RECOMMENDED_COURSES_PATH: Name = CONTENT_NODE_NAME + "recommendedCou
 private val PARTNERS_PATH: Name = CONTENT_NODE_NAME + "partners"
 
 context(WebPage) private fun FlowContent.programSection() {
-    val programBlock = data.resolveHtml(PROGRAM_PATH)!!
-    val recommendedBlock = data.resolveHtml(RECOMMENDED_COURSES_PATH)!!
+    val programBlock = data.resolveHtmlOrNull(PROGRAM_PATH)!!
+    val recommendedBlock = data.resolveHtmlOrNull(RECOMMENDED_COURSES_PATH)!!
     div("inner") {
         h2 { +"Учебная программа" }
         htmlData(programBlock)
@@ -199,7 +198,7 @@ context(WebPage) private fun FlowContent.mentors() {
                     h2 {
                         a(href = ref) { +mentor.name }
                     }
-                    val info = data.resolveHtml(name.withIndex("info"))
+                    val info = data.resolveHtmlOrNull(name.replaceLast { NameToken(it.body + "[info]") })
                     if (info != null) {
                         htmlData(info)
                     }
@@ -300,19 +299,18 @@ context(WebPage) internal fun BODY.magProgFooter() {
 
 context(SnarkContext) private val HtmlData.mentorPageId get() = "mentor-${id}"
 
-internal fun SiteBuilder.spcMasters(dataPath: Path, prefix: Name = "education.masters".parseAsName()) {
+internal fun SiteBuilder.spcMasters(magProgData: DataTree<Any>, prefix: Name = "education.masters".parseAsName()) {
 
-    val magProgData: DataTree<Any> = snark.readDirectory(dataPath.resolve("content"))
+    //val magProgData: DataTree<Any> = snark.readDirectory(dataPath.resolve("content"))
 
     site(prefix, magProgData) {
-        file(dataPath.resolve("assets"))
-        file(dataPath.resolve("images"))
-        file(dataPath.resolve("../common/assets/webfonts"), "assets/webfonts")
-        file(dataPath.resolve("../common"), "")
+        static("assets")
+        static("images")
+        static("common", "")
 
         page {
             val sections = listOf<MagProgSection>(
-                wrapSection(data.resolveHtml(INTRO_PATH)!!, "intro"),
+                wrapSection(page.data.resolveHtmlOrNull(INTRO_PATH)!!, "intro"),
                 MagProgSection(
                     id = "partners",
                     title = "Партнеры",
@@ -335,9 +333,9 @@ internal fun SiteBuilder.spcMasters(dataPath: Path, prefix: Name = "education.ma
                 ) {
                     programSection()
                 },
-                wrapSection(data.resolveHtml(ENROLL_PATH)!!, "enroll"),
+                wrapSection(page.data.resolveHtmlOrNull(ENROLL_PATH)!!, "enroll"),
                 wrapSection(id = "contacts", title = "Контакты") {
-                    htmlData(data.resolveHtml(CONTACTS_PATH)!!)
+                    htmlData(page.data.resolveHtmlOrNull(CONTACTS_PATH)!!)
                     team()
                 }
             )

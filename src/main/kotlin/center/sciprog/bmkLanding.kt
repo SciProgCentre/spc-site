@@ -13,7 +13,6 @@ import space.kscience.dataforge.meta.string
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.parseAsName
 import space.kscience.snark.html.*
-import java.nio.file.Path
 
 
 private val Data<*>.title: String
@@ -23,21 +22,21 @@ private val Data<*>.fragment: String
     get() = meta["fragment"].string ?: ""
 
 
-internal fun SiteBuilder.bmk(dataPath: Path, prefix: Name = "bmk".parseAsName()) {
+internal fun SiteBuilder.bmk(data: DataTree<Any>, prefix: Name = "bmk".parseAsName()) {
 
-    val data: DataTree<Any> = snark.readDirectory(dataPath.resolve("content"))
+//    val data: DataTree<Any> = snark.readDirectory(dataPath.resolve("content"))
 
     site(prefix, data) {
-        file(dataPath.resolve("assets"))
-        file(dataPath.resolve("images"))
-        file(dataPath.resolve("../common/assets/webfonts"), "assets/webfonts")
-        file(dataPath.resolve("../common"), "")
+        static("assets")
+        static("images")
+        static("common.assets.webfonts", "assets/webfonts")
+        static("common", "")
 
-        val about: Data<HtmlFragment> = data.resolveHtml("about")!!
-        val team: Data<HtmlFragment> = data.resolveHtml("team.index")!!
+        val about: Data<HtmlFragment> = data.resolveHtml("about")
+        val team: Data<HtmlFragment> = data.resolveHtml("team.index")
         val teamData: Map<Name, Data<HtmlFragment>> = data.resolveAllHtml { _, meta -> meta["type"].string == "team" }
-        val solutions: Data<HtmlFragment> = data.resolveHtml("lotSeis")!!
-        val partners: Data<HtmlFragment> = data.resolveHtml("partners")!!
+        val solutions: Data<HtmlFragment> = data.resolveHtml("lotSeis")
+        val partners: Data<HtmlFragment> = data.resolveHtml("partners")
         val partnersData = runBlocking { data.getByType<Meta>("partnersData")!!.await() }
 
         page {

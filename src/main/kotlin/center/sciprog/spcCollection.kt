@@ -63,12 +63,8 @@ context(WebPage) private fun FlowContent.spcSpotlightContent(
                             header("major") {
                                 h3 { +(entry.meta["title"].string ?: "???") }
                             }
-                            val infoData = data.resolveHtml(name.withIndex("info"))
-                            if (infoData == null) {
-                                htmlData(entry)
-                            } else {
-                                htmlData(infoData)
-                            }
+                            val infoData = data.resolveHtmlOrNull(name.replaceLast { NameToken(it.body + "[info]") }) ?: entry
+                            htmlData(infoData)
                             ul("actions") {
                                 li {
                                     a(classes = "button") {
@@ -92,8 +88,8 @@ internal fun SiteBuilder.spcSpotlight(
 ) {
     val pageName = address.parseAsName()
     val languagePrefix = languagePrefix
-    val body = data.resolveHtml(languagePrefix + pageName)
-        ?: data.resolveHtml(pageName) ?: error("Could not find body for $pageName")
+    val body = data.resolveHtmlOrNull(languagePrefix + pageName)
+        ?: data.resolveHtmlOrNull(pageName) ?: error("Could not find body for $pageName")
     val content: Map<Name, Data<HtmlFragment>> =
         data.resolveAllHtml { name, meta -> name.startsWith(languagePrefix) && contentFilter(name, meta) }
 

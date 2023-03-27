@@ -9,7 +9,6 @@ import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.startsWith
 import space.kscience.snark.html.*
-import java.nio.file.Path
 import kotlin.reflect.typeOf
 
 
@@ -68,7 +67,7 @@ internal val FortyDataRenderer: DataRenderer = object : DataRenderer {
             }
 
             page(name, dataMeta) {
-                spcPageContent{
+                spcPageContent {
                     htmlData(data)
                 }
             }
@@ -77,7 +76,7 @@ internal val FortyDataRenderer: DataRenderer = object : DataRenderer {
 }
 
 
-context(WebPage) private fun HTML.spcHome() {
+context(WebPage) private fun HTML.spcHomePage() {
     spcHead()
     body("is-preload") {
         wrapper {
@@ -264,21 +263,20 @@ context(WebPage) private fun HTML.spcHome() {
     }
 }
 
-internal fun SiteBuilder.spcHome(dataPath: Path, prefix: Name = Name.EMPTY) {
+internal fun SiteBuilder.spcHome(homePageData: DataTree<Any>, prefix: Name = Name.EMPTY) {
 
-    val homePageData: DataTree<Any> = snark.readDirectory(dataPath.resolve("content"))
+    //val homePageData: DataTree<Any> = snark.readDirectory(dataPath.resolve("content"))
 
     site(prefix, homePageData) {
-        file(dataPath.resolve("assets"))
-        file(dataPath.resolve("images"))
-        file(dataPath.resolve("../common/assets/webfonts"), "assets/webfonts")
-        file(dataPath.resolve("../common"), "")
+        static("assets")
+        static("images")
+        static("common", "")
 
         withLanguages(
             "en" to "",
             "ru" to "ru"
         ) {
-            page { spcHome() }
+            page { spcHomePage() }
 
             localizedPages("consulting", dataRenderer = FortyDataRenderer)
 
@@ -293,5 +291,4 @@ internal fun SiteBuilder.spcHome(dataPath: Path, prefix: Name = Name.EMPTY) {
             }
         }
     }
-
 }
