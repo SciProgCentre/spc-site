@@ -88,3 +88,9 @@ if (host != null && user != null || identityString != null) {
 } else {
     logger.error("Host, user or ID are not defined. Skipping deployment tasks.")
 }
+
+val staticSite by tasks.creating(JavaExec::class){
+    group = "application"
+    mainClass.set("center.sciprog.StaticRenderKt")
+    classpath = sourceSets["main"].runtimeClasspath
+}
