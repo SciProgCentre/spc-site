@@ -3,6 +3,7 @@ content_type: magprog_mentor
 name: Андрей Александрович Ефанов
 id: Efanov
 image: images/mentors/Efanov.jpg
+published: false
 language: ru
 ---
 

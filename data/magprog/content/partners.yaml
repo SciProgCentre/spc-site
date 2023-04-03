@@ -24,15 +24,19 @@ content:
   - title: ОИЯИ
     link: "https://bmn.jinr.ru/"
     logo: /images/partners/jinr.png
+  - title: НПО ВЫМПЕЛ
+    link: "https://vympel.group/"
+    logo: /images/partners/vympel.png
+
 #  - title: ВШЭ
 #    link: https://www.hse.ru/en/
 #    logo: /images/partners/hse.jpg
 #  - title: HZG-DESY
 #    link: https://www.desy.de/research/cooperations__institutes/hzg/index_eng.html
 #    logo: /images/partners/desy.svg
-  - title: Тинькофф
-    link: "https://fintech.tinkoff.ru/"
-    logo: /images/partners/tink.jpg
+#  - title: Тинькофф
+#    link: "https://fintech.tinkoff.ru/"
+#    logo: /images/partners/tink.jpg
 #  - title: ФИЦ Биотехнологии РАН
 #    link: "https://www.fbras.ru/"
 #    logo: /images/partners/biotech.png

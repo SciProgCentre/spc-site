@@ -90,6 +90,9 @@ if (host != null && user != null || identityString != null) {
 }
 
 val staticSite by tasks.creating(JavaExec::class){
+    doFirst {
+        buildDir.resolve("public").deleteRecursively()
+    }
     group = "application"
     mainClass.set("center.sciprog.StaticRenderKt")
     classpath = sourceSets["main"].runtimeClasspath

@@ -5,6 +5,7 @@ id: Kondratov
 image: 
     path: images/mentors/Kondratov.jpg
     position: right
+published: false
 language: ru
 ---
 

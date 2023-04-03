@@ -8,9 +8,11 @@ import space.kscience.snark.html.readResources
 import space.kscience.snark.html.static
 import java.nio.file.Path
 
-fun main() {
+fun main(args: Array<String>) {
+    val destinationPath = args.firstOrNull() ?: "build/public"
+
     val snark = Global.request(SnarkHtmlPlugin)
     val siteData = snark.readResources("common", "home", "magprog")
 
-    snark.static(siteData, Path.of("build/public"), siteUrl = "", block = SiteBuilder::spcSite)
+    snark.static(siteData, Path.of(destinationPath), block = SiteBuilder::spcSite)
 }
