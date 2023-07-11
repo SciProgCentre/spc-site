@@ -110,23 +110,23 @@ context(WebPage) private fun HTML.spcHomePage() {
             // Main
             div {
                 id = "main"
-                section {
-                    div("inner home_creationinfo") {
-                        a(href = "https://mipt.ru/education/departments/fpmi/") {
-                            span("image") {
-                                img {
-                                    src = "images/FPMI.jpg"
-                                    alt = "FPMI"
-                                    height = "60dp"
-                                    width = "60dp"
-                                }
-                            }
-                        }
-                        p {
-                            +"Centre was created in 2022 based on the Phystech School of Applied Mathematics and Informatics at MIPT"
-                        }
-                    }
-                }
+//                section {
+//                    div("inner home_creationinfo") {
+//                        a(href = "https://mipt.ru/education/departments/fpmi/") {
+//                            span("image") {
+//                                img {
+//                                    src = "images/FPMI.jpg"
+//                                    alt = "FPMI"
+//                                    height = "60dp"
+//                                    width = "60dp"
+//                                }
+//                            }
+//                        }
+//                        p {
+//                            +"Centre was created in 2022 based on the Phystech School of Applied Mathematics and Informatics at MIPT"
+//                        }
+//                    }
+//                }
 
                 section {
                     div("inner") {

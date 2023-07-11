@@ -52,22 +52,23 @@ apiValidation{
 
 val host = System.getenv("SPC_HOST")
 val user = System.getenv("SPC_USER")
-//val password = System.getenv("SPC_PASSWORD")
-val identityString = System.getenv("SPC_ID")
+val password = System.getenv("SPC_PASSWORD")
+val privateKey = System.getenv("SPC_ID")
+//val publicKey = System.getenv("SPC_PUBKEY")
 val serviceName = "sciprog-site"
 
-if (host != null && user != null || identityString != null) {
+if (host != null && user != null || privateKey != null) {
     val uploadDistribution by tasks.creating {
         group = "distribution"
         dependsOn("installDist")
         doLast {
             JSch {
-                addIdentity("spc-webmaster", identityString.encodeToByteArray(), null, null)
+                addIdentity("webmaster", privateKey.encodeToByteArray(), null, null)
             }.useSession(host, user) {
                 //stopping service during the upload
                 execute("sudo systemctl stop $serviceName")
                 uploadDirectory(buildDir.resolve("install/spc-site"), "/opt")
-                //adding executable flag to the entry point
+                //adding an executable flag to the entry point
                 execute("sudo chmod +x /opt/spc-site/bin/spc-site")
                 execute("sudo systemctl start $serviceName")
             }
@@ -78,7 +79,7 @@ if (host != null && user != null || identityString != null) {
         group = "distribution"
         doLast {
             JSch {
-                addIdentity("spc-webmaster", identityString.encodeToByteArray(), null, null)
+                addIdentity("webmaster", privateKey.encodeToByteArray(), null, null)
             }.useSession(host, user) {
                 execute("sudo systemctl restart $serviceName")
             }

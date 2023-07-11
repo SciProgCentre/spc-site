@@ -4,15 +4,15 @@ job("Deploy") {
     }
 
     container(image = "gradle:jdk17-alpine") {
-        env["SPC_HOST"] = Params("spc-host")
-        env["SPC_USER"] = Secrets("spc-webmaster-user")
-        env["SPC_ID"] = Secrets("spc-webmaster-id")
+        env["SPC_HOST"] = "{{ project:spc-host }}"
+        env["SPC_USER"] = "{{ project:spc-webmaster-user }}"
+        env["SPC_ID"] = "{{ project:spc-webmaster-id }}"
         kotlinScript { api ->
             api.space().projects.automation.deployments.start(
             	project = api.projectIdentifier(),
             	targetIdentifier = TargetIdentifier.Key("spc-site"),
             	version = "current",
-            	// automatically update deployment status based on a status of a job
+            	// automatically update deployment status based on the status of the job
             	syncWithAutomationJob = true
         	)
             api.gradle("uploadDistribution")
@@ -26,9 +26,9 @@ job("Restart service"){
     }
 
     container(image = "gradle:jdk17-alpine") {
-        env["SPC_HOST"] = Params("spc-host")
-        env["SPC_USER"] = Secrets("spc-webmaster-user")
-        env["SPC_ID"] = Secrets("spc-webmaster-id")
+        env["SPC_HOST"] = "{{ project:spc-host }}"
+        env["SPC_USER"] = "{{ project:spc-webmaster-user }}"
+        env["SPC_ID"] = "{{ project:spc-webmaster-id }}"
         kotlinScript { api ->
             api.gradle("reloadDistribution")
         }
