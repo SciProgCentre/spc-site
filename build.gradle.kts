@@ -35,7 +35,7 @@ dependencies {
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-server-http-redirect:$ktorVersion")
     implementation("io.ktor:ktor-server-forwarded-header:$ktorVersion")
-    implementation("ch.qos.logback:logback-classic:1.2.11")
+    implementation("ch.qos.logback:logback-classic:1.4.12")
 
     testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
 }

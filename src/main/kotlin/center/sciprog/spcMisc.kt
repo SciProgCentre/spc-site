@@ -3,16 +3,16 @@ package center.sciprog
 import kotlinx.html.*
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.string
-import space.kscience.snark.html.WebPage
+import space.kscience.snark.html.PageContext
+import space.kscience.snark.html.getLanguageMap
 import space.kscience.snark.html.homeRef
-import space.kscience.snark.html.languages
 import space.kscience.snark.html.resolvePageRef
 import java.time.LocalDate
 
 
 internal const val SPC_TITLE = "Scientific Programming Centre"
 
-context(WebPage)
+context(PageContext)
 internal fun HTML.spcHead(title: String = SPC_TITLE) {
     head {
         title {
@@ -53,7 +53,7 @@ internal fun HTML.spcHead(title: String = SPC_TITLE) {
     }
 }
 
-context(WebPage)
+context(PageContext)
 internal fun FlowContent.spcHomeMenu() {
     nav {
         id = "menu"
@@ -106,7 +106,7 @@ internal fun FlowContent.spcHomeMenu() {
     }
 }
 
-context(WebPage)
+context(PageContext)
 internal fun FlowContent.spcFooter() {
     footer {
         id = "footer"
@@ -158,7 +158,7 @@ internal fun FlowContent.spcFooter() {
     }
 }
 
-context(WebPage)
+context(PageContext)
 internal fun FlowContent.wrapper(contentBody: FlowContent.() -> Unit) {
     div {
         id = "wrapper"
@@ -172,9 +172,9 @@ internal fun FlowContent.wrapper(contentBody: FlowContent.() -> Unit) {
             }
 
 
-            if (languages.isNotEmpty()) {
+            getLanguageMap().takeIf { it.isNotEmpty() }?.let { languageMap->
                 div {
-                    languages.forEach { (key, meta) ->
+                    languageMap.forEach { (key, meta) ->
                         a(classes = "button primary small") {
                             href = resolvePageRef(meta["target"].string ?: "#")
                             +key

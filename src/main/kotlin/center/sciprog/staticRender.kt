@@ -1,18 +1,21 @@
 package center.sciprog
 
-import space.kscience.dataforge.context.Global
+import kotlinx.coroutines.coroutineScope
+import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.request
-import space.kscience.snark.html.SiteBuilder
-import space.kscience.snark.html.SnarkHtmlPlugin
-import space.kscience.snark.html.readResources
-import space.kscience.snark.html.static
+import space.kscience.snark.html.*
+import space.kscience.snark.html.static.staticSite
 import java.nio.file.Path
 
-fun main(args: Array<String>) {
+suspend fun main(args: Array<String>)  = coroutineScope{
+    val context = Context{
+        plugin(SnarkHtml)
+    }
+
     val destinationPath = args.firstOrNull() ?: "build/public"
 
-    val snark = Global.request(SnarkHtmlPlugin)
+    val snark = context.request(SnarkHtml)
     val siteData = snark.readResources("common", "home", "magprog")
 
-    snark.static(siteData, Path.of(destinationPath), block = SiteBuilder::spcSite)
+    snark.staticSite(siteData, Path.of(destinationPath), content = spcSite)
 }

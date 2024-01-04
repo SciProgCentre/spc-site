@@ -3,7 +3,6 @@ package center.sciprog
 import kotlinx.coroutines.runBlocking
 import kotlinx.html.*
 import space.kscience.dataforge.data.Data
-import space.kscience.dataforge.data.DataTree
 import space.kscience.dataforge.data.await
 import space.kscience.dataforge.data.getByType
 import space.kscience.dataforge.meta.Meta
@@ -11,7 +10,6 @@ import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.getIndexed
 import space.kscience.dataforge.meta.string
 import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.parseAsName
 import space.kscience.snark.html.*
 
 
@@ -22,58 +20,55 @@ private val Data<*>.fragment: String
     get() = meta["fragment"].string ?: ""
 
 
-internal fun SiteBuilder.bmk(data: DataTree<Any>, prefix: Name = "bmk".parseAsName()) {
+internal val bmk = HtmlSite {
 
-//    val data: DataTree<Any> = snark.readDirectory(dataPath.resolve("content"))
+    static("assets")
+    static("images")
+    static("common.assets.webfonts", "assets/webfonts")
+    static("common", "")
 
-    site(prefix, data) {
-        static("assets")
-        static("images")
-        static("common.assets.webfonts", "assets/webfonts")
-        static("common", "")
+    val about: Data<PageFragment> = siteData.resolveHtml("about")
+    val team: Data<PageFragment> = siteData.resolveHtml("team.index")
+    val teamData: Map<Name, Data<PageFragment>> = siteData.resolveAllHtml { _, meta -> meta["type"].string == "team" }
+    val solutions: Data<PageFragment> = siteData.resolveHtml("lotSeis")
+    val partners: Data<PageFragment> = siteData.resolveHtml("partners")
+    val partnersData = runBlocking { siteData.getByType<Meta>("partnersData")!!.await() }
 
-        val about: Data<HtmlFragment> = data.resolveHtml("about")
-        val team: Data<HtmlFragment> = data.resolveHtml("team.index")
-        val teamData: Map<Name, Data<HtmlFragment>> = data.resolveAllHtml { _, meta -> meta["type"].string == "team" }
-        val solutions: Data<HtmlFragment> = data.resolveHtml("lotSeis")
-        val partners: Data<HtmlFragment> = data.resolveHtml("partners")
-        val partnersData = runBlocking { data.getByType<Meta>("partnersData")!!.await() }
-
-        page {
-            head {
-                title = "БМК-Сервис"
-                meta {
-                    charset = "utf-8"
-                }
-                meta {
-                    name = "viewport"
-                    content = "width=device-width, initial-scale=1, user-scalable=no"
-                }
+    page {
+        head {
+            title = "БМК-Сервис"
+            meta {
+                charset = "utf-8"
+            }
+            meta {
+                name = "viewport"
+                content = "width=device-width, initial-scale=1, user-scalable=no"
+            }
+            link {
+                rel = "stylesheet"
+                href = resolveRef("assets/css/main.css")
+            }
+            noScript {
                 link {
                     rel = "stylesheet"
-                    href = resolveRef("assets/css/main.css")
-                }
-                noScript {
-                    link {
-                        rel = "stylesheet"
-                        href = resolveRef("assets/css/noscript.css")
-                    }
+                    href = resolveRef("assets/css/noscript.css")
                 }
             }
-            body("is-preload") {
+        }
+        body("is-preload") {
 //              Wrapper
-                div {
-                    id = "wrapper"
+            div {
+                id = "wrapper"
 //                  Header
-                    header("alt") {
-                        id = "header"
-                        span("logo") {
-                            img {
-                                src = "images/logo.svg"
-                                alt = ""
-                            }
+                header("alt") {
+                    id = "header"
+                    span("logo") {
+                        img {
+                            src = "images/logo.svg"
+                            alt = ""
                         }
-                        h1 { +"""БМК-Сервис""" }
+                    }
+                    h1 { +"""БМК-Сервис""" }
 //                        p {
 //                            +"""Just another free, fully responsive site template"""
 //                            br {
@@ -90,99 +85,98 @@ internal fun SiteBuilder.bmk(data: DataTree<Any>, prefix: Name = "bmk".parseAsNa
 //                            }
 //                            +"""."""
 //                        }
-                    }
+                }
 //                  Nav
-                    nav {
-                        id = "nav"
-                        ul {
-                            li {
-                                a(classes = "active") {
-                                    href = "#${about.fragment}"
-                                    +about.title
+                nav {
+                    id = "nav"
+                    ul {
+                        li {
+                            a(classes = "active") {
+                                href = "#${about.fragment}"
+                                +about.title
+                            }
+                        }
+                        li {
+                            a {
+                                href = "#${team.fragment}"
+                                +team.title
+                            }
+                        }
+                        li {
+                            a {
+                                href = "#${solutions.fragment}"
+                                +solutions.title
+                            }
+                        }
+                        li {
+                            a {
+                                href = "#${partners.fragment}"
+                                +partners.title
+                            }
+                        }
+                    }
+                }
+                div {
+                    id = "main"
+                    section("main") {
+                        id = about.fragment
+                        div("spotlight") {
+                            div("content") {
+                                header("major") {
+                                    h2 { +about.title }
+                                }
+                                htmlData(about)
+                            }
+                        }
+                    }
+                    section("main") {
+                        id = team.fragment
+                        header("major") {
+                            h2 { +team.title }
+                        }
+                        fragment(team)
+                        teamData.values.sortedBy { it.order }.forEach { data ->
+                            span("image left") {
+                                img {
+                                    src = resolveRef("images/${data.meta["image"].string!!}")
+                                    height = "120dp"
                                 }
                             }
-                            li {
-                                a {
-                                    href = "#${team.fragment}"
-                                    +team.title
-                                }
-                            }
-                            li {
-                                a {
-                                    href = "#${solutions.fragment}"
-                                    +solutions.title
-                                }
-                            }
-                            li {
-                                a {
-                                    href = "#${partners.fragment}"
-                                    +partners.title
+                            h3 { +data.title }
+                            fragment(data)
+                        }
+                    }
+                    section("main") {
+                        id = solutions.fragment
+                        header("major") {
+                            h2 { +solutions.title }
+                            fragment(solutions)
+                            span("image fit") {
+                                img {
+                                    src = resolveRef("images/fresnel_lands_critdepth2.png")
                                 }
                             }
                         }
                     }
-                    div {
-                        id = "main"
-                        section("main") {
-                            id = about.fragment
-                            div("spotlight") {
-                                div("content") {
-                                    header("major") {
-                                        h2 { +about.title }
-                                    }
-                                    htmlData(about)
-                                }
-                            }
-                        }
-                        section("main") {
-                            id = team.fragment
-                            header("major") {
-                                h2 { +team.title }
-                            }
-                            htmlData(team)
-                            teamData.values.sortedBy { it.order }.forEach { data ->
-                                span("image left") {
-                                    img {
-                                        src = resolveRef("images/${data.meta["image"].string!!}")
-                                        height = "120dp"
-                                    }
-                                }
-                                h3 { +data.title }
-                                htmlData(data)
-                            }
-                        }
-                        section("main") {
-                            id = solutions.fragment
-                            header("major") {
-                                h2 { +solutions.title }
-                                htmlData(solutions)
-                                span("image fit") {
-                                    img {
-                                        src = resolveRef("images/fresnel_lands_critdepth2.png")
-                                    }
-                                }
-                            }
-                        }
-                        section("main") {
-                            id = partners.fragment
-                            header("major") {
-                                h2 { +partners.title }
-                                htmlData(partners)
-                                table {
-                                    partnersData.getIndexed("content").values.forEach {
-                                        tr {
-                                            td {
-                                                span("image right") {
-                                                    img {
-                                                        src = resolveRef(it["image"].string!!)
-                                                        height = "120dp"
-                                                        width = "auto"
-                                                    }
+                    section("main") {
+                        id = partners.fragment
+                        header("major") {
+                            h2 { +partners.title }
+                            fragment(partners)
+                            table {
+                                partnersData.getIndexed("content").values.forEach {
+                                    tr {
+                                        td {
+                                            span("image right") {
+                                                img {
+                                                    src = resolveRef(it["image"].string!!)
+                                                    height = "120dp"
+                                                    width = "auto"
                                                 }
-                                                h3 {
-                                                    a(href = it["target"].string!!) {
-                                                        +it["title"].string!!
-                                                    }
+                                            }
+                                            h3 {
+                                                a(href = it["target"].string!!) {
+                                                    +it["title"].string!!
                                                 }
                                             }
                                         }
@@ -191,8 +185,9 @@ internal fun SiteBuilder.bmk(data: DataTree<Any>, prefix: Name = "bmk".parseAsNa
                             }
                         }
                     }
+                }
 //                  Footer
-                    footer {
+                footer {
 //                        id = "footer"
 //                        section {
 //                            h2 { +"""Aliquam sed mauris""" }
@@ -254,38 +249,37 @@ internal fun SiteBuilder.bmk(data: DataTree<Any>, prefix: Name = "bmk".parseAsNa
 //                                }
 //                            }
 //                        }
-                        p("copyright") {
-                            +"""SPC. Design:"""
-                            a {
-                                href = "https://html5up.net"
-                                +"""HTML5 UP"""
-                            }
-                            +"""."""
+                    p("copyright") {
+                        +"""SPC. Design:"""
+                        a {
+                            href = "https://html5up.net"
+                            +"""HTML5 UP"""
                         }
+                        +"""."""
                     }
                 }
+            }
 //              Scripts
-                script {
-                    src = resolveRef("assets/js/jquery.min.js")
-                }
-                script {
-                    src = resolveRef("assets/js/jquery.scrollex.min.js")
-                }
-                script {
-                    src = resolveRef("assets/js/jquery.scrolly.min.js")
-                }
-                script {
-                    src = resolveRef("assets/js/browser.min.js")
-                }
-                script {
-                    src = resolveRef("assets/js/breakpoints.min.js")
-                }
-                script {
-                    src = resolveRef("assets/js/util.js")
-                }
-                script {
-                    src = resolveRef("assets/js/main.js")
-                }
+            script {
+                src = resolveRef("assets/js/jquery.min.js")
+            }
+            script {
+                src = resolveRef("assets/js/jquery.scrollex.min.js")
+            }
+            script {
+                src = resolveRef("assets/js/jquery.scrolly.min.js")
+            }
+            script {
+                src = resolveRef("assets/js/browser.min.js")
+            }
+            script {
+                src = resolveRef("assets/js/breakpoints.min.js")
+            }
+            script {
+                src = resolveRef("assets/js/util.js")
+            }
+            script {
+                src = resolveRef("assets/js/main.js")
             }
         }
     }

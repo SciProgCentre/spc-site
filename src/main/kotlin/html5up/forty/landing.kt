@@ -1,9 +1,10 @@
 package html5up.forty
 
 import kotlinx.html.*
-import space.kscience.snark.html.WebPage
+import space.kscience.snark.html.PageContext
 
-context(WebPage) internal fun HTML.landing(){
+context(PageContext)
+internal fun HTML.landing() {
     head {
         title {
         }
@@ -30,7 +31,7 @@ context(WebPage) internal fun HTML.landing(){
         div {
             id = "wrapper"
             // Header
-			// Note: The "styleN" class below should match that of the banner element. -->
+            // Note: The "styleN" class below should match that of the banner element. -->
 
             header("alt style2") {
                 id = "header"
@@ -48,7 +49,7 @@ context(WebPage) internal fun HTML.landing(){
             }
             fortyMenu()
             // Banner
-		    // Note: The "styleN" class below should match that of the header element.
+            // Note: The "styleN" class below should match that of the header element.
             section("style2") {
                 id = "banner"
                 div("inner") {

@@ -10,12 +10,11 @@ import io.ktor.server.plugins.forwardedheaders.XForwardedHeaders
 import io.ktor.server.response.respondRedirect
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
-import space.kscience.dataforge.context.Global
+import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.request
 import space.kscience.dataforge.data.DataTree
-import space.kscience.snark.html.SiteBuilder
-import space.kscience.snark.html.SnarkHtmlPlugin
-import space.kscience.snark.html.readDirectory
+import space.kscience.dataforge.workspace.readDataDirectory
+import space.kscience.snark.html.*
 import space.kscience.snark.ktor.prepareSnarkDataCacheDirectory
 import space.kscience.snark.ktor.site
 import java.nio.file.FileSystems
@@ -69,7 +68,11 @@ fun Application.spcModule() {
     install(ForwardedHeaders)
     install(XForwardedHeaders)
 
-    val snark = Global.request(SnarkHtmlPlugin)
+    val context = Context {
+        plugin(SnarkHtml)
+    }
+
+    val snark = context.request(SnarkHtml)
 
     val dataDirectory = Path.of(
         environment.config.tryGetString("ktor.environment.dataDirectory") ?: "data"
@@ -81,14 +84,13 @@ fun Application.spcModule() {
         copyResource("magprog", dataDirectory)
     }
 
-    val siteData: DataTree<Any> = snark.readDirectory(dataDirectory)
-
-    site(snark, siteData, block = SiteBuilder::spcSite)
+    val siteData: DataTree<Any> = snark.io.readDataDirectory(dataDirectory)
 
     routing {
         get("magprog") {
             call.respondRedirect("education/masters")
         }
+        site(context, siteData, content = spcSite)
     }
 }
 

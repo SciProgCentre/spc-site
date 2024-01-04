@@ -2,19 +2,15 @@ package center.sciprog
 
 import html5up.forty.fortyScripts
 import kotlinx.html.*
-import space.kscience.dataforge.data.Data
-import space.kscience.dataforge.data.DataTree
-import space.kscience.dataforge.meta.*
-import space.kscience.dataforge.names.Name
+import space.kscience.dataforge.data.*
+import space.kscience.dataforge.meta.get
+import space.kscience.dataforge.meta.string
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.startsWith
 import space.kscience.snark.html.*
-import kotlin.reflect.typeOf
 
 
-context(WebPage) internal fun HTML.spcPageContent(
-    fragment: FlowContent.() -> Unit,
-) {
+internal fun spcPage(content: Data<PageFragment>) = HtmlPage {
     val title by pageMeta.string { SPC_TITLE }
     val pageName by pageMeta.string { title }
     spcHead(pageName)
@@ -30,7 +26,8 @@ context(WebPage) internal fun HTML.spcPageContent(
                         }
                         pageMeta["image"]?.let { imageMeta ->
                             val imagePath =
-                                imageMeta.value?.string ?: imageMeta["path"].string ?: error("Image path not provided")
+                                imageMeta.value?.string ?: imageMeta["path"].string
+                                ?: error("Image path not provided")
                             val imageClass = imageMeta["position"].string ?: "main"
                             span("image $imageClass") {
                                 img {
@@ -39,7 +36,7 @@ context(WebPage) internal fun HTML.spcPageContent(
                                 }
                             }
                         }
-                        fragment()
+                        fragment(content)
                     }
                 }
             }
@@ -49,34 +46,7 @@ context(WebPage) internal fun HTML.spcPageContent(
     }
 }
 
-@Suppress("UNCHECKED_CAST")
-internal val FortyDataRenderer: DataRenderer = object : DataRenderer {
-
-    context(SiteBuilder)
-    override fun invoke(name: Name, data: Data<Any>) {
-        if (data.type == typeOf<HtmlFragment>()) {
-            data as Data<HtmlFragment>
-            val languageMeta: Meta = Language.forName(name)
-
-            val dataMeta: Meta = if (languageMeta.isEmpty()) {
-                data.meta
-            } else {
-                data.meta.toMutableMeta().apply {
-                    Language.LANGUAGES_KEY put languageMeta
-                }
-            }
-
-            page(name, dataMeta) {
-                spcPageContent {
-                    htmlData(data)
-                }
-            }
-        }
-    }
-}
-
-
-context(WebPage) private fun HTML.spcHomePage() {
+internal val spcHomePage = HtmlPage {
     spcHead()
     body("is-preload") {
         wrapper {
@@ -156,14 +126,14 @@ context(WebPage) private fun HTML.spcHomePage() {
                     article {
                         span("image") {
                             img {
-                                src = resolveRef("images/pic01.jpg")
+                                src = page.resolveRef("images/pic01.jpg")
                                 alt = ""
                             }
                         }
                         header("major") {
                             h3 {
                                 a(classes = "link") {
-                                    href = resolvePageRef("education")
+                                    href = page.resolvePageRef("education")
                                     +"""Education"""
                                 }
                             }
@@ -173,14 +143,14 @@ context(WebPage) private fun HTML.spcHomePage() {
                     article {
                         span("image") {
                             img {
-                                src = resolveRef("images/pic02.jpg")
+                                src = page.resolveRef("images/pic02.jpg")
                                 alt = ""
                             }
                         }
                         header("major") {
                             h3 {
                                 a(classes = "link") {
-                                    href = resolvePageRef("research")
+                                    href = page.resolvePageRef("research")
                                     +"""Research"""
                                 }
                             }
@@ -192,14 +162,14 @@ context(WebPage) private fun HTML.spcHomePage() {
                     article {
                         span("image") {
                             img {
-                                src = resolveRef("images/pic03.jpg")
+                                src = page.resolveRef("images/pic03.jpg")
                                 alt = ""
                             }
                         }
                         header("major") {
                             h3 {
                                 a(classes = "link") {
-                                    href = resolvePageRef("consulting.index")
+                                    href = page.resolvePageRef("consulting.index")
                                     +"""Consulting"""
                                 }
                             }
@@ -209,14 +179,14 @@ context(WebPage) private fun HTML.spcHomePage() {
                     article {
                         span("image") {
                             img {
-                                src = resolveRef("images/pic04.jpg")
+                                src = page.resolveRef("images/pic04.jpg")
                                 alt = ""
                             }
                         }
                         header("major") {
                             h3 {
                                 a(classes = "link") {
-                                    href = resolvePageRef("team")
+                                    href = page.resolvePageRef("team")
                                     +"""Team"""
                                 }
                             }
@@ -263,32 +233,88 @@ context(WebPage) private fun HTML.spcHomePage() {
     }
 }
 
-internal fun SiteBuilder.spcHome(homePageData: DataTree<Any>, prefix: Name = Name.EMPTY) {
-
-    //val homePageData: DataTree<Any> = snark.readDirectory(dataPath.resolve("content"))
-
-    site(prefix, homePageData) {
-        static("assets")
-        static("images")
-        static("common", "")
-
-        withLanguages(
-            "en" to "",
-            "ru" to "ru"
-        ) {
-            page { spcHomePage() }
-
-            localizedPages("consulting", dataRenderer = FortyDataRenderer)
-
-            localizedPages("education", dataRenderer = FortyDataRenderer)
-
-            spcSpotlight("team") { _, meta ->
-                meta["type"].string == "team"
-            }
-
-            spcSpotlight("research") { name, meta ->
-                name.startsWith("projects".asName()) && meta["type"].string == "project"
-            }
-        }
+private fun SiteContextWithData.allPagesIn(location: String){
+    siteData.filterByType<PageFragment> { name, meta ->
+        name.startsWith(location) && meta["type"].string == "page"
+    }.forEach { (name, content) ->
+        page(name, content = spcPage(content))
     }
 }
+
+
+internal val spcHome: HtmlSite = HtmlSite {
+    static("assets")
+    static("images")
+    static("common", "")
+
+    multiLanguageSite(
+        siteData,
+        mapOf(
+            "en" to Language(""),
+            "ru" to Language("ru"),
+        )
+    ) {
+        page(content = spcHomePage)
+
+        allPagesIn("consulting")
+
+        allPagesIn("education")
+
+        spcSpotlight("team") { _, meta ->
+            meta["type"].string == "team"
+        }
+
+        spcSpotlight("research") { name, meta ->
+            name.startsWith("projects".asName()) && meta["type"].string == "project"
+        }
+    }
+//    withLanguages(
+//        "en" to "",
+//        "ru" to "ru"
+//    ) {
+//        page { spcHomePage() }
+//
+//        localizedPages("consulting", dataRenderer = FortyDataRenderer)
+//
+//        localizedPages("education", dataRenderer = FortyDataRenderer)
+//
+//        spcSpotlight("team") { _, meta ->
+//            meta["type"].string == "team"
+//        }
+//
+//        spcSpotlight("research") { name, meta ->
+//            name.startsWith("projects".asName()) && meta["type"].string == "project"
+//        }
+//    }
+
+}
+//
+//internal fun SiteBuilder.spcHome(homePageData: DataTree<Any>, prefix: Name = Name.EMPTY) {
+//
+//    //val homePageData: DataTree<Any> = snark.readDirectory(dataPath.resolve("content"))
+//
+//    site(prefix, homePageData) {
+//        static("assets")
+//        static("images")
+//        static("common", "")
+//
+//        withLanguages(
+//            "en" to "",
+//            "ru" to "ru"
+//        ) {
+//            page { spcHomePage() }
+//
+//            localizedPages("consulting", dataRenderer = FortyDataRenderer)
+//
+//            localizedPages("education", dataRenderer = FortyDataRenderer)
+//
+//            spcSpotlight("team") { _, meta ->
+//                meta["type"].string == "team"
+//            }
+//
+//            spcSpotlight("research") { name, meta ->
+//                name.startsWith("projects".asName()) && meta["type"].string == "project"
+//            }
+//        }
+//    }
+//}

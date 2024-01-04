@@ -13,9 +13,11 @@ import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set
 
-context(WebPage) private fun FlowContent.spcSpotlightContent(
-    landing: HtmlData,
-    content: Map<Name, HtmlData>,
+
+context(PageContextWithData)
+private fun FlowContent.spcSpotlightContent(
+    landing: Data<PageFragment>,
+    content: Map<Name, Data<PageFragment>>,
 ) {
     // Banner
     // Note: The "styleN" class below should match that of the header element.
@@ -32,7 +34,7 @@ context(WebPage) private fun FlowContent.spcSpotlightContent(
                 h1 { +(landing.meta["title"].string ?: "???") }
             }
             div("content") {
-                htmlData(landing)
+                fragment(landing)
             }
         }
     }
@@ -63,8 +65,9 @@ context(WebPage) private fun FlowContent.spcSpotlightContent(
                             header("major") {
                                 h3 { +(entry.meta["title"].string ?: "???") }
                             }
-                            val infoData = data.resolveHtmlOrNull(name.replaceLast { NameToken(it.body + "[info]") }) ?: entry
-                            htmlData(infoData)
+                            val infoData =
+                                data.resolveHtmlOrNull(name.replaceLast { NameToken(it.body + "[info]") }) ?: entry
+                            fragment(infoData)
                             ul("actions") {
                                 li {
                                     a(classes = "button") {
@@ -82,16 +85,16 @@ context(WebPage) private fun FlowContent.spcSpotlightContent(
 }
 
 
-internal fun SiteBuilder.spcSpotlight(
+internal fun SiteContextWithData.spcSpotlight(
     address: String,
     contentFilter: (Name, Meta) -> Boolean,
 ) {
     val pageName = address.parseAsName()
     val languagePrefix = languagePrefix
-    val body = data.resolveHtmlOrNull(languagePrefix + pageName)
-        ?: data.resolveHtmlOrNull(pageName) ?: error("Could not find body for $pageName")
-    val content: Map<Name, Data<HtmlFragment>> =
-        data.resolveAllHtml { name, meta -> name.startsWith(languagePrefix) && contentFilter(name, meta) }
+    val body = siteData.resolveHtmlOrNull(languagePrefix + pageName)
+        ?: siteData.resolveHtmlOrNull(pageName) ?: error("Could not find body for $pageName")
+    val content: Map<Name, Data<PageFragment>> =
+        siteData.resolveAllHtml { name, meta -> name.startsWith(languagePrefix) && contentFilter(name, meta) }
 
     val meta = body.meta
     page(pageName) {
@@ -107,10 +110,6 @@ internal fun SiteBuilder.spcSpotlight(
     }
 
     content.forEach { (name, contentBody) ->
-        page(name, contentBody.meta) {
-            spcPageContent {
-                htmlData(contentBody)
-            }
-        }
+        page(name, contentBody.meta, spcPage(contentBody))
     }
 }
