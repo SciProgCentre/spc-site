@@ -125,7 +125,7 @@ internal val bmk = HtmlSite {
                                 header("major") {
                                     h2 { +about.title }
                                 }
-                                htmlData(about)
+                                fragment(about)
                             }
                         }
                     }
